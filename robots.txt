@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://vadimohka.ru/sitemap.xml
+
+# crawl-delay: 10
+# Crawl delay is intentionally set to 10 seconds to prevent overloading the server
+# with too many requests in a short period of time
+
+# Disallow access to private files
+Disallow: /Profile.pdf
+Disallow: /Vadim_Vladymtsev.png
+Disallow: /style.css
+Disallow: /favicon.ico
+
+# Disallow access to potential admin or system directories
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /temp/
+Disallow: /private/
+
+# Specific pages that should not be indexed
+Disallow: /*.pdf$

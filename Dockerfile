@@ -5,10 +5,10 @@ FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/index.html
 COPY index.en.html /usr/share/nginx/html/index.en.html
 COPY style.css /usr/share/nginx/html/style.css
-COPY 758853568.png /usr/share/nginx/html/758853568.png
+COPY Vadim_Vladymtsev.png /usr/share/nginx/html/Vadim_Vladymtsev.png
+COPY robots.txt /usr/share/nginx/html/robots.txt
+COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 COPY favicon.ico /usr/share/nginx/html/favicon.ico
 
 # Expose port 80
 EXPOSE 80
-
-# No CMD needed, nginx default
