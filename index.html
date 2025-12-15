@@ -5,70 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Вадим Владымцев — Архитектор AI-решений | R&D Директор</title>
   <meta name="description" content="Внедрение безопасного AI и RAG-систем в корпоративный бизнес. Экспертиза от R&D директора с академическим бэкграундом. Python, FastAPI, Vector DBs." />
+  <meta name="keywords" content="AI, RAG, архитектура ИИ, машинное обучение, Python, FastAPI, векторные базы данных, LLM, безопасность ИИ, корпоративный ИИ" />
+  <meta name="author" content="Вадим Владымцев" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vadimohka.ru/" />
+  <meta property="og:title" content="Вадим Владымцев — Архитектор AI-решений | R&D Директор" />
+  <meta property="og:description" content="Внедрение безопасного AI и RAG-систем в корпоративный бизнес. Экспертиза от R&D директора с академическим бэкграундом." />
+  <meta property="og:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://vadimohka.ru/" />
+  <meta property="twitter:title" content="Вадим Владымцев — Архитектор AI-решений | R&D Директор" />
+  <meta property="twitter:description" content="Внедрение безопасного AI и RAG-систем в корпоративный бизнес. Экспертиза от R&D директора с академическим бэкграундом." />
+  <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Вадим Владымцев",
+    "jobTitle": "R&D Director & AI Solutions Architect",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "StackLevel Group"
+    },
+    "url": "https://vadimohka.ru/",
+    "sameAs": [
+      "https://www.linkedin.com/in/vadimohka/",
+      "https://github.com/vadimohka"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Минск",
+      "addressCountry": "BY"
+    },
+    "description": "Эксперт по LLM и RAG архитектуре, R&D директор StackLevel Group. Специализируется на безопасном внедрении ИИ в корпоративный сектор."
+  }
+  </script>
 </head>
 
 <body>
 
-  <header class="header">
+  <header class="header" role="banner">
     <div class="container nav-flex">
       <div class="brand">
         <span class="text-accent">AI</span> Architect
       </div>
-      <nav class="nav-links">
-        <a href="#services">Компетенции</a>
-        <a href="#background">Бэкграунд</a>
-        <a href="#projects">Проекты</a>
-        <a href="#education">Образование</a>
+      <nav class="nav-links" role="navigation" aria-label="Основная навигация">
+        <a href="#services" aria-label="Перейти к разделу ключевые компетенции">Компетенции</a>
+        <a href="#background" aria-label="Перейти к разделу профессиональный и академический путь">Бэкграунд</a>
+        <a href="#projects" aria-label="Перейти к разделу избранные проекты">Проекты</a>
+        <a href="#education" aria-label="Перейти к разделу образование и награды">Образование</a>
       </nav>
-      <a href="#contact" class="btn btn-primary">Связаться</a>
+      <button class="mobile-menu-toggle" aria-label="Открыть мобильное меню" aria-expanded="false">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <a href="#contact" class="btn btn-primary" aria-label="Связаться с Вадимом">Связаться</a>
     </div>
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero" aria-label="Введение">
       <div class="container hero-grid">
         <div class="hero-content">
-          <span class="hero-badge">R&D Director & AI Expert</span>
+          <span class="hero-badge" aria-label="Роль: R&D Director & AI Expert">R&D Director & AI Expert</span>
           <h1>Внедряю <span class="text-accent">безопасный AI</span> в контур вашего бизнеса</h1>
           <p class="lead">
             Превращаю корпоративные знания в надежные RAG-системы. Фундаментальный подход: от архитектуры и R&D до MLOps и интеграции в Enterprise.
           </p>
           <div class="hero-cta">
             <a href="#contact" class="btn btn-primary">Обсудить задачу</a>
-            <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
+            <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline" aria-label="Перейти на LinkedIn профиль">LinkedIn Profile</a>
           </div>
-          <div class="trust-badges">
+          <div class="trust-badges" aria-label="Преимущества">
             <span>🛡️ Security First</span>
             <span>🚀 High Performance</span>
             <span>🔧 On-Premise Ready</span>
           </div>
         </div>
         <div class="hero-img-wrapper">
-          <img src="Vadim_Vladymtsev.png" alt="Вадим Владымцев" class="hero-img" />
+          <img src="Vadim_Vladymtsev.png" alt="Фотография Вадима Владымцева, R&D директора и архитектора AI-решений" class="hero-img" loading="lazy" />
         </div>
       </div>
     </section>
 
-    <section id="services" class="section bg-secondary">
+    <section id="services" class="section bg-secondary" aria-labelledby="services-heading">
       <div class="container">
-        <h2>Ключевые компетенции</h2>
+        <h2 id="services-heading">Ключевые компетенции</h2>
         <div class="services-grid">
-          <article class="service-card">
-            <span class="service-icon">🤖</span>
-            <h3>RAG "под ключ"</h3>
+          <article class="service-card" role="region" aria-labelledby="service-1">
+            <span class="service-icon" aria-hidden="true">🤖</span>
+            <h3 id="service-1">RAG "под ключ"</h3>
             <p class="text-muted">Разработка систем поиска по документам (PDF, Doc, HTML). Сотрудники задают вопросы — нейросеть отвечает строго по базе знаний, без галлюцинаций.</p>
           </article>
-          <article class="service-card">
-            <span class="service-icon">🏗️</span>
-            <h3>Архитектура & R&D</h3>
+          <article class="service-card" role="region" aria-labelledby="service-2">
+            <span class="service-icon" aria-hidden="true">🏗️</span>
+            <h3 id="service-2">Архитектура & R&D</h3>
             <p class="text-muted">Проектирование безопасного контура для LLM. Построение R&D процессов с нуля: от гипотезы до пилота и продакшена. Защита данных, контроль токенов.</p>
           </article>
-          <article class="service-card">
-            <span class="service-icon">⚡</span>
-            <h3>Аудит и Оптимизация</h3>
+          <article class="service-card" role="region" aria-labelledby="service-3">
+            <span class="service-icon" aria-hidden="true">⚡</span>
+            <h3 id="service-3">Аудит и Оптимизация</h3>
             <p class="text-muted">Анализ текущих Python/FastAPI бэкендов. Ускорение, рефакторинг, внедрение векторных баз данных (ChromaDB, Elasticsearch) и MLOps практик.</p>
           </article>
         </div>
@@ -238,12 +284,64 @@
   </main>
 
   <script>
+    // Плавная прокрутка для якорных ссылок
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
+        
+        // Закрыть мобильное меню при клике на ссылку
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (mobileMenuToggle.classList.contains('active')) {
+          mobileMenuToggle.classList.remove('active');
+          navLinks.classList.remove('active');
+          mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+        
         document.querySelector(this.getAttribute('href')).scrollIntoView({
           behavior: 'smooth'
         });
+      });
+    });
+    
+    // Мобильное меню
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    mobileMenuToggle.addEventListener('click', function() {
+      this.classList.toggle('active');
+      navLinks.classList.toggle('active');
+      this.setAttribute('aria-expanded', this.classList.contains('active'));
+    });
+    
+    // Закрыть меню при клике вне его области
+    document.addEventListener('click', function(event) {
+      if (!mobileMenuToggle.contains(event.target) && !navLinks.contains(event.target)) {
+        mobileMenuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
+
+  <script>
+    // Lazy loading для изображений
+    document.addEventListener('DOMContentLoaded', function() {
+      const imgElements = document.querySelectorAll('img[loading="lazy"]');
+      
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.classList.add('loaded');
+            observer.unobserve(img);
+          }
+        });
+      });
+      
+      imgElements.forEach(img => {
+        imageObserver.observe(img);
       });
     });
   </script>

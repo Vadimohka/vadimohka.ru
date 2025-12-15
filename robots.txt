@@ -4,3 +4,10 @@ Sitemap: https://vadimohka.ru/sitemap.xml
 
 # Directive for AI Bots to find the structured context
 Allow: /llm-profile.json
+Allow: /index.html
+Allow: /style.css
+Allow: /script.js
+Allow: /favicon.ico
+Allow: /robots.txt
+Allow: /sitemap.xml
+Allow: /Vadim_Vladymtsev.png
