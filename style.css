@@ -240,16 +240,35 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 .stack-item {
   background: var(--bg-secondary); padding: 20px; border-radius: 12px;
   border: 1px solid var(--border-color); font-weight: 600; transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 80px;
 }
 .stack-item:hover { border-color: var(--accent-blue); }
 
 /* --- Projects Section --- */
-.projects-grid { display: grid; gap: 48px; }
-.project-card {
-  background: var(--bg-main); border: 1px solid var(--border-color);
-  border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 1fr;
+.projects-grid {
+  display: grid;
+  gap: 48px;
 }
-.project-content { padding: 40px; }
+.project-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+ overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.project-content {
+  padding: 40px;
+}
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-blue);
+}
 .project-role {
   display: inline-block; font-size: 0.875rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 16px;
 }
@@ -285,15 +304,68 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
   .hero-content { order: 2; }
   .hero-img-wrapper { order: 1; }
   .hero-cta, .trust-badges { justify-content: center; }
-  .p.lead { margin: 0 auto 32px; }
-  
+  p.lead { margin: 0 auto 32px; }
+   
   .services-grid, .timeline-grid, .edu-grid { grid-template-columns: 1fr; gap: 32px; }
  .timeline-col h3 { margin-top: 32px; }
 }
-
+ 
+.projects-grid {
+   grid-template-columns: 1fr;
+ }
+ 
 @media (max-width: 768px) {
   .nav-links { display: none; }
-  .section { padding: 64px 0; }
+ .section { padding: 64px 0; }
   .hero { padding-top: 120px; }
   .project-content { padding: 24px; }
+  
+  .hero-grid {
+    gap: 32px;
+  }
+  .hero-content, .hero-img-wrapper {
+    padding: 0 20px;
+  }
+  .trust-badges {
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .services-grid {
+    gap: 24px;
+  }
+  .service-card {
+    padding: 24px;
+ }
+  .footer-links {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  /* Улучшение адаптивности для очень маленьких экранов */
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 16px;
+    }
+    
+    .hero-grid {
+      gap: 24px;
+    }
+    
+    .hero-content, .hero-img-wrapper {
+      padding: 0 16px;
+    }
+    
+    .section {
+      padding: 48px 0;
+    }
+    
+    .btn {
+      padding: 14px 20px;
+      font-size: 0.95rem;
+    }
+  }
 }

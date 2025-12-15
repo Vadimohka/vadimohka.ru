@@ -25,22 +25,29 @@
   },
   "profile": {
     "full_name": "Vadim Vladymtsev",
-    "short_bio": "LLM and RAG architecture expert, R&D Director at StackLevel Group. Specializes in secure AI implementation in corporate environments.",
+    "short_bio": "R&D Director and AI Solutions Architect. Builds secure enterprise LLM/RAG systems for regulated environments (air-gapped/on-prem). Focus: OpenAI-compatible API integration, hybrid retrieval, source-grounded answers, auditability, and observability.",
     "key_skills": [
-      "RAG (Retrieval-Augmented Generation)",
-      "LLM Security & Compliance",
-      "Python / FastAPI / Docker",
-      "Vector Databases (ChromaDB, Elasticsearch)",
-      "Team Leadership"
-    ],
+          "Enterprise RAG (Retrieval-Augmented Generation)",
+          "Hybrid Search (BM25 + Dense Vectors)",
+          "Source-grounded answers (citations & verification)",
+          "Air-Gapped / On-Prem deployments (Docker/VM)",
+          "OpenAI-compatible API integration",
+          "LLM Security (Prompt Injection, defense-in-depth)",
+          "Access control (RBAC) & audit logging",
+          "LLM Evaluation, A/B testing & quality monitoring",
+          "Observability for LLM apps (logs/metrics)",
+          "Agentic orchestration: Plan-Execute-Verify",
+          "AI Readiness Assessment (cases/team/data/infra)",
+          "Vendor lock-in risk reduction"
+        ],
     "services_offered": [
       {
-        "name": "AI Implementation Consulting",
-        "description": "Infrastructure readiness audit for LLM, model selection (Open Source vs Closed), unit economics calculation."
+        "name": "AI Readiness Assessment (ИИ-аудит)",
+        "description": "Assessment across 4 axes: business cases with ROI, team readiness, data readiness, and infrastructure readiness for on-prem inference. Output: roadmap + pilot plan."
       },
       {
-        "name": "RAG Platform Development",
-        "description": "Development of secure search systems over corporate knowledge bases with answer accuracy >95%."
+        "name": "Secure Enterprise RAG Platform Development",
+        "description": "End-to-end RAG platform: hybrid retrieval, answers with source verification (citations), request/response logging, audit trails, and on-prem/air-gapped deployment with OpenAI-compatible API."
       }
     ],
     "availability": "Open for consulting and high-impact R&D projects.",
