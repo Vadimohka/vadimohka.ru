@@ -1,0 +1,350 @@
+/* --- Global Reset & Variables --- */
+:root {
+    --bg-main: #0a0f1c;       /* Глубокий премиальный черный */
+    --bg-card: #111827;       /* Вторичный фон для блоков */
+    --accent: #3b82f6;        /* Интеллектуальный синий */
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: rgba(255, 255, 255, 0.08);
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+ul { list-style: none; }
+
+/* --- Layout Utilities --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.section {
+    padding: 100px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+
+/* --- Typography --- */
+h1, h2, h3, h4 {
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 48px;
+    position: relative;
+    display: inline-block;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+}
+
+.lead {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin-bottom: 32px;
+}
+
+.highlight {
+    color: var(--accent);
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* --- Components: Buttons --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+    color: white;
+}
+
+/* --- Header --- */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(10, 15, 28, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+.logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; }
+.nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
+.nav-links a:hover { color: white; }
+
+/* --- Hero Section --- */
+.hero {
+    padding-top: 180px;
+    padding-bottom: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Эффект свечения на фоне */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    z-index: -1;
+}
+
+.hero-badges {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.badge-pill {
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+}
+
+.hero-img-wrap {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.hero-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: saturate(1.1) contrast(1.1);
+}
+
+/* --- Stats Block --- */
+.stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+}
+
+.stat-item strong {
+    display: block;
+    font-size: 2rem;
+    color: white;
+}
+.stat-item span {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* --- Services (Cards) --- */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* --- Timeline (Academic & Career) --- */
+/* Уникальный стиль для отображения опыта */
+.timeline-section {
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 48px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1);
+}
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 24px;
+    bottom: -40px;
+    width: 2px;
+    background: var(--border);
+}
+
+.timeline-item:last-child::after { display: none; }
+
+.timeline-role {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.timeline-org {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.timeline-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* --- Tech Stack (Tags) --- */
+.tech-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.tech-tag {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.tech-tag:hover {
+    color: white;
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* --- Footer --- */
+.footer {
+    padding: 80px 0 40px;
+    background: #050a14;
+    text-align: center;
+}
+
+.footer-meta {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* --- Mobile Adaptability --- */
+@media (max-width: 968px) {
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    h1 { font-size: 2.5rem; }
+    .hero { padding-top: 120px; }
+    .hero-img-wrap { order: -1; max-width: 400px; margin: 0 auto; }
+    
+    .nav-links { display: none; } /* Mobile menu simplified */
+    
+    .timeline-item { padding-left: 0; }
+    .timeline-item::before, .timeline-item::after { display: none; }
+    .timeline-item { border-left: 2px solid var(--accent); padding-left: 24px; }
+}
