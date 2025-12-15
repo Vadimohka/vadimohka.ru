@@ -1,158 +1,464 @@
+Я вас понял. Это справедливое замечание. Баланс между "продающим" и "экспертным" — тонкая вещь. Предыдущий вариант действительно мог показаться слишком упрощенным для специалиста вашего уровня.
+
+Давайте сделаем **премиальный, профессиональный лендинг**.
+
+**Мой новый подход:**
+
+1. **Вернуть глубину:** Мы восстановим блок с академическим и преподавательским опытом, но упакуем его визуально так, чтобы он подчеркивал вашу фундаментальную экспертизу, а не выглядел как скучное резюме.
+2. **Структура и ритм:** Лендинг будет четко разбит на смысловые блоки с чередованием фона, чтобы глаз не уставал.
+3. **"Дорогой" дизайн:** Вместо "кричащих" цветов используем глубокую темную палитру с благородным синим акцентом, чистую типографику и профессиональные иконки. Это создаст ощущение надежности и компетентности.
+4. **Адаптивность:** Все блоки будут корректно перестраиваться в одну колонку на мобильных устройствах.
+
+Ниже представлен полный код (HTML + CSS в одном файле для удобства), который решает эти задачи.
+
+```html
 <!doctype html>
-<html lang="ru">
+<html lang="ru" class="scroll-smooth">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Вадим Владымцев — Архитектор AI-решений | R&D Директор</title>
+  <meta name="description" content="Внедрение безопасного AI и RAG-систем в корпоративный бизнес. Экспертиза от R&D директора с академическим бэкграундом. Python, FastAPI, Vector DBs." />
   
-  <title>Вадим Владымцев — Архитектор AI-решений | RAG, LLM, Enterprise Python</title>
-  <meta name="description" content="Помогаю бизнесу безопасно внедрять LLM и RAG. Разработка архитектуры Project Century, аудит AI-проектов, автоматизация процессов. Экспертиза: Python, FastAPI, Vector DBs, Docker." />
-  
-  <meta property="og:title" content="Вадим Владымцев — Внедрение AI и RAG в Enterprise" />
-  <meta property="og:description" content="Архитектор решений на базе LLM. Превращаю хайп вокруг ИИ в работающие бизнес-инструменты." />
-  <meta property="og:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
-  <meta property="og:type" content="profile" />
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  
-  <link rel="alternate" type="application/json" href="llm-profile.json" title="LLM Context Data" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- CSS Variables & Global Reset --- */
+    :root {
+      --bg-main: #0b1120; /* Глубокий темный фон */
+      --bg-secondary: #111827; /* Чуть светлее для контраста блоков */
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-blue: #3b82f6; /* Профессиональный синий */
+      --accent-hover: #2563eb;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; transition: color 0.2s; }
+    ul { list-style: none; }
+
+    /* --- Utility Classes --- */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section { padding: 80px 0; }
+    .bg-secondary { background-color: var(--bg-secondary); }
+    
+    /* Typography */
+    h1, h2, h3 { font-weight: 800; letter-spacing: -0.025em; line-height: 1.2; }
+    h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
+    h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 48px; text-align: center; }
+    h3 { font-size: 1.5rem; margin-bottom: 16px; }
+    p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
+    .text-accent { color: var(--accent-blue); }
+    .text-muted { color: var(--text-secondary); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 28px; border-radius: 8px; font-weight: 600;
+      transition: all 0.2s; cursor: pointer; border: none;
+    }
+    .btn-primary {
+      background-color: var(--accent-blue); color: white;
+    }
+    .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; border: 2px solid var(--accent-blue); color: var(--accent-blue);
+    }
+    .btn-outline:hover { background: rgba(59, 130, 246, 0.1); transform: translateY(-2px); }
+
+    /* --- Header / Nav --- */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color); padding: 16px 0;
+    }
+    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-weight: 800; font-size: 1.25rem; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { font-weight: 500; font-size: 0.95rem; }
+    .nav-links a:hover { color: var(--accent-blue); }
+
+    /* --- Hero Section --- */
+    .hero {
+      padding-top: 160px; padding-bottom: 100px;
+      display: flex; align-items: center; min-height: 90vh;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-block; padding: 6px 12px; background: rgba(59, 130, 246, 0.1);
+      color: var(--accent-blue); border-radius: 20px; font-weight: 600; font-size: 0.875rem; margin-bottom: 24px;
+    }
+    .hero-cta { display: flex; gap: 16px; margin-top: 32px; }
+    .trust-badges {
+      display: flex; flex-wrap: wrap; gap: 24px; margin-top: 48px;
+      font-weight: 500; color: var(--text-secondary); font-size: 0.9rem;
+    }
+    .trust-badges span { display: flex; align-items: center; gap: 8px; }
+    .hero-img-wrapper {
+      position: relative; display: flex; justify-content: center;
+    }
+    .hero-img {
+      width: 100%; max-width: 400px; border-radius: 24px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* --- Key Competencies Section --- */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    }
+    .service-card {
+      background: var(--bg-main); border: 1px solid var(--border-color);
+      padding: 32px; border-radius: 16px; transition: transform 0.2s, border-color 0.2s;
+    }
+    .service-card:hover { transform: translateY(-4px); border-color: var(--accent-blue); }
+    .service-icon { font-size: 2.5rem; margin-bottom: 24px; display: block; }
+
+    /* --- Academic & Professional Background Section (NEW) --- */
+    .timeline-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+    }
+    .timeline-col h3 { text-align: center; margin-bottom: 40px; position: relative; }
+    .timeline-col h3::after {
+      content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+      width: 40px; height: 3px; background: var(--accent-blue); border-radius: 2px;
+    }
+    .timeline-item {
+      display: flex; gap: 24px; margin-bottom: 40px; position: relative;
+    }
+    .timeline-icon {
+      flex-shrink: 0; width: 48px; height: 48px; background: rgba(59, 130, 246, 0.1);
+      color: var(--accent-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+    }
+    .timeline-content h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .timeline-date { font-size: 0.875rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 12px; display: block;}
+    .timeline-list li {
+      margin-bottom: 8px; padding-left: 20px; position: relative; color: var(--text-secondary);
+    }
+    .timeline-list li::before {
+      content: '•'; color: var(--accent-blue); position: absolute; left: 0; font-weight: bold;
+    }
+
+    /* --- Tech Stack Section --- */
+    .stack-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center;
+    }
+    .stack-item {
+      background: var(--bg-secondary); padding: 20px; border-radius: 12px;
+      border: 1px solid var(--border-color); font-weight: 600; transition: border-color 0.2s;
+    }
+    .stack-item:hover { border-color: var(--accent-blue); }
+
+    /* --- Projects Section --- */
+    .projects-grid { display: grid; gap: 48px; }
+    .project-card {
+      background: var(--bg-main); border: 1px solid var(--border-color);
+      border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 1fr;
+    }
+    .project-content { padding: 40px; }
+    .project-role {
+      display: inline-block; font-size: 0.875rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .project-results li {
+      margin-bottom: 12px; padding-left: 24px; position: relative;
+    }
+    .project-results li::before {
+      content: '✓'; color: var(--accent-blue); position: absolute; left: 0; font-weight: bold;
+    }
+
+    /* --- Education & Awards --- */
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .edu-card {
+        background: var(--bg-secondary); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color);
+        display: flex; align-items: start; gap: 20px;
+    }
+    .edu-icon { font-size: 2rem; }
+
+    /* --- Footer --- */
+    .footer {
+      background: #050a14; padding: 80px 0 32px; text-align: center;
+    }
+    .footer-cta h2 { margin-bottom: 24px; }
+    .footer-links {
+      display: flex; justify-content: center; gap: 24px; margin: 40px 0;
+    }
+    .copyright { color: var(--text-secondary); font-size: 0.875rem; }
+
+    /* --- RESPONSIVE DESIGN (MEDIA QUERIES) --- */
+    @media (max-width: 992px) {
+      h1 { font-size: 3rem; }
+      .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 48px; }
+      .hero-content { order: 2; }
+      .hero-img-wrapper { order: 1; }
+      .hero-cta, .trust-badges { justify-content: center; }
+      .p.lead { margin: 0 auto 32px; }
+      
+      .services-grid, .timeline-grid, .edu-grid { grid-template-columns: 1fr; gap: 32px; }
+      .timeline-col h3 { margin-top: 32px; } /* Отступ между колонками таймлайна на мобилках */
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; } /* Простейшее скрытие меню, в идеале нужен бургер */
+      .section { padding: 64px 0; }
+      .hero { padding-top: 120px; }
+      .project-content { padding: 24px; }
+    }
+  </style>
 </head>
 
 <body>
-  <header class="fixed-nav">
-    <div class="wrap nav-flex">
-      <div class="brand">Vadim.AI</div>
-      <nav class="desktop-nav">
-        <a href="#services">Услуги</a>
-        <a href="#expertise">Технологии</a>
-        <a href="#cases">Кейсы</a>
-        <a href="#contact" class="btn-sm">Связаться</a>
+
+  <header class="header">
+    <div class="container nav-flex">
+      <div class="brand">
+        <span class="text-accent">AI</span> Architect
+      </div>
+      <nav class="nav-links">
+        <a href="#services">Компетенции</a>
+        <a href="#background">Бэкграунд</a>
+        <a href="#projects">Проекты</a>
+        <a href="#education">Образование</a>
       </nav>
+      <a href="#contact" class="btn btn-primary">Связаться</a>
     </div>
   </header>
 
   <main>
-    <section class="hero-section">
-      <div class="wrap grid-2">
+    <section class="hero">
+      <div class="container hero-grid">
         <div class="hero-content">
-          <div class="badge">R&D Director & AI Architect</div>
-          <h1>Внедряю <span class="accent">безопасный AI</span> в контур вашего бизнеса</h1>
+          <span class="hero-badge">R&D Director & AI Expert</span>
+          <h1>Внедряю <span class="text-accent">безопасный AI</span> в контур вашего бизнеса</h1>
           <p class="lead">
-            Превращаю ваши корпоративные данные в надежные RAG-системы. 
-            Без галлюцинаций, с защитой данных и полной интеграцией в Enterprise-инфраструктуру.
+            Превращаю корпоративные знания в надежные RAG-системы. Фундаментальный подход: от архитектуры и R&D до MLOps и интеграции в Enterprise.
           </p>
-          <div class="cta-row">
-            <a href="#contact" class="btn primary">Обсудить задачу</a>
-            <a href="https://t.me/your_telegram" class="btn secondary">Telegram</a>
+          <div class="hero-cta">
+            <a href="#contact" class="btn btn-primary">Обсудить задачу</a>
+            <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
           </div>
-          <div class="trust-markers">
+          <div class="trust-badges">
             <span>🛡️ Security First</span>
             <span>🚀 High Performance</span>
             <span>🔧 On-Premise Ready</span>
           </div>
         </div>
-        <div class="hero-image">
-           <img src="Vadim_Vladymtsev.png" alt="Вадим Владымцев AI Эксперт" class="profile-img glowing-border" />
+        <div class="hero-img-wrapper">
+          <img src="Vadim_Vladymtsev.png" alt="Вадим Владымцев" class="hero-img" />
         </div>
       </div>
     </section>
 
-    <section id="services" class="dark-bg">
-      <div class="wrap">
-        <h2 class="section-title">Чем я могу быть полезен</h2>
-        <div class="grid-3 cards">
+    <section id="services" class="section bg-secondary">
+      <div class="container">
+        <h2>Ключевые компетенции</h2>
+        <div class="services-grid">
           <article class="service-card">
-            <div class="icon">🤖</div>
+            <span class="service-icon">🤖</span>
             <h3>RAG "под ключ"</h3>
-            <p>Разработка систем поиска по документам (PDF, Doc, HTML). Ваши сотрудники задают вопросы — нейросеть отвечает строго по базе знаний.</p>
+            <p class="text-muted">Разработка систем поиска по документам (PDF, Doc, HTML). Сотрудники задают вопросы — нейросеть отвечает строго по базе знаний, без галлюцинаций.</p>
           </article>
           <article class="service-card">
-            <div class="icon">🏗️</div>
+            <span class="service-icon">🏗️</span>
             <h3>Архитектура & R&D</h3>
-            <p>Проектирование безопасного контура для LLM (Project Century). Защита от утечек данных, контроль токенов, MLOps пайплайны.</p>
+            <p class="text-muted">Проектирование безопасного контура для LLM. Построение R&D процессов с нуля: от гипотезы до пилота и продакшена. Защита данных, контроль токенов.</p>
           </article>
           <article class="service-card">
-            <div class="icon">⚡</div>
+            <span class="service-icon">⚡</span>
             <h3>Аудит и Оптимизация</h3>
-            <p>Анализ текущих Python/FastAPI бэкендов. Ускорение, рефакторинг, внедрение Vector DB (Chroma, Elasticsearch).</p>
+            <p class="text-muted">Анализ текущих Python/FastAPI бэкендов. Ускорение, рефакторинг, внедрение векторных баз данных (ChromaDB, Elasticsearch) и MLOps практик.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <section id="expertise" class="wrap">
-      <div class="tech-stack-container">
-        <h3>Технологический стек</h3>
-        <div class="logos">
-          <span>Python</span>
-          <span>FastAPI</span>
-          <span>LangChain</span>
-          <span>Docker</span>
-          <span>PostgreSQL</span>
-          <span>ChromaDB</span>
-          <span>Elasticsearch</span>
-          <span>LLama/OpenAI</span>
+    <section id="background" class="section">
+      <div class="container">
+        <h2>Профессиональный и Академический путь</h2>
+        <div class="timeline-grid">
+          
+          <div class="timeline-col">
+            <h3>Индустрия и R&D Лидерство</h3>
+            <div class="timeline-item">
+              <div class="timeline-icon">💼</div>
+              <div class="timeline-content">
+                <h4>Заместитель директора по R&D</h4>
+                <span class="timeline-date">StackLevel Group | 2025 — н.в.</span>
+                <p class="text-muted">Руководство разработкой RAG-платформы Project Century. Создание R&D отдела с нуля: найм, процессы, карта компетенций. Фокус на безопасном внедрении LLM в госсектор и бизнес.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-icon">🚀</div>
+              <div class="timeline-content">
+                <h4>Co-Founder & Бизнес-девелопмент</h4>
+                <span class="timeline-date">Teach IT | 2021 — 2023</span>
+                <p class="text-muted">Планирование стратегии развития, бюджетирование, управление командой преподавателей и контроль качества образовательных IT-программ.</p>
+              </div>
+            </div>
+             <div class="timeline-item">
+              <div class="timeline-icon">📱</div>
+              <div class="timeline-content">
+                <h4>Software Engineer / Lead Developer</h4>
+                <span class="timeline-date">Разные проекты | 2019 — 2025</span>
+                <ul class="timeline-list">
+                  <li>Разработка Android-приложения (Kotlin, MVVM) для системы с 1M+ пользователей.</li>
+                  <li>Руководство командой .NET разработчиков: внедрение Agile/GitLab, рефакторинг legacy-кода, обновление архитектуры БД.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-col">
+            <h3>Академия и Преподавание</h3>
+             <div class="timeline-item">
+              <div class="timeline-icon">🏛️</div>
+              <div class="timeline-content">
+                <h4>Зам. зав. кафедры / Старший преподаватель</h4>
+                <span class="timeline-date">БГУИР | 2019 — 2025</span>
+                <p class="text-muted">Обновление учебных планов, руководство дипломными проектами. Внедрение современных практик разработки в образовательный процесс.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-icon">🏆</div>
+              <div class="timeline-content">
+                <h4>ICPC Coach и Руководитель Олимпиад</h4>
+                <span class="timeline-date">БГУИР | Волонтерство</span>
+                <p class="text-muted">Подготовка команд к международным олимпиадам по программированию. Экс-руководитель чемпионатов BSUIR Open, BIT-Cup и "Олимпиадной школы".</p>
+              </div>
+            </div>
+             <div class="timeline-item">
+              <div class="timeline-icon">🎓</div>
+              <div class="timeline-content">
+                <h4>Развитие студенческих проектов</h4>
+                <span class="timeline-date">БГУИР | 2018 — 2021</span>
+                <p class="text-muted">Организация хакатонов, TechWeek, внедрение Google Developer Club. Менторство студенческих стартапов.</p>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </section>
 
-    <section id="cases" class="wrap">
-      <h2 class="section-title">Опыт и Проекты</h2>
-      
-      <div class="case-study">
-        <div class="case-header">
-          <h3>Project Century (RAG Platform)</h3>
-          <span class="role">R&D Lead @ StackLevel</span>
-        </div>
-        <p>Создание платформы для безопасной интеграции LLM в госсектор и крупный бизнес.</p>
-        <ul>
-          <li>Реализован гибридный поиск (BM25 + Dense Vector).</li>
-          <li>Внедрен RBAC и защита от Prompt Injection.</li>
-          <li>Результат: Сокращение времени поиска информации сотрудниками на 70%.</li>
-        </ul>
-      </div>
-
-      <div class="case-study">
-        <div class="case-header">
-          <h3>E-commerce Personalization</h3>
-          <span class="role">AI Engineer</span>
-        </div>
-        <p>Прототип рекомендательной системы на базе LLM. Динамическая генерация описаний товаров и персонализация выдачи.</p>
-      </div>
-    </section>
-
-    <section id="contact" class="cta-section">
-      <div class="wrap center-text">
-        <h2>Готовы усилить бизнес технологиями ИИ?</h2>
-        <p>Напишите мне. Я не продаю "часы разработки", я продаю работающее решение вашей проблемы.</p>
-        <div class="contact-buttons">
-          <a href="mailto:vadimohkav@gmail.com" class="btn primary big">Написать на Email</a>
-          <a href="https://www.linkedin.com/in/vadimohka/" class="btn linkedin big">LinkedIn Profile</a>
+    <section class="section bg-secondary">
+      <div class="container">
+        <h2>Технологический стек</h2>
+        <div class="stack-grid">
+          <div class="stack-item">Python</div>
+          <div class="stack-item">FastAPI</div>
+          <div class="stack-item">LangChain</div>
+          <div class="stack-item">Docker</div>
+          <div class="stack-item">PostgreSQL</div>
+          <div class="stack-item">ChromaDB</div>
+          <div class="stack-item">Elasticsearch</div>
+          <div class="stack-item">OpenAI / LLaMA</div>
         </div>
       </div>
     </section>
+
+    <section id="projects" class="section">
+      <div class="container">
+        <h2>Избранные проекты</h2>
+        <div class="projects-grid">
+          
+          <article class="project-card">
+            <div class="project-content">
+              <span class="project-role">R&D Lead @ StackLevel</span>
+              <h3>Project Century (Enterprise RAG Platform)</h3>
+              <p class="text-muted" style="margin-bottom: 24px;">Создание платформы для безопасной интеграции LLM в контур госучреждений и крупного бизнеса. Решение проблемы приватности данных и точности ответов.</p>
+              <ul class="project-results text-muted">
+                <li>Реализован гибридный поиск (BM25 + Dense Vector) для максимальной релевантности.</li>
+                <li>Внедрена система безопасности: RBAC, защита от Prompt Injection, аудит логов.</li>
+                <li>**Результат:** Сокращение времени поиска корпоративной информации сотрудниками на 70%.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="project-card">
+             <div class="project-content">
+              <span class="project-role">AI Engineer</span>
+              <h3>E-commerce Personalization System</h3>
+              <p class="text-muted" style="margin-bottom: 24px;">Разработка прототипа рекомендательной системы на базе LLM для персонализации опыта покупателей.</p>
+              <ul class="project-results text-muted">
+                <li>Динамическая генерация уникальных описаний товаров на основе их характеристик.</li>
+                <li>Персонализация выдачи карточек товаров под профиль пользователя.</li>
+                <li>Использование FastAPI для высоконагруженного API и prompt engineering для управления стилем генерации.</li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="education" class="section bg-secondary">
+       <div class="container">
+        <h2>Образование и Награды</h2>
+        <div class="edu-grid">
+          <div class="edu-card">
+            <div class="edu-icon">🎓</div>
+            <div>
+              <h3>БГУИР</h3>
+               <p class="text-accent" style="font-weight: 600;">Магистр, Информационные системы и технологии</p>
+               <p class="text-muted">2023 — 2026</p>
+               <p class="text-accent" style="font-weight: 600; margin-top: 16px;">Бакалавр, Информатика и технологии программирования</p>
+               <p class="text-muted">2017 — 2021</p>
+            </div>
+          </div>
+           <div class="edu-card">
+            <div class="edu-icon">🎖️</div>
+            <div>
+              <h3>Награды</h3>
+               <p class="text-muted" style="margin-top: 16px;">Благодарность преподавателю кафедры информатики ФКСиС БГУИР за высокий профессонализм и вклад в развитие студентов (Минск, 2023).</p>
+            </div>
+          </div>
+        </div>
+       </div>
+    </section>
+
+    <footer id="contact" class="footer">
+      <div class="container">
+        <div class="footer-cta">
+          <h2>Готовы усилить бизнес технологиями ИИ?</h2>
+          <p class="lead" style="margin: 0 auto;">Напишите мне. Я предлагаю не просто разработку, а экспертное партнерство для решения ваших бизнес-задач.</p>
+        </div>
+        <div class="footer-links">
+          <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Написать на Email</a>
+          <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
+        </div>
+        <div class="copyright">
+          © 2025 Вадим Владымцев. Сайт-визитка эксперта.
+        </div>
+      </div>
+    </footer>
+
   </main>
 
-  <footer>
-    <div class="wrap footer-flex">
-      <div>© 2025 Вадим Владымцев. All rights reserved.</div>
-      <a href="llm-profile.json" style="opacity: 0.1; font-size: 10px;">AI Protocol</a>
-    </div>
-  </footer>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Вадим Владымцев",
-    "jobTitle": "R&D Director, AI Architect",
-    "url": "https://vadimohka.ru",
-    "sameAs": [
-      "https://www.linkedin.com/in/vadimohka/",
-      "https://github.com/vadimohka"
-    ],
-    "knowsAbout": ["RAG", "LLM", "Machine Learning", "Python", "Enterprise Architecture"]
-  }
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
   </script>
+
 </body>
 </html>
+
+```
