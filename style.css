@@ -1,10 +1,10 @@
-/* --- CSS Variables & Global Reset --- */
+/* --- Global Reset & Variables --- */
 :root {
-  --bg-main: #0b1120; /* Глубокий темный фон */
-  --bg-secondary: #111827; /* Чуть светлее для контраста блоков */
+  --bg-main: #0b1120;       /* Глубокий темный фон */
+  --bg-secondary: #111827;  /* Чуть светлее для контраста */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --accent-blue: #3b82f6; /* Профессиональный синий */
+  --accent-blue: #3b82f6;   /* Акцентный синий */
   --accent-hover: #2563eb;
   --border-color: rgba(255, 255, 255, 0.08);
 }
@@ -36,6 +36,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.025em; line-height: 1.2; }
 h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
 h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 48px; text-align: center; }
 h3 { font-size: 1.5rem; margin-bottom: 16px; }
+
 p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 .text-accent { color: var(--accent-blue); }
 .text-muted { color: var(--text-secondary); }
@@ -46,13 +47,9 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
   padding: 12px 28px; border-radius: 8px; font-weight: 600;
   transition: all 0.2s; cursor: pointer; border: none;
 }
-.btn-primary {
-  background-color: var(--accent-blue); color: white;
-}
+.btn-primary { background-color: var(--accent-blue); color: white; }
 .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-2px); }
-.btn-outline {
-  background: transparent; border: 2px solid var(--accent-blue); color: var(--accent-blue);
-}
+.btn-outline { background: transparent; border: 2px solid var(--accent-blue); color: var(--accent-blue); }
 .btn-outline:hover { background: rgba(59, 130, 246, 0.1); transform: translateY(-2px); }
 
 /* --- Header / Nav --- */
@@ -85,19 +82,15 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
   font-weight: 500; color: var(--text-secondary); font-size: 0.9rem;
 }
 .trust-badges span { display: flex; align-items: center; gap: 8px; }
-.hero-img-wrapper {
-  position: relative; display: flex; justify-content: center;
-}
+.hero-img-wrapper { position: relative; display: flex; justify-content: center; }
 .hero-img {
   width: 100%; max-width: 400px; border-radius: 24px;
   border: 2px solid var(--border-color);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Key Competencies Section --- */
-.services-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
-}
+/* --- Competencies Section --- */
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
 .service-card {
   background: var(--bg-main); border: 1px solid var(--border-color);
   padding: 32px; border-radius: 16px; transition: transform 0.2s, border-color 0.2s;
@@ -105,21 +98,18 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 .service-card:hover { transform: translateY(-4px); border-color: var(--accent-blue); }
 .service-icon { font-size: 2.5rem; margin-bottom: 24px; display: block; }
 
-/* --- Academic & Professional Background Section --- */
-.timeline-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
-}
+/* --- Timeline (Background) Section --- */
+.timeline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
 .timeline-col h3 { text-align: center; margin-bottom: 40px; position: relative; }
 .timeline-col h3::after {
   content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
   width: 40px; height: 3px; background: var(--accent-blue); border-radius: 2px;
 }
-.timeline-item {
-  display: flex; gap: 24px; margin-bottom: 40px; position: relative;
-}
+.timeline-item { display: flex; gap: 24px; margin-bottom: 40px; position: relative; }
 .timeline-icon {
   flex-shrink: 0; width: 48px; height: 48px; background: rgba(59, 130, 246, 0.1);
-  color: var(--accent-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+  color: var(--accent-blue); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
 }
 .timeline-content h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
 .timeline-date { font-size: 0.875rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 12px; display: block;}
@@ -130,7 +120,7 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
   content: '•'; color: var(--accent-blue); position: absolute; left: 0; font-weight: bold;
 }
 
-/* --- Tech Stack Section --- */
+/* --- Tech Stack --- */
 .stack-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center;
 }
@@ -140,50 +130,60 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 }
 .stack-item:hover { border-color: var(--accent-blue); }
 
-/* --- Projects Section --- */
+/* --- Projects Section (СТРОГО ВАША ВЕРСИЯ) --- */
 .projects-grid { display: grid; gap: 48px; }
 .project-card {
-  background: var(--bg-main); border: 1px solid var(--border-color);
-  border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 1fr;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
 }
 .project-content { padding: 40px; }
 .project-role {
-  display: inline-block; font-size: 0.875rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 16px;
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
 }
 .project-results li {
-  margin-bottom: 12px; padding-left: 24px; position: relative;
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
 }
+/* Галочка перед списком */
 .project-results li::before {
-  content: '✓'; color: var(--accent-blue); position: absolute; left: 0; font-weight: bold;
+  content: '✓';
+  color: var(--accent-blue);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
 }
 
 /* --- Education & Awards --- */
 .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .edu-card {
-    background: var(--bg-secondary); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color);
-    display: flex; align-items: start; gap: 20px;
+  background: var(--bg-secondary); padding: 32px; border-radius: 16px;
+  border: 1px solid var(--border-color); display: flex; align-items: start; gap: 20px;
 }
 .edu-icon { font-size: 2rem; }
 
 /* --- Footer --- */
-.footer {
-  background: #050a14; padding: 80px 0 32px; text-align: center;
-}
+.footer { background: #050a14; padding: 80px 0 32px; text-align: center; }
 .footer-cta h2 { margin-bottom: 24px; }
-.footer-links {
-  display: flex; justify-content: center; gap: 24px; margin: 40px 0;
-}
+.footer-links { display: flex; justify-content: center; gap: 24px; margin: 40px 0; }
 .copyright { color: var(--text-secondary); font-size: 0.875rem; }
 
-/* --- RESPONSIVE DESIGN --- */
+/* --- Mobile Responsiveness --- */
 @media (max-width: 992px) {
   h1 { font-size: 3rem; }
   .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 48px; }
   .hero-content { order: 2; }
   .hero-img-wrapper { order: 1; }
   .hero-cta, .trust-badges { justify-content: center; }
-  .p.lead { margin: 0 auto 32px; }
-  
+  p.lead { margin: 0 auto 32px; }
   .services-grid, .timeline-grid, .edu-grid { grid-template-columns: 1fr; gap: 32px; }
   .timeline-col h3 { margin-top: 32px; }
 }
