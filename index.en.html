@@ -4,22 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vadim Vladymtsev — Corporate AI Architect | R&D Director</title>
-  <meta name="description" content="Secure LLM and RAG implementation in perimeter: air-gapped/on-prem, hybrid search, source citations, audit and observability. Vadim Vladymtsev." />
-  <meta name="keywords" content="AI, LLM, Enterprise RAG, hybrid search, BM25, dense vectors, vector databases, on-premise, air-gapped, OpenAI API, LLM security, prompt injection, source grounding, citations, verification, audit, observability, A/B testing, evaluation, Plan-Execute-Verify, agentic orchestration, AI readiness assessment, vendor lock-in" />
+  <meta name="description" content="Vadim Vladymtsev — Corporate AI Architect | R&D Director. Secure LLM and RAG implementation in perimeter: air-gapped/on-prem, hybrid search, source citations, audit and observability." />
+  <meta name="keywords" content="Vadim Vladymtsev, AI, LLM, Enterprise RAG, hybrid search, BM25, dense vectors, vector databases, on-premise, air-gapped, OpenAI API, LLM security, prompt injection, source grounding, citations, verification, audit, observability, A/B testing, evaluation, Plan-Execute-Verify, agentic orchestration, AI readiness assessment, vendor lock-in" />
   <meta name="author" content="Vadim Vladymtsev" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vadimohka.ru/" />
   <meta property="og:title" content="Vadim Vladymtsev — Corporate AI Architect | R&D Director" />
-  <meta property="og:description" content="Designing and implementing secure LLM/RAG systems for business and government: air-gapped/on-prem deployment, hybrid search, source verification, audit and observability." />
+  <meta property="og:description" content="Vadim Vladymtsev — Corporate AI Architect | R&D Director. Designing and implementing secure LLM/RAG systems for business and government: air-gapped/on-prem deployment, hybrid search, source verification, audit and observability." />
   <meta property="og:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://vadimohka.ru/" />
   <meta property="twitter:title" content="Vadim Vladymtsev — Corporate AI Architect | R&D Director" />
-  <meta property="twitter:description" content="Secure LLM/RAG systems in corporate perimeter: air-gapped/on-prem, hybrid search, citation-based answers, audit and observability." />
+  <meta property="twitter:description" content="Vadim Vladymtsev — Secure LLM/RAG systems in corporate perimeter: air-gapped/on-prem, hybrid search, citation-based answers, audit and observability." />
   <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,6 +31,8 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Vadim Vladymtsev",
+    "alternateName": "Vladymtsev Vadim Denisovich",
+    "description": "Vladymtsev Vadim Denisovich - Corporate LLM/RAG Systems Architect. Specializing in secure AI implementation in regulated sectors: air-gapped/on-prem deployment, OpenAI-compatible API, hybrid search, source verification, audit and observability.",
     "jobTitle": "R&D Director & AI Solutions Architect",
     "worksFor": {
       "@type": "Organization",
@@ -64,11 +66,6 @@
         <a href="#projects" aria-label="Go to featured projects section">Projects</a>
         <a href="#education" aria-label="Go to education and awards section">Education</a>
       </nav>
-      <button class="mobile-menu-toggle" aria-label="Open mobile menu" aria-expanded="false">
-        <span class="hamburger"></span>
-        <span class="hamburger"></span>
-        <span class="hamburger"></span>
-      </button>
       <a href="#contact" class="btn btn-primary" aria-label="Contact Vadim">Contact</a>
     </div>
   </header>
@@ -335,12 +332,12 @@
           <h2>Ready to strengthen your business with AI technologies?</h2>
           <p class="lead" style="margin: 0 auto;">Contact me. I offer not just development, but expert partnership for solving your business challenges.</p>
         </div>
-        <div class="footer-links">
+        <div class="footer-links" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
           <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Email Me</a>
           <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
         </div>
         <div class="copyright">
-          © 2025 Vadim Vladymtsev. Expert business card website.
+          © 2025 Vadim Vladymtsev | Vladymtsev Vadim Denisovich. Expert business card website.
         </div>
       </div>
     </footer>
@@ -353,39 +350,10 @@
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
         
-        // Close mobile menu when clicking on link
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-        
-        if (mobileMenuToggle.classList.contains('active')) {
-          mobileMenuToggle.classList.remove('active');
-          navLinks.classList.remove('active');
-          mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        }
-        
         document.querySelector(this.getAttribute('href')).scrollIntoView({
           behavior: 'smooth'
         });
       });
-    });
-    
-    // Mobile menu
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    
-    mobileMenuToggle.addEventListener('click', function() {
-      this.classList.toggle('active');
-      navLinks.classList.toggle('active');
-      this.setAttribute('aria-expanded', this.classList.contains('active'));
-    });
-    
-    // Close menu when clicking outside its area
-    document.addEventListener('click', function(event) {
-      if (!mobileMenuToggle.contains(event.target) && !navLinks.contains(event.target)) {
-        mobileMenuToggle.classList.remove('active');
-        navLinks.classList.remove('active');
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-      }
     });
   </script>
 
