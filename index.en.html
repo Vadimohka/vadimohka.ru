@@ -332,7 +332,7 @@
           <h2>Ready to strengthen your business with AI technologies?</h2>
           <p class="lead" style="margin: 0 auto;">Contact me. I offer not just development, but expert partnership for solving your business challenges.</p>
         </div>
-        <div class="footer-links" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <div class="footer-links">
           <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Email Me</a>
           <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
         </div>
@@ -374,6 +374,18 @@
       
       imgElements.forEach(img => {
         imageObserver.observe(img);
+      });
+    });
+  </script>
+  
+  <script>
+    document.querySelectorAll('.stack-item').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 100;
+        const y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.setProperty('--x', `${x}%`);
+        card.style.setProperty('--y', `${y}%`);
       });
     });
   </script>

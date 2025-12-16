@@ -337,7 +337,7 @@
           <h2>Готовы усилить бизнес технологиями ИИ?</h2>
           <p class="lead" style="margin: 0 auto;">Напишите мне. Я предлагаю не просто разработку, а экспертное партнерство для решения ваших бизнес-задач.</p>
         </div>
-        <div class="footer-links" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <div class="footer-links">
           <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Написать на Email</a>
           <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
         </div>
@@ -379,6 +379,51 @@
       
       imgElements.forEach(img => {
         imageObserver.observe(img);
+      });
+    });
+  </script>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // Lazy loading для изображений
+    document.addEventListener('DOMContentLoaded', function() {
+      const imgElements = document.querySelectorAll('img[loading="lazy"]');
+      
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.classList.add('loaded');
+            observer.unobserve(img);
+          }
+        });
+      });
+      
+      imgElements.forEach(img => {
+        imageObserver.observe(img);
+      });
+    });
+  </script>
+  
+  <script>
+    document.querySelectorAll('.stack-item').forEach(card => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 100;
+        const y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.setProperty('--x', `${x}%`);
+        card.style.setProperty('--y', `${y}%`);
       });
     });
   </script>

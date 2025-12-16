@@ -42,18 +42,38 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 
 /* Buttons */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 12px 28px; border-radius: 8px; font-weight: 600;
-  transition: all 0.2s; cursor: pointer; border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  line-height: 1;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  /* ВАЖНО: одинаковый бордер для всех кнопок -> одинаковые габариты */
+  border: 2px solid transparent;
 }
+
 .btn-primary {
-  background-color: var(--accent-blue); color: white;
+  background-color: var(--accent-blue);
+  color: white;
 }
-.btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-2px); }
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
 .btn-outline {
-  background: transparent; border: 2px solid var(--accent-blue); color: var(--accent-blue);
+  background: transparent;
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
 }
-.btn-outline:hover { background: rgba(59, 130, 246, 0.1); transform: translateY(-2px); }
+.btn-outline:hover {
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+}
 
 /* --- Header / Nav --- */
 .header {
@@ -235,18 +255,111 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
 
 /* --- Tech Stack Section --- */
 .stack-grid {
- display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center;
 }
 .stack-item {
-  background: var(--bg-secondary); padding: 20px; border-radius: 12px;
-  border: 1px solid var(--border-color); font-weight: 600; transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+
+  background: var(--bg-secondary);
+  padding: 20px;
+  border-radius: 12px;
+
+  /* делаем одинаковую "рамку" и базовую глубину */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   min-height: 80px;
+
+  transform: translateZ(0);
+  will-change: transform;
+
+  transition:
+    transform 260ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 260ms cubic-bezier(.2,.8,.2,1),
+    border-color 260ms ease,
+    background-color 260ms ease;
 }
-.stack-item:hover { border-color: var(--accent-blue); }
+
+/* мягкое "свечение" внутри карточки */
+.stack-item::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+
+  background: radial-gradient(
+    180px circle at var(--x, 50%) var(--y, 40%),
+    rgba(59, 130, 246, 0.28),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+/* блик, который "пробегает" по карточке */
+.stack-item::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -40%;
+  width: 40%;
+  height: 220%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+
+  transform: translateX(-140%) rotate(20deg);
+  opacity: 0;
+
+  transition:
+    transform 650ms cubic-bezier(.2,.8,.2,1),
+    opacity 260ms ease;
+}
+
+.stack-item:hover,
+.stack-item:focus-visible {
+  transform: translateY(-6px);
+  border-color: rgba(59, 130, 246, 0.75);
+  background-color: rgba(17, 24, 39, 0.72);
+
+  box-shadow:
+    0 22px 45px -28px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(59, 130, 246, 0.18) inset;
+}
+
+.stack-item:hover::before,
+.stack-item:focus-visible::before {
+  opacity: 1;
+}
+
+.stack-item:hover::after,
+.stack-item:focus-visible::after {
+  opacity: 1;
+  transform: translateX(240%) rotate(20deg);
+}
+
+/* аккуратная доступность: выключаем анимации если пользователь просит */
+@media (prefers-reduced-motion: reduce) {
+  .stack-item,
+  .stack-item::before,
+  .stack-item::after {
+    transition: none !important;
+  }
+  .stack-item:hover,
+  .stack-item:focus-visible {
+    transform: none !important;
+  }
+}
 
 /* --- Projects Section --- */
 .projects-grid {
@@ -316,7 +429,7 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
  
 @media (max-width: 768px) {
   .nav-links { display: none; }
- .section { padding: 64px 0; }
+  .section { padding: 64px 0; }
   .hero { padding-top: 120px; }
   .project-content { padding: 24px; }
   
@@ -335,14 +448,23 @@ p.lead { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; }
   }
   .service-card {
     padding: 24px;
- }
+  }
   .footer-links {
     flex-direction: column;
     gap: 16px;
+    align-items: center;
   }
-  .btn {
-    width: 100%;
-    max-width: 300px;
+  .footer-links .btn {
+    width: min(320px, 100%);
+    max-width: none;
+  }
+  
+  /* FIX: верхняя кнопка "Связаться" больше не тянется на всю ширину */
+  .header .btn {
+    width: auto;
+    max-width: none;
+    padding: 10px 14px;
+    white-space: nowrap;
   }
   
   /* Улучшение адаптивности для очень маленьких экранов */
