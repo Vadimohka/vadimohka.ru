@@ -39,7 +39,9 @@
   <meta property="twitter:description" content="Сайт про Владымцева Вадима Денисовича | Vadim Vladymtsev — Безопасные LLM/RAG-системы в корпоративном контуре: air-gapped/on-prem, гибридный поиск, ответы с цитатами, аудит и observability." />
   <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   
   <!-- Structured Data -->
@@ -72,27 +74,27 @@
 
 <body>
 
-  <header class="header" role="banner">
-    <div class="container nav-flex">
-      <div class="brand">
-        <span class="text-accent">AI</span> Architect
-      </div>
-      <nav class="nav-links" role="navigation" aria-label="Основная навигация">
-        <a href="#services" aria-label="Перейти к разделу ключевые компетенции">Компетенции</a>
-        <a href="#background" aria-label="Перейти к разделу профессиональный и академический путь">Бэкграунд</a>
-        <a href="#projects" aria-label="Перейти к разделу избранные проекты">Проекты</a>
-        <a href="#education" aria-label="Перейти к разделу образование и награды">Образование</a>
-      </nav>
-      <a href="#contact" class="btn btn-primary" aria-label="Связаться с Вадимом">Связаться</a>
+<header class="header" role="banner">
+  <div class="container nav-flex">
+    <div class="brand">
+      <span class="text-gradient">AI</span> Architect
     </div>
-  </header>
+    <nav class="nav-links" role="navigation" aria-label="Основная навигация">
+      <a href="#services" aria-label="Перейти к разделу ключевые компетенции">Компетенции</a>
+      <a href="#background" aria-label="Перейти к разделу профессиональный и академический путь">Бэкграунд</a>
+      <a href="#projects" aria-label="Перейти к разделу избранные проекты">Проекты</a>
+      <a href="#education" aria-label="Перейти к разделу образование и награды">Образование</a>
+    </nav>
+    <a href="#contact" class="btn btn-primary" aria-label="Связаться с Вадимом">Связаться</a>
+  </div>
+</header>
 
   <main>
     <section class="hero" aria-label="Введение">
       <div class="container hero-grid">
         <div class="hero-content">
           <span class="hero-badge" aria-label="Роль: R&D Director & AI Expert">R&D Director & AI Expert</span>
-          <h1>Внедряю <span class="text-accent">безопасный AI</span> в контур вашего бизнеса</h1>
+         <h1 class="font-heading">Внедряю <span class="text-gradient">безопасный AI</span> в контур вашего бизнеса</h1>
           <p class="lead">
             Строю корпоративные LLM-сервисы «в контуре»: от air-gapped/on-prem развертывания (Docker/VM) до RAG с гибридным поиском и ответами с цитатами. Добавляю контроль моделей, логирование/аудит, A/B-тестирование и наблюдаемость — чтобы ИИ был управляемым и безопасным.
           </p>
@@ -112,42 +114,42 @@
       </div>
     </section>
 
-    <section id="services" class="section bg-secondary" aria-labelledby="services-heading">
-      <div class="container">
-        <h2 id="services-heading">Ключевые компетенции</h2>
-        <div class="services-grid">
-          
-          <article class="service-card" role="region" aria-labelledby="service-1">
-            <span class="service-icon" aria-hidden="true">🤖</span>
-            <h3 id="service-1">Корпоративный RAG и База знаний</h3>
-            <p class="text-muted">
-              Индексация PDF/DOCX/HTML и поиск по знаниям компании. Гибридная выдача (keyword + vector) и ответы строго по источникам: каждому ответу — цитата/фрагмент документа или таблицы.
-            </p>
-          </article>
-          <article class="service-card" role="region" aria-labelledby="service-2">
-            <span class="service-icon" aria-hidden="true">🏗️</span>
-            <h3 id="service-2">Безопасный LLM-контур (Air-Gapped / On-Prem)</h3>
-            <p class="text-muted">
-              Проектирование защищённого контура для LLM-сервисов: поставка Docker/VM, OpenAI-совместимый API для интеграций, RBAC и аудит. Отдельный фокус — защита от Prompt Injection и контроль вывода.
-            </p>
-          </article>
-          <article class="service-card" role="region" aria-labelledby="service-3">
-            <span class="service-icon" aria-hidden="true">⚡</span>
-            <h3 id="service-3">ИИ-аудит (AI Readiness) и внедрение</h3>
-            <p class="text-muted">
-              AI Readiness Assessment: поиск бизнес-кейсов с максимальным ROI, оценка готовности команды, данных и инфраструктуры к on-prem инференсу. По итогам — дорожная карта внедрения и пилот под ваш контур.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
+   <section id="services" class="section section-alt" aria-labelledby="services-heading">
+     <div class="container">
+       <h2 class="font-heading" id="services-heading">Ключевые компетенции</h2>
+       <div class="services-grid">
+         
+         <article class="service-card" role="region" aria-labelledby="service-1">
+           <span class="service-icon" aria-hidden="true">🤖</span>
+           <h3 class="font-heading" id="service-1">Корпоративный RAG и База знаний</h3>
+           <p class="text-muted">
+             Индексация PDF/DOCX/HTML и поиск по знаниям компании. Гибридная выдача (keyword + vector) и ответы строго по источникам: каждому ответу — цитата/фрагмент документа или таблицы.
+           </p>
+         </article>
+         <article class="service-card" role="region" aria-labelledby="service-2">
+           <span class="service-icon" aria-hidden="true">🏗️</span>
+           <h3 class="font-heading" id="service-2">Безопасный LLM-контур (Air-Gapped / On-Prem)</h3>
+           <p class="text-muted">
+             Проектирование защищённого контура для LLM-сервисов: поставка Docker/VM, OpenAI-совместимый API для интеграций, RBAC и аудит. Отдельный фокус — защита от Prompt Injection и контроль вывода.
+           </p>
+         </article>
+         <article class="service-card" role="region" aria-labelledby="service-3">
+           <span class="service-icon" aria-hidden="true">⚡</span>
+           <h3 class="font-heading" id="service-3">ИИ-аудит (AI Readiness) и внедрение</h3>
+           <p class="text-muted">
+             AI Readiness Assessment: поиск бизнес-кейсов с максимальным ROI, оценка готовности команды, данных и инфраструктуры к on-prem инференсу. По итогам — дорожная карта внедрения и пилот под ваш контур.
+           </p>
+         </article>
+       </div>
+     </div>
+   </section>
 
-    <section id="background" class="section">
-      <div class="container">
-        <h2>Профессиональный и Академический путь</h2>
-        <div class="timeline-grid">
-          
-          <div class="timeline-col">
+   <section id="background" class="section">
+     <div class="container">
+       <h2 class="font-heading">Профессиональный и Академический путь</h2>
+       <div class="timeline-grid">
+         
+         <div class="timeline-col">
             <h3>Индустрия и R&D Лидерство</h3>
             <div class="timeline-item">
               <div class="timeline-icon">💼</div>
@@ -248,75 +250,75 @@
       </div>
     </section>
 
-    <section class="section bg-secondary">
-          <div class="container">
-            <h2>Ключевые навыки</h2>
-            <div class="stack-grid">
-                           <div class="stack-item">Enterprise RAG</div>
-                           <div class="stack-item">Python / FastAPI / gRPC</div>
-                           <div class="stack-item">Ответы с цитатами (Source Grounding)</div>
-                           <div class="stack-item">Верификация источников</div>
-                           <div class="stack-item">Air-Gapped / On-Prem развертывание</div>
-                           <div class="stack-item">OpenAI-совместимый API</div>
-                           <div class="stack-item">LLM Security (Prompt Injection)</div>
-                           <div class="stack-item">RBAC + аудит запросов/ответов</div>
-                           <div class="stack-item">Наблюдаемость (логи/метрики)</div>
-                           <div class="stack-item">LLM Evaluation & A/B-тестирование</div>
-                           <div class="stack-item">Plan-Execute-Verify orchestration</div>
-                           <div class="stack-item">AI Readiness Assessment</div>
-                           <div class="stack-item">LangChain</div>
-                           <div class="stack-item">Elasticsearch</div>
-                         </div>
-          </div>
-        </section>
+   <section class="section section-alt">
+         <div class="container">
+           <h2 class="font-heading">Ключевые навыки</h2>
+           <div class="stack-grid">
+                          <div class="stack-item font-mono">Enterprise RAG</div>
+                          <div class="stack-item font-mono">Python / FastAPI / gRPC</div>
+                          <div class="stack-item font-mono">Ответы с цитатами (Source Grounding)</div>
+                          <div class="stack-item font-mono">Верификация источников</div>
+                          <div class="stack-item font-mono">Air-Gapped / On-Prem развертывание</div>
+                          <div class="stack-item font-mono">OpenAI-совместимый API</div>
+                          <div class="stack-item font-mono">LLM Security (Prompt Injection)</div>
+                          <div class="stack-item font-mono">RBAC + аудит запросов/ответов</div>
+                          <div class="stack-item font-mono">Наблюдаемость (логи/метрики)</div>
+                          <div class="stack-item font-mono">LLM Evaluation & A/B-тестирование</div>
+                          <div class="stack-item font-mono">Plan-Execute-Verify orchestration</div>
+                          <div class="stack-item font-mono">AI Readiness Assessment</div>
+                          <div class="stack-item font-mono">LangChain</div>
+                          <div class="stack-item font-mono">Elasticsearch</div>
+                        </div>
+         </div>
+       </section>
 
-    <section id="projects" class="section">
-      <div class="container">
-        <h2>Избранные проекты</h2>
-        <div class="projects-grid">
-          
-          <article class="project-card">
-            <div class="project-content">
-              <span class="project-role">CTO / R&D Lead @ StackLevel</span>
-              <h3>Project Century (Enterprise RAG Platform)</h3>
-              <p class="text-muted" style="margin-bottom: 24px;">
-                Century — платформа для безопасного внедрения LLM в контур бизнеса и государственных организаций: локально (air-gapped/on-prem) с совместимостью с облачными моделями и единым конвейером для запуска LLM-приложений.
-              </p>
-              <ul class="project-results text-muted">
-                <li>Ядро безопасности и развертывания: Docker/VM, работа «в периметре», OpenAI-совместимый API для RAG интеграций.</li>
-                <li>Ядро точности: гибридный RAG-движок и ответы с верификацией источников (цитата/фрагмент документа или таблицы).</li>
-                <li>Контроль и управляемость: UI для загрузки/тестирования, логирование запросов и ответов, аудит, A/B-тестирование и наблюдаемость.</li>
-                <li>Мультиагентный оркестратор Plan-Execute-Verify для снижения ошибок и ускорения вывода сервисов в продакшен.</li>
-                <li>Отмечено на форуме IT Академград: Century получила диплом 3 степени в категории "AI Product Leader".</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="project-card">
-             <div class="project-content">
-              <span class="project-role">R&D Lead, AI Engineer</span>
-              <h3>E-commerce Personalization System</h3>
-              <p class="text-muted" style="margin-bottom: 24px;">Разработка прототипа рекомендательной системы на базе LLM для персонализации опыта покупателей.</p>
-              <ul class="project-results text-muted">
-                <li>Динамическая генерация уникальных описаний товаров на основе их характеристик.</li>
-                <li>Персонализация выдачи карточек товаров под профиль пользователя.</li>
-                <li>Использование FastAPI для высоконагруженного API и prompt engineering для управления стилем генерации.</li>
-              </ul>
-            </div>
-          </article>
+   <section id="projects" class="section">
+     <div class="container">
+       <h2 class="font-heading">Избранные проекты</h2>
+       <div class="projects-grid">
+         
+         <article class="project-card">
+           <div class="project-content">
+             <span class="project-role font-mono">CTO / R&D Lead @ StackLevel Group</span>
+             <h3 class="font-heading">Project Century (Enterprise RAG Platform)</h3>
+             <p class="text-muted" style="margin-bottom: 24px;">
+               Century — платформа для безопасного внедрения LLM в контур бизнеса и государственных организаций: локально (air-gapped/on-prem) с совместимостью с облачными моделями и единым конвейером для запуска LLM-приложений.
+             </p>
+             <ul class="project-results text-muted">
+               <li>Ядро безопасности и развертывания: Docker/VM, работа «в периметре», OpenAI-совместимый API для RAG интеграций.</li>
+               <li>Ядро точности: гибридный RAG-движок и ответы с верификацией источников (цитата/фрагмент документа или таблицы).</li>
+               <li>Контроль и управляемость: UI для загрузки/тестирования, логирование запросов и ответов, аудит, A/B-тестирование и наблюдаемость.</li>
+               <li>Мультиагентный оркестратор Plan-Execute-Verify для снижения ошибок и ускорения вывода сервисов в продакшен.</li>
+               <li>Отмечено на форуме IT Академград: Century получила диплом 3 степени в категории "AI Product Leader".</li>
+             </ul>
+           </div>
+         </article>
 
           <article class="project-card">
             <div class="project-content">
-              <span class="project-role">AI Solutions Architect</span>
-              <h3>Enterprise Knowledge Base System</h3>
-              <p class="text-muted" style="margin-bottom: 24px;">Разработка корпоративной системы управления знаниями с использованием гибридного поиска и LLM для извлечения информации.</p>
-              <ul class="project-results text-muted">
-                <li>Интеграция Elasticsearch и dense vector search для гибридного поиска.</li>
-                <li>Реализация механизмов верификации источников и цитирования.</li>
-                <li>Разработка пользовательского интерфейса для управления базой знаний.</li>
-              </ul>
-            </div>
+             <span class="project-role font-mono">R&D Lead, AI Engineer</span>
+             <h3 class="font-heading">E-commerce Personalization System</h3>
+             <p class="text-muted" style="margin-bottom: 24px;">Разработка прототипа рекомендательной системы на базе LLM для персонализации опыта покупателей.</p>
+             <ul class="project-results text-muted">
+               <li>Динамическая генерация уникальных описаний товаров на основе их характеристик.</li>
+               <li>Персонализация выдачи карточек товаров под профиль пользователя.</li>
+               <li>Использование FastAPI для высоконагруженного API и prompt engineering для управления стилем генерации.</li>
+             </ul>
+           </div>
           </article>
+
+   <article class="project-card">
+     <div class="project-content">
+       <span class="project-role font-mono">AI Solutions Architect</span>
+       <h3 class="font-heading">Enterprise Knowledge Base System</h3>
+       <p class="text-muted" style="margin-bottom: 24px;">Разработка корпоративной системы управления знаниями с использованием гибридного поиска и LLM для извлечения информации.</p>
+       <ul class="project-results text-muted">
+         <li>Интеграция Elasticsearch и dense vector search для гибридного поиска.</li>
+         <li>Реализация механизмов верификации источников и цитирования.</li>
+         <li>Разработка пользовательского интерфейса для управления базой знаний.</li>
+       </ul>
+     </div>
+   </article>
 
         </div>
       </div>
@@ -348,59 +350,26 @@
         </div>
      </section>
 
-    <footer id="contact" class="footer">
-      <div class="container">
-        <div class="footer-cta">
-          <h2>Готовы усилить бизнес технологиями ИИ?</h2>
-          <p class="lead" style="margin: 0 auto;">Напишите мне. Я предлагаю не просто разработку, а экспертное партнерство для решения ваших бизнес-задач.</p>
-        </div>
-        <div class="footer-links">
-          <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Написать на Email</a>
-          <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
-        </div>
-        <div class="copyright">
-          © 2025 Владымцев Вадим Денисович. Сайт-визитка эксперта.
-        </div>
-      </div>
-    </footer>
+   <footer id="contact" class="footer">
+     <div class="container">
+       <div class="footer-cta">
+         <h2 class="font-heading">Готовы усилить бизнес технологиями ИИ?</h2>
+         <p class="lead" style="margin: 0 auto;">Напишите мне. Я предлагаю не просто разработку, а экспертное партнерство для решения ваших бизнес-задач.</p>
+       </div>
+       <div class="footer-links">
+         <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Написать на Email</a>
+         <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline font-mono">LinkedIn Profile</a>
+       </div>
+       <div class="copyright">
+         © 2025 Владымцев Вадим Денисович. Сайт-визитка эксперта.
+       </div>
+     </div>
+   </footer>
 
   </main>
 
   <script>
     // Плавная прокрутка для якорных ссылок
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-          behavior: 'smooth'
-        });
-      });
-    });
-  </script>
-
-  <script>
-    // Lazy loading для изображений
-    document.addEventListener('DOMContentLoaded', function() {
-      const imgElements = document.querySelectorAll('img[loading="lazy"]');
-      
-      const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            img.classList.add('loaded');
-            observer.unobserve(img);
-          }
-        });
-      });
-      
-      imgElements.forEach(img => {
-        imageObserver.observe(img);
-      });
-    });
-  </script>
-
-  <script>
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();

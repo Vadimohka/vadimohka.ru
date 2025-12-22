@@ -39,7 +39,9 @@
   <meta property="twitter:description" content="Vadim Vladymtsev — Secure LLM/RAG systems in corporate perimeter: air-gapped/on-prem, hybrid search, citation-based answers, audit and observability." />
   <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   
   <!-- Structured Data -->
@@ -75,7 +77,7 @@
   <header class="header" role="banner">
     <div class="container nav-flex">
       <div class="brand">
-        <span class="text-accent">AI</span> Architect
+        <span class="text-gradient">AI</span> Architect
       </div>
       <nav class="nav-links" role="navigation" aria-label="Main navigation">
         <a href="#services" aria-label="Go to key competencies section">Competencies</a>
@@ -92,7 +94,7 @@
       <div class="container hero-grid">
         <div class="hero-content">
           <span class="hero-badge" aria-label="Role: R&D Director & AI Expert">R&D Director & AI Expert</span>
-          <h1>Implementing <span class="text-accent">secure AI</span> into your business perimeter</h1>
+          <h1 class="font-heading">Implementing <span class="text-gradient">secure AI</span> into your business perimeter</h1>
           <p class="lead">
             Building enterprise LLM services "in perimeter": from air-gapped/on-prem deployment (Docker/VM) to RAG with hybrid search and citation-based answers. Adding model control, logging/audit, A/B testing and observability — to make AI manageable and secure.
           </p>
@@ -105,13 +107,14 @@
             <span>🚀 High Performance</span>
             <span>🔧 On-Premise Ready</span>
           </div>
+        </div>
         <div class="hero-img-wrapper">
           <img src="Vadim_Vladymtsev.png" alt="Photo of Vadim Vladymtsev, R&D Director and AI Solutions Architect" class="hero-img" loading="lazy" />
         </div>
       </div>
     </section>
 
-    <section id="services" class="section bg-secondary" aria-labelledby="services-heading">
+    <section id="services" class="section section-alt" aria-labelledby="services-heading">
       <div class="container">
         <h2 id="services-heading">Key Competencies</h2>
         <div class="services-grid">
@@ -173,6 +176,7 @@
                   <li>Management of teaching staff</li>
                 </ul>
               </div>
+            </div>
              <div class="timeline-item">
               <div class="timeline-icon">📱</div>
               <div class="timeline-content">
@@ -213,6 +217,7 @@
                    <li>Developed C++ course</li>
                  </ul>
                </div>
+             </div>
              <div class="timeline-item">
                <div class="timeline-icon">🏛️</div>
                <div class="timeline-content">
@@ -224,6 +229,7 @@
                    <li>Resuming operations of "BIT-Cup" and "BSUIR Open" competitions. Launching individual competition "Computer Science Cup"</li>
                  </ul>
                </div>
+             </div>
              <div class="timeline-item">
                <div class="timeline-icon">🏆</div>
                <div class="timeline-content">
@@ -243,24 +249,24 @@
       </div>
     </section>
 
-    <section class="section bg-secondary">
+    <section class="section section-alt">
           <div class="container">
             <h2>Key Skills</h2>
             <div class="stack-grid">
-                           <div class="stack-item">Enterprise RAG</div>
-                           <div class="stack-item">Python / FastAPI / gRPC</div>
-                           <div class="stack-item">Source Grounding Answers</div>
-                           <div class="stack-item">Source Verification</div>
-                           <div class="stack-item">Air-Gapped / On-Prem Deployment</div>
-                           <div class="stack-item">OpenAI-Compatible API</div>
-                           <div class="stack-item">LLM Security (Prompt Injection)</div>
-                           <div class="stack-item">RBAC + Request/Response Audit</div>
-                           <div class="stack-item">Observability (logs/metrics)</div>
-                           <div class="stack-item">LLM Evaluation & A/B Testing</div>
-                           <div class="stack-item">Plan-Execute-Verify Orchestration</div>
-                           <div class="stack-item">AI Readiness Assessment</div>
-                           <div class="stack-item">LangChain</div>
-                           <div class="stack-item">Elasticsearch</div>
+                           <div class="stack-item font-mono">Enterprise RAG</div>
+                           <div class="stack-item font-mono">Python / FastAPI / gRPC</div>
+                           <div class="stack-item font-mono">Source Grounding Answers</div>
+                           <div class="stack-item font-mono">Source Verification</div>
+                           <div class="stack-item font-mono">Air-Gapped / On-Prem Deployment</div>
+                           <div class="stack-item font-mono">OpenAI-Compatible API</div>
+                           <div class="stack-item font-mono">LLM Security (Prompt Injection)</div>
+                           <div class="stack-item font-mono">RBAC + Request/Response Audit</div>
+                           <div class="stack-item font-mono">Observability (logs/metrics)</div>
+                           <div class="stack-item font-mono">LLM Evaluation & A/B Testing</div>
+                           <div class="stack-item font-mono">Plan-Execute-Verify Orchestration</div>
+                           <div class="stack-item font-mono">AI Readiness Assessment</div>
+                           <div class="stack-item font-mono">LangChain</div>
+                           <div class="stack-item font-mono">Elasticsearch</div>
                          </div>
           </div>
         </section>
@@ -272,8 +278,8 @@
           
           <article class="project-card">
             <div class="project-content">
-              <span class="project-role">CTO / R&D Lead @ StackLevel</span>
-              <h3>Project Century (Enterprise RAG Platform)</h3>
+              <span class="project-role font-mono">CTO / R&D Lead @ StackLevel</span>
+              <h3 class="font-heading">Project Century (Enterprise RAG Platform)</h3>
               <p class="text-muted" style="margin-bottom: 24px;">
                 Century — platform for secure LLM implementation in business and government organizations: locally (air-gapped/on-prem) with compatibility with cloud models and a unified pipeline for launching LLM applications.
               </p>
@@ -288,9 +294,9 @@
           </article>
 
           <article class="project-card">
-             <div class="project-content">
-              <span class="project-role">R&D Lead, AI Engineer</span>
-              <h3>E-commerce Personalization System</h3>
+           <div class="project-content">
+             <span class="project-role font-mono">R&D Lead, AI Engineer</span>
+             <h3 class="font-heading">E-commerce Personalization System</h3>
               <p class="text-muted" style="margin-bottom: 24px;">Development of LLM-based recommendation system prototype for personalizing customer experience.</p>
               <ul class="project-results text-muted">
                 <li>Dynamic generation of unique product descriptions based on their characteristics.</li>
@@ -301,9 +307,9 @@
           </article>
 
           <article class="project-card">
-            <div class="project-content">
-              <span class="project-role">AI Solutions Architect</span>
-              <h3>Enterprise Knowledge Base System</h3>
+          <div class="project-content">
+            <span class="project-role font-mono">AI Solutions Architect</span>
+            <h3 class="font-heading">Enterprise Knowledge Base System</h3>
               <p class="text-muted" style="margin-bottom: 24px;">Development of corporate knowledge management system using hybrid search and LLM for information extraction.</p>
               <ul class="project-results text-muted">
                 <li>Integration of Elasticsearch and dense vector search for hybrid search.</li>
@@ -351,7 +357,7 @@
         </div>
         <div class="footer-links">
           <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Email Me</a>
-          <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline">LinkedIn Profile</a>
+          <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline font-mono">LinkedIn Profile</a>
         </div>
         <div class="copyright">
           © 2025 Vadim Vladymtsev | Vladymtsev Vadim Denisovich. Expert business card website.
