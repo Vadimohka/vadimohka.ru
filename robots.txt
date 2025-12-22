@@ -12,3 +12,7 @@ Allow: /favicon.ico
 Allow: /robots.txt
 Allow: /sitemap.xml
 Allow: /Vadim_Vladymtsev.png
+
+# Disallow non-essential files
+Disallow: /dockerfile
+Disallow: /.git
