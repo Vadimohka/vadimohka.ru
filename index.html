@@ -28,9 +28,11 @@
   <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
   <link rel="preload" as="image" href="Vadim_Vladymtsev.avif" type="image/avif">
+  <link rel="preload" as="image" href="Vadim_Vladymtsev.webp" type="image/webp">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://mc.yandex.ru">
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" as="font" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin="anonymous">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
@@ -185,7 +187,7 @@
             <source srcset="Vadim_Vladymtsev.avif" type="image/avif">
             <source srcset="Vadim_Vladymtsev.webp" type="image/webp">
             <img
-              src="Vadim_Vladymtsev.png"
+              src="Vadim_Vladymtsev.avif"
               alt="Фотография Вадима Владымцева, R&D директора и архитектора AI-решений"
               class="hero-img"
               width="602"
@@ -522,7 +524,7 @@
           card.style.setProperty('--x', `${x}%`);
           card.style.setProperty('--y', `${y}%`);
         });
-      }, { passive: true });
+      });
     });
   </script>
   
