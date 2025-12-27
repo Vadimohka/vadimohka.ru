@@ -31,6 +31,8 @@ body {
   color: var(--text-primary);
  line-height: 1.6;
  overflow-x: hidden;
+ /* Фиксация минимальной высоты для предотвращения сдвигов */
+ min-height: 100vh;
 }
 
 /* Inputs */
@@ -374,6 +376,9 @@ ul { list-style: none; }
   overflow: hidden;
  color: white;
  background-clip: padding-box;
+ width: fit-content;
+ min-width: 160px; /* Минимальная ширина для кнопок */
+ text-align: center;
 }
 
 .btn::before {
@@ -677,8 +682,8 @@ ul { list-style: none; }
   justify-content: center;
   text-align: center;
   min-height: 80px;
-
-  transform: translateZ(0);
+  /* Фиксация размеров для предотвращения CLS */
+  min-width: 140px;
   will-change: transform;
 
   transition:
