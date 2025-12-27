@@ -455,10 +455,7 @@ ul { list-style: none; }
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: rgba(3, 3, 4, 0.85); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
-  padding-top: calc(16px + env(safe-area-inset-top));
-  padding-left: calc(24px + env(safe-area-inset-left));
-  padding-right: calc(24px + env(safe-area-inset-right));
-  padding-bottom: 16px;
+  padding: 16px 24px;
 }
 .nav-flex { display: flex; justify-content: space-between; align-items: center; }
 .brand { font-weight: 800; font-size: 1.25rem; color: var(--accent-primary); }
