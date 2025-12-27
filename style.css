@@ -444,7 +444,11 @@ ul { list-style: none; }
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: rgba(3, 3, 4, 0.85); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-light); padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+  padding-top: calc(16px + env(safe-area-inset-top));
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
+  padding-bottom: 16px;
 }
 .nav-flex { display: flex; justify-content: space-between; align-items: center; }
 .brand { font-weight: 800; font-size: 1.25rem; color: var(--accent-primary); }
@@ -849,7 +853,13 @@ ul { list-style: none; }
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .section { padding: 64px 0; }
-  .hero { padding-top: 120px; }
+  .hero {
+    padding-top: 120px;
+    min-height: auto;
+    align-items: flex-start;
+    padding-top: 110px;
+    padding-bottom: 96px;
+  }
   .project-content { padding: 24px; }
   
   .hero-grid {
