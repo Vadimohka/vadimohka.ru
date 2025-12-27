@@ -503,12 +503,53 @@
   
   <script>
     document.querySelectorAll('.stack-item').forEach(card => {
+      let rect = null;
+      let rafId = 0;
+      let lastClientX = 0;
+      let lastClientY = 0;
+ 
+      // Инициализируем размеры карточки после загрузки страницы
+      const initRect = () => {
+        rect = card.getBoundingClientRect();
+      };
+ 
+      // Инициализируем после загрузки страницы
+      window.addEventListener('load', initRect);
+      
+      // Создаем ResizeObserver для отслеживания изменений размера карточки
+      const resizeObserver = new ResizeObserver(() => {
+        rect = null;
+      });
+      resizeObserver.observe(card);
+      
+      // Обновляем размеры при изменении размера окна или прокрутке
+      window.addEventListener('resize', () => { rect = null; }, { passive: true });
+      window.addEventListener('scroll', () => { rect = null; }, { passive: true });
+ 
+      // Используем pointerenter вместо pointermove для инициализации rect
+      card.addEventListener('pointerenter', (e) => {
+        if (!rect) {
+          rect = card.getBoundingClientRect();
+        }
+      });
+ 
       card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width) * 100;
-        const y = ((e.clientY - r.top) / r.height) * 100;
-        card.style.setProperty('--x', `${x}%`);
-        card.style.setProperty('--y', `${y}%`);
+        lastClientX = e.clientX;
+        lastClientY = e.clientY;
+ 
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          // Если rect еще не инициализирован или был сброшен, инициализируем его
+          if (!rect) {
+            rect = card.getBoundingClientRect();
+          }
+          
+          const x = ((lastClientX - rect.left) / rect.width) * 100;
+          const y = ((lastClientY - rect.top) / rect.height) * 100;
+          card.style.setProperty('--x', `${x}%`);
+          card.style.setProperty('--y', `${y}%`);
+        });
       });
     });
   </script>

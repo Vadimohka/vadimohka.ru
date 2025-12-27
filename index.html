@@ -28,17 +28,14 @@
   <meta property="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png" />
   
   <link rel="preload" as="image" href="Vadim_Vladymtsev.avif" type="image/avif">
-  <link rel="preload" as="image" href="Vadim_Vladymtsev.webp" type="image/webp">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://mc.yandex.ru">
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" as="font" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin="anonymous">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
-  <link rel="preload" as="style" href="style.css" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="style.css"></noscript>
+  <link rel="stylesheet" href="style.css?v=2025-12-27">
 
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   
@@ -185,9 +182,8 @@
         <div class="hero-img-wrapper">
           <picture class="hero-img-wrapper">
             <source srcset="Vadim_Vladymtsev.avif" type="image/avif">
-            <source srcset="Vadim_Vladymtsev.webp" type="image/webp">
             <img
-              src="Vadim_Vladymtsev.avif"
+              src="Vadim_Vladymtsev.webp"
               alt="Фотография Вадима Владымцева, R&D директора и архитектора AI-решений"
               class="hero-img"
               width="602"
@@ -503,9 +499,22 @@
       // Инициализируем после загрузки страницы
       window.addEventListener('load', initRect);
       
+      // Создаем ResizeObserver для отслеживания изменений размера карточки
+      const resizeObserver = new ResizeObserver(() => {
+        rect = null;
+      });
+      resizeObserver.observe(card);
+      
       // Обновляем размеры при изменении размера окна или прокрутке
       window.addEventListener('resize', () => { rect = null; }, { passive: true });
       window.addEventListener('scroll', () => { rect = null; }, { passive: true });
+ 
+      // Используем pointerenter вместо pointermove для инициализации rect
+      card.addEventListener('pointerenter', (e) => {
+        if (!rect) {
+          rect = card.getBoundingClientRect();
+        }
+      });
  
       card.addEventListener('pointermove', (e) => {
         lastClientX = e.clientX;

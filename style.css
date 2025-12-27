@@ -8,6 +8,7 @@
   --accent-primary: #F7931A; /* Bitcoin Orange - основной акцент */
   --accent-secondary: #EA580C; /* Burnt Orange - глубокий оранжевый */
   --accent-tertiary: #FFD600; /* Digital Gold - цвет ценности */
+  --accent-blue: #F7931A; /* Используем тот же цвет, что и accent-primary */
   --border-color: #1E293B; /* Dim Boundary - границы */
   --border-light: rgba(25, 255, 255, 0.1); /* Легкие границы */
   
@@ -354,12 +355,6 @@ p.lead {
 a { text-decoration: none; color: inherit; transition: color 0.2s; }
 ul { list-style: none; }
 
-/* --- Utility Classes --- */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
 .section { padding: 80px 0; }
 .bg-secondary { background-color: var(--bg-secondary); }
 
