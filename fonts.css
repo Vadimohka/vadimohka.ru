@@ -1,0 +1,25 @@
+/* Шрифты загружаются локально для ускорения загрузки страницы */
+
+/* Space Grotesk - основной заголовочный шрифт */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('./fonts/SpaceGrotesk.woff2') format('woff2');
+  font-weight: 500 700;
+  font-display: swap;
+}
+
+/* Inter - основной текстовый шрифт */
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/Inter.woff2') format('woff2');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+/* JetBrains Mono - моноширинный шрифт */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./fonts/JetBrainsMono.woff2') format('woff2');
+  font-weight: 400 500;
+  font-display: swap;
+}
