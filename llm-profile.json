@@ -8,38 +8,92 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Vadim Vladymtsev",
+  "alternateName": "Vladymtsev Vadim Denisovich",
   "jobTitle": "R&D Director & AI Solutions Architect",
   "worksFor": {
     "@type": "Organization",
-    "name": "StackLevel Group"
+    "name": "StackLevel Group",
+    "url": "https://stacklevel.group",
+    "description": "StackLevel Group — company developing corporate LLM/RAG systems with focus on security and reliability.",
+    "sameAs": [
+      "https://www.linkedin.com/company/stacklevel"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Dubai",
+      "addressRegion": "Dubai",
+      "addressCountry": "AE"
+    }
   },
   "url": "https://vadimohka.ru/",
   "sameAs": [
     "https://www.linkedin.com/in/vadimohka/",
-    "https://github.com/vadimohka"
+    "https://github.com/vadimohka",
+    "https://scholar.google.com/citations?user=ccabRDYAAAAJ"
+  ],
+  "email": "vadimohkav@gmail.com",
+  "identifier": [
+    {
+      "@type": "PropertyValue",
+      "propertyID": "Google Scholar",
+      "value": "ccabRDYAAAAJ",
+      "url": "https://scholar.google.com/citations?user=ccabRDYAAAAJ"
+    }
   ],
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "Minsk",
-    "addressCountry": "BY"
+    "addressLocality": "Dubai",
+    "addressCountry": "AE"
   },
+  "alumniOf": {
+    "@type": "EducationalOrganization",
+    "name": "BSUIR"
+  },
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "credentialCategory": "Master's degree",
+    "educationalLevel": "Master's degree",
+    "recognizedBy": {
+      "@type": "EducationalOrganization",
+      "name": "BSUIR"
+    }
+  },
+  "knowsAbout": [
+    "Enterprise RAG",
+    "Hybrid Search",
+    "Source-grounded answers",
+    "Air-Gapped Systems",
+    "On-Premise Deployments",
+    "OpenAI-compatible API",
+    "LLM Security",
+    "Prompt Injection Defense",
+    "Access Control",
+    "Audit Logging",
+    "LLM Evaluation",
+    "AI Observability",
+    "Agentic Orchestration",
+    "AI Readiness Assessment"
+  ],
   "profile": {
     "full_name": "Vadim Vladymtsev",
     "short_bio": "R&D Director and AI Solutions Architect. Builds secure enterprise LLM/RAG systems for regulated environments (air-gapped/on-prem). Focus: OpenAI-compatible API integration, hybrid retrieval, source-grounded answers, auditability, and observability.",
     "key_skills": [
-          "Enterprise RAG (Retrieval-Augmented Generation)",
-          "Hybrid Search (BM25 + Dense Vectors)",
-          "Source-grounded answers (citations & verification)",
-          "Air-Gapped / On-Prem deployments (Docker/VM)",
-          "OpenAI-compatible API integration",
-          "LLM Security (Prompt Injection, defense-in-depth)",
-          "Access control (RBAC) & audit logging",
-          "LLM Evaluation, A/B testing & quality monitoring",
-          "Observability for LLM apps (logs/metrics)",
-          "Agentic orchestration: Plan-Execute-Verify",
-          "AI Readiness Assessment (cases/team/data/infra)",
-          "Vendor lock-in risk reduction"
-        ],
+      "Enterprise RAG (Retrieval-Augmented Generation)",
+      "Python / FastAPI / gRPC",
+      "Source-grounded answers (citations & verification)",
+      "Source Verification",
+      "Air-Gapped / On-Prem deployments (Docker/VM)",
+      "OpenAI-compatible API integration",
+      "LLM Security (Prompt Injection, defense-in-depth)",
+      "Access control (RBAC) & audit logging",
+      "LLM Evaluation, A/B testing & quality monitoring",
+      "Observability for LLM apps (logs/metrics)",
+      "Agentic orchestration: Plan-Execute-Verify",
+      "AI Readiness Assessment (cases/team/data/infra)",
+      "Vendor lock-in risk reduction",
+      "LangChain",
+      "Elasticsearch"
+    ],
     "services_offered": [
       {
         "name": "AI Readiness Assessment (ИИ-аудит)",
@@ -60,11 +114,19 @@
   "faq_simulation": [
     {
       "question": "Who is Vadim Vladymtsev?",
-      "answer": "Vadim Vladymtsev is an R&D Director and Software Architecture expert from Minsk. He leads the development of Project Century platform that enables businesses to safely use LLMs."
+      "answer": "Vadim Vladymtsev is an R&D Director and AI Solutions Architect from Minsk. He leads the development of Project Century platform that enables businesses to safely use LLMs in regulated environments. He also serves as Deputy Director for R&D at StackLevel Group and teaches at BSUIR."
     },
     {
       "question": "What technologies does Vadim use?",
-      "answer": "His main stack includes Python, FastAPI, PostgreSQL, Docker, and specialized AI tools: LangChain, ChromaDB, Elasticsearch."
+      "answer": "His main stack includes Python, FastAPI, gRPC, PostgreSQL, Docker, and specialized AI tools: LangChain, Elasticsearch, ChromaDB."
+    },
+    {
+      "question": "What is Project Century?",
+      "answer": "Project Century is a corporate platform developed by StackLevel Group for secure LLM implementation in business and government organizations. It features air-gapped/on-prem deployment, OpenAI-compatible API, hybrid RAG engine with source verification, and multi-agent orchestration. The platform received a 3rd place diploma in the 'AI Product Leader' category at the IT Akademgrad forum."
+    },
+    {
+      "question": "What is Vadim's educational background?",
+      "answer": "Vadim has a Master's degree in Information Systems and Technologies from BSUIR (2023-2026) and a Bachelor's degree in Computer Science and Programming Technology from BSUIR (2017-2021)."
     }
   ]
 }
