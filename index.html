@@ -32,6 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="font" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin="anonymous">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
   <link rel="preload" as="style" href="style.css" onload="this.onload=null;this.rel='stylesheet'">
@@ -190,7 +191,8 @@
               width="602"
               height="602"
               fetchpriority="high"
-              decoding="async" />
+              decoding="async"
+              loading="eager" />
           </picture>
         </div>
       </div>
@@ -490,24 +492,31 @@
       let rafId = 0;
       let lastClientX = 0;
       let lastClientY = 0;
-
-      const measure = () => {
+ 
+      // Инициализируем размеры карточки после загрузки страницы
+      const initRect = () => {
         rect = card.getBoundingClientRect();
       };
-
-      card.addEventListener('pointerenter', measure, { passive: true });
+ 
+      // Инициализируем после загрузки страницы
+      window.addEventListener('load', initRect);
+      
+      // Обновляем размеры при изменении размера окна или прокрутке
       window.addEventListener('resize', () => { rect = null; }, { passive: true });
       window.addEventListener('scroll', () => { rect = null; }, { passive: true });
-
+ 
       card.addEventListener('pointermove', (e) => {
         lastClientX = e.clientX;
         lastClientY = e.clientY;
-
+ 
         if (rafId) return;
         rafId = requestAnimationFrame(() => {
           rafId = 0;
-          if (!rect) measure();
-
+          // Если rect еще не инициализирован или был сброшен, инициализируем его
+          if (!rect) {
+            rect = card.getBoundingClientRect();
+          }
+          
           const x = ((lastClientX - rect.left) / rect.width) * 100;
           const y = ((lastClientY - rect.top) / rect.height) * 100;
           card.style.setProperty('--x', `${x}%`);
@@ -517,49 +526,19 @@
     });
   </script>
   
-  <!-- Yandex.Metrika (lazy-load to avoid render blocking) -->
-  <script>
-    (function () {
-      var METRIKA_ID = 105913979;
-
-      function loadMetrika() {
-        if (window.__metrikaLoaded) return;
-        window.__metrikaLoaded = true;
-
-        (function(m,e,t,r,i,k,a){
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
           m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
           m[i].l=1*new Date();
-          for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
-          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
-        })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + METRIKA_ID, 'ym');
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105913979', 'ym');
 
-        ym(METRIKA_ID, 'init', {
-          ssr: true,
-          webvisor: true,
-          clickmap: true,
-          ecommerce: "dataLayer",
-          accurateTrackBounce: true,
-          trackLinks: true
-        });
-      }
-
-      // Load on first real user interaction (best for CWV),
-      // and as a fallback load after 5s so analytics still works.
-      ['click', 'scroll', 'keydown', 'pointerdown', 'touchstart'].forEach(function (evt) {
-        window.addEventListener(evt, loadMetrika, { passive: true, once: true });
-      });
-
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 5000);
-      });
-    })();
+      ym(105913979, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
   </script>
-  <noscript>
-    <div>
-      <img src="https://mc.yandex.ru/watch/105913979" style="position:absolute; left:-9999px;" alt="" />
-    </div>
-  </noscript>
-  <!-- /Yandex.Metrika -->
+  <noscript><div><img src="https://mc.yandex.ru/watch/105913979" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
 
 </body>
 </html>
