@@ -1,14 +1,5 @@
 User-agent: *
-Allow: /
 Disallow: /.git
 Disallow: /.github
+
 Sitemap: https://vadimohka.ru/sitemap.xml
-Allow: /llm-profile.json
-Allow: /index.html
-Allow: /index.en.html
-Allow: /style.css
-Allow: /script.js
-Allow: /favicon.ico
-Allow: /robots.txt
-Allow: /sitemap.xml
-Allow: /Vadim_Vladymtsev.png
