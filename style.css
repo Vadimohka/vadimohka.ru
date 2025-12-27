@@ -389,9 +389,10 @@ ul { list-style: none; }
 }
 
 .btn-primary {
-  background: var(--accent-primary);
-  box-shadow: var(--glow-orange);
-}
+   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+   box-shadow: var(--glow-orange);
+   border: none;
+ }
 
 .btn-primary:hover {
   transform: scale(1.05);
