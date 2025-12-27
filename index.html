@@ -47,32 +47,106 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="https://vadimohka.ru/favicon.ico" type="image/x-icon">
   
+  <!-- hreflang links -->
+  <link rel="alternate" hreflang="ru" href="https://vadimohka.ru/" />
+  <link rel="alternate" hreflang="en" href="https://vadimohka.ru/index.en.html" />
+  <link rel="alternate" hreflang="x-default" href="https://vadimohka.ru/" />
+  
+  <!-- canonical link -->
+  <link rel="canonical" href="https://vadimohka.ru/" />
+  
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Владымцев Вадим Денисович",
-    "alternateName": "Vadim Vladymtsev",
-    "description": [
-      "Владымцев Вадим Денисович | Vadim Vladymtsev - Архитектор корпоративных LLM/RAG-систем. Специализируюсь на безопасном внедрении ИИ в регулируемых секторах: air-gapped/on-prem развертывание, OpenAI-совместимый API, гибридный поиск, верификация источников, аудит и наблюдаемость.",
-      "Архитектор корпоративных LLM/RAG-систем. Специализируюсь на безопасном внедрении ИИ в регулируемых секторах: air-gapped/on-prem развертывание, OpenAI-совместимый API, гибридный поиск, верификация источников, аудит и наблюдаемость."
-    ],
-    "jobTitle": "R&D Director & AI Solutions Architect",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "StackLevel Group"
-    },
-    "url": "https://vadimohka.ru/",
-    "sameAs": [
-      "https://www.linkedin.com/in/vadimohka/",
-      "https://github.com/vadimohka"
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Минск",
-      "addressCountry": "BY"
-    }
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://vadimohka.ru/#website",
+        "name": "Владымцев Вадим Денисович — Архитектор корпоративного AI | R&D Director | Безопасные LLM и RAG-системы",
+        "url": "https://vadimohka.ru/",
+        "description": "Сайт про Владымцева Вадима Денисовича | Vadim Vladymtsev — Архитектор корпоративного AI | R&D Director. Проектирую и внедряю безопасные LLM/RAG-системы для бизнеса и госсектора: air-gapped/on-prem развертывание, гибридный поиск, верификация источников, аудит и наблюдаемость.",
+        "inLanguage": "ru-RU"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://stacklevel.group/#organization",
+        "name": "StackLevel Group",
+        "url": "https://stacklevel.group",
+        "description": "StackLevel Group — компания, разрабатывающая корпоративные LLM/RAG-системы с фокусом на безопасность и надежность.",
+        "sameAs": [
+          "https://www.linkedin.com/company/stacklevel"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Минск",
+          "addressCountry": "BY"
+        }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://vadimohka.ru/#person",
+        "name": "Владымцев Вадим Денисович",
+        "alternateName": "Vadim Vladymtsev",
+        "disambiguatingDescription": "Архитектор корпоративных LLM/RAG-систем (secure on-prem / air-gapped).",
+        "description": "Архитектор корпоративных LLM/RAG-систем. Специализируюсь на безопасном внедрении ИИ в регулируемых секторах: air-gapped/on-prem развертывание, OpenAI-совместимый API, гибридный поиск, верификация источников, аудит и наблюдаемость.",
+        "jobTitle": "R&D Director & AI Solutions Architect",
+        "worksFor": { "@id": "https://stacklevel.group/#organization" },
+        "url": "https://vadimohka.ru/",
+        "image": "https://vadimohka.ru/Vadim_Vladymtsev.png",
+        "mainEntityOfPage": { "@id": "https://vadimohka.ru/" },
+        "sameAs": [
+          "https://www.linkedin.com/in/vadimohka/",
+          "https://github.com/vadimohka",
+          "https://scholar.google.com/citations?user=ccabRDYAAAAJ"
+        ],
+        "email": "vadimohkav@gmail.com",
+        "identifier": [
+          {
+            "@type": "PropertyValue",
+            "propertyID": "Google Scholar",
+            "value": "ccabRDYAAAAJ",
+            "url": "https://scholar.google.com/citations?user=ccabRDYAAAAJ"
+          }
+        ],
+        "knowsAbout": [
+          "Enterprise RAG",
+          "Hybrid Search",
+          "Source-grounded answers",
+          "Air-Gapped Systems",
+          "On-Premise Deployments",
+          "OpenAI-compatible API",
+          "LLM Security",
+          "Prompt Injection Defense",
+          "Access Control",
+          "Audit Logging",
+          "LLM Evaluation",
+          "AI Observability",
+          "Agentic Orchestration",
+          "AI Readiness Assessment"
+        ],
+        "alumniOf": {
+          "@type": "EducationalOrganization",
+          "name": "БГУИР"
+        },
+        "hasCredential": {
+          "@type": "EducationalOccupationalCredential",
+          "credentialCategory": "Master's degree",
+          "educationalLevel": "Master's degree",
+          "recognizedBy": {
+            "@type": "EducationalOrganization",
+            "name": "БГУИР"
+          }
+        }
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://vadimohka.ru/index.html#profile",
+        "url": "https://vadimohka.ru/",
+        "inLanguage": "ru",
+        "mainEntity": { "@id": "https://vadimohka.ru/#person" }
+      }
+    ]
   }
   </script>
 </head>
@@ -365,6 +439,7 @@
          <a href="mailto:vadimohkav@gmail.com" class="btn btn-primary">Написать на Email</a>
          <a href="https://www.linkedin.com/in/vadimohka/" target="_blank" class="btn btn-outline font-mono">LinkedIn Profile</a>
        </div>
+       <div class="contact-info" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
        <div class="copyright">
          © 2025 Владымцев Вадим Денисович. Сайт-визитка эксперта.
        </div>
