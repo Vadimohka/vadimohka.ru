@@ -190,7 +190,18 @@
           </div>
         </div>
         <div class="hero-img-wrapper">
-          <img src="Vadim_Vladymtsev.png" alt="Photo of Vadim Vladymtsev, R&D Director and AI Solutions Architect" class="hero-img" loading="lazy" />
+          <picture class="hero-img-wrapper">
+            <source srcset="Vadim_Vladymtsev.avif" type="image/avif">
+            <source srcset="Vadim_Vladymtsev.webp" type="image/webp">
+            <img
+              src="Vadim_Vladymtsev.png"
+              alt="Photo of Vadim Vladymtsev, R&D Director and AI Solutions Architect"
+              class="hero-img"
+              width="602"
+              height="602"
+              fetchpriority="high"
+              decoding="async" />
+          </picture>
         </div>
       </div>
     </section>
