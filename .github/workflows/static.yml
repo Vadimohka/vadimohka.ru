@@ -38,6 +38,11 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
+      - name: Set up Cache-Control headers
+        run: |
+          find . -name '*.css' -o -name '*.js' -o -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.gif' -o -name '*.webp' -o -name '*.avif' -o -name '*.ico' -o -name '*.svg' | while read file; do
+            echo 'Cache-Control: max-age=31536000' >> $file.headers
+          done
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
