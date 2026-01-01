@@ -569,8 +569,8 @@ ul { list-style: none; }
 
   /* ВАЖНО: хедер использует .container, поэтому делаем отступы именно здесь */
   .header .container{
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
   }
 
   /* немного пространства между логотипом и кнопкой */
@@ -582,8 +582,8 @@ ul { list-style: none; }
 /* ещё плотнее для совсем маленьких экранов */
 @media (max-width: 480px) {
   .header .container{
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: calc(14px + env(safe-area-inset-left));
+    padding-right: calc(14px + env(safe-area-inset-right));
   }
 
   .brand{
