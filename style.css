@@ -559,6 +559,43 @@ ul { list-style: none; }
   }
 }
 
+/* Mobile header spacing + safe-area (iOS notch / rounded corners) */
+@media (max-width: 768px) {
+  .header{
+    /* больше "воздуха" сверху/снизу + учитываем вырез/статусбар */
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: 10px;
+  }
+
+  /* ВАЖНО: хедер использует .container, поэтому делаем отступы именно здесь */
+  .header .container{
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* немного пространства между логотипом и кнопкой */
+  .nav-flex{
+    gap: 12px;
+  }
+}
+
+/* ещё плотнее для совсем маленьких экранов */
+@media (max-width: 480px) {
+  .header .container{
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .brand{
+    font-size: 1.05rem; /* чтобы "AI Architect" не упирался */
+  }
+
+  .header .btn{
+    padding: 10px 14px;  /* у тебя уже есть — просто фиксируем */
+    min-width: auto;     /* убираем давление min-width */
+  }
+}
+
 /* --- Hero Section --- */
 .hero {
   padding-top: 160px; padding-bottom: 100px;
@@ -918,34 +955,34 @@ ul { list-style: none; }
   }
   
   /* Улучшение адаптивности для очень маленьких экранов */
-  @media (max-width: 480px) {
-    .container {
-      padding-left: calc(16px + env(safe-area-inset-left));
-      padding-right: calc(16px + env(safe-area-inset-right));
-    }
-    
-    .hero-grid {
-      gap: 24px;
-    }
-    
-    .hero-content, .hero-img-wrapper {
-      padding: 0 16px;
-    }
-    
-    .section {
-      padding: 48px 0;
-    }
-    
-    .btn {
-      padding: 14px 20px;
-      font-size: 0.95rem;
-    }
-    
-    .hero-cta .btn {
-      width: min(320px, 100%); /* ✅ одинаковая ширина + центр */
-      max-width: none;
-    }
- }
+      @media (max-width: 480px) {
+        .container {
+          padding-left: calc(14px + env(safe-area-inset-left));
+          padding-right: calc(14px + env(safe-area-inset-right));
+        }
+        
+        .hero-grid {
+          gap: 24px;
+        }
+        
+        .hero-content, .hero-img-wrapper {
+          padding: 0 16px;
+        }
+        
+        .section {
+          padding: 48px 0;
+        }
+        
+        .btn {
+          padding: 14px 20px;
+          font-size: 0.95rem;
+        }
+        
+        .hero-cta .btn {
+          width: min(320px, 100%); /* ✅ одинаковая ширина + центр */
+          max-width: none;
+        }
+   }
 }
 
 /* Дополнительные адаптивные стили для мобильных устройств */
