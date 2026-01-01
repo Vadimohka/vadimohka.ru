@@ -938,6 +938,11 @@ ul { list-style: none; }
       padding: 14px 20px;
       font-size: 0.95rem;
     }
+    
+    .hero-cta .btn {
+      width: min(320px, 100%); /* ✅ одинаковая ширина + центр */
+      max-width: none;
+    }
  }
 }
 
