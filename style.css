@@ -872,6 +872,7 @@ ul { list-style: none; }
 
 @media (max-width: 768px) {
   .nav-links { display: none; }
+  .nav-links.active{ display: flex; }
   .section { padding: 64px 0; }
   .hero {
     padding-top: 120px;
@@ -919,7 +920,8 @@ ul { list-style: none; }
   /* Улучшение адаптивности для очень маленьких экранов */
   @media (max-width: 480px) {
     .container {
-      padding: 0 16px;
+      padding-left: calc(16px + env(safe-area-inset-left));
+      padding-right: calc(16px + env(safe-area-inset-right));
     }
     
     .hero-grid {
@@ -954,8 +956,17 @@ ul { list-style: none; }
   }
   
   .hero-cta {
+    display: flex;
     flex-direction: column;
     gap: 12px;
+
+    align-items: center;   /* ✅ центр по горизонтали */
+    width: 100%;
+  }
+
+  .hero-cta .btn {
+    width: min(320px, 100%); /* ✅ одинаковая ширина */
+    margin-inline: auto;     /* ✅ подстраховка центровки */
   }
   
   .trust-badges {
