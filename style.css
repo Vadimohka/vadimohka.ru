@@ -1,23 +1,23 @@
-/* --- CSS Variables & Global Reset --- */
+
 :root {
-  /* Цвета "Bitcoin DeFi" дизайн-системы */
-  --bg-main: #030304; /* True Void - самый глубокий космос */
-  --bg-secondary: #0F1115; /* Dark Matter - поверхности карточек */
-  --text-primary: #FFFFFF; /* Pure Light - основной текст */
-  --text-secondary: #94A3B8; /* Stardust - второстепенный текст */
-  --accent-primary: #F7931A; /* Bitcoin Orange - основной акцент */
-  --accent-secondary: #EA580C; /* Burnt Orange - глубокий оранжевый */
-  --accent-tertiary: #FFD600; /* Digital Gold - цвет ценности */
-  --border-color: #1E293B; /* Dim Boundary - границы */
-  --border-light: rgba(25, 255, 255, 0.1); /* Легкие границы */
   
-  /* Тени и эффекты свечения */
+  --bg-main: #030304; 
+  --bg-secondary: #0F1115; 
+  --text-primary: #FFFFFF; 
+  --text-secondary: #94A3B8; 
+  --accent-primary: #F7931A; 
+  --accent-secondary: #EA580C; 
+  --accent-tertiary: #FFD600; 
+  --border-color: #1E293B; 
+  --border-light: rgba(25, 255, 255, 0.1); 
+  
+  
   --glow-orange: 0 20px -5px rgba(234, 88, 12, 0.5);
   --glow-orange-intense: 0 30px -5px rgba(247, 147, 26, 0.6);
   --glow-gold: 0 20px rgba(255, 214, 0, 0.3);
   --card-elevation: 0 0 50px -10px rgba(247, 147, 26, 0.1);
   
-  /* Анимации */
+  
   --transition-default: all 0.3s ease;
   --transition-fast: all 0.2s ease;
 }
@@ -30,15 +30,15 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
-  /* Фиксация минимальной высоты для предотвращения сдвигов */
+  
   min-height: 100vh;
-  /* Фиксация ширины для предотвращения сдвигов */
+  
   width: 100%;
-  /* Фиксация позиционирования для предотвращения сдвигов */
+  
   position: relative;
 }
 
-/* Inputs */
+
 .input {
   background: rgba(0, 0, 0, 0.5);
   border: 0;
@@ -65,7 +65,7 @@ body {
   cursor: not-allowed;
 }
 
-/* Glass Cards */
+
 .card-glass {
   background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px);
@@ -74,7 +74,7 @@ body {
   padding: 32px;
 }
 
-/* Glow Effects */
+
 .glow-orange {
   box-shadow: var(--glow-orange);
 }
@@ -87,7 +87,7 @@ body {
   box-shadow: var(--glow-gold);
 }
 
-/* Grid Pattern Background */
+
 .bg-grid-pattern {
   background-size: 50px 50px;
   background-image:
@@ -96,7 +96,7 @@ body {
   mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
 }
 
-/* Radial Blur Backgrounds */
+
 .bg-radial-blur {
   position: absolute;
   width: 50px;
@@ -122,7 +122,7 @@ body {
  opacity: 0.08;
 }
 
-/* Custom Animations */
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
  50% { transform: translateY(-20px); }
@@ -132,7 +132,7 @@ body {
   animation: float 8s ease-in-out infinite;
 }
 
-/* Corner Border Accents for "How It Works" cards */
+
 .corner-border-tl {
   border-top: 2px solid var(--accent-primary);
   border-left: 2px solid var(--accent-primary);
@@ -143,7 +143,7 @@ body {
   border-bottom: 2px solid var(--accent-primary);
 }
 
-/* Timeline as Blockchain */
+
 .timeline-blockchain {
   position: relative;
 }
@@ -176,7 +176,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Asymmetric Pricing Scale */
+
 .pricing-popular {
   transform: scale(1.05);
   z-index: 10;
@@ -196,7 +196,7 @@ body {
   transform: scale(1.02);
 }
 
-/* Holographic Icon Container */
+
 .icon-container {
   background: rgba(234, 88, 12, 0.2);
   border: 1px solid rgba(234, 88, 12, 0.5);
@@ -209,7 +209,7 @@ body {
   box-shadow: 0 20px rgba(234, 88, 12, 0.4);
 }
 
-/* Background Icon Watermarks */
+
 .bg-icon-watermark {
   position: absolute;
   opacity: 0.05;
@@ -222,7 +222,7 @@ body {
   opacity: 0.1;
 }
 
-/* Pulsing Dot Badges */
+
 .dot-pulse {
   position: relative;
 }
@@ -256,7 +256,7 @@ body {
   }
 }
 
-/* Custom utility classes */
+
 .text-gradient {
   background: linear-gradient(to right, var(--accent-primary), var(--accent-tertiary));
   -webkit-background-clip: text;
@@ -277,7 +277,7 @@ body {
   backdrop-filter: blur(20px);
 }
 
-/* Section styling */
+
 .section {
   padding: 96px 0;
   position: relative;
@@ -287,16 +287,16 @@ body {
   background: var(--bg-secondary);
 }
 
-/* Container styling */
+
 .container {
-  max-width: 1280px; /* max-w-7xl */
+  max-width: 1280px; 
   margin: 0 auto;
   padding: 0 24px;
   padding-left: calc(24px + env(safe-area-inset-left));
   padding-right: calc(24px + env(safe-area-inset-right));
 }
 
-/* Typography */
+
 .font-heading, h1, h2, h3 {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
@@ -354,20 +354,20 @@ p.lead {
 .text-muted { color: var(--text-secondary); }
 
 
-/* Шрифты - удалены дублирующиеся импорты, так как шрифты подключаются в HTML */
+
 
 a { text-decoration: none; color: inherit; transition: color 0.2s; }
 ul { list-style: none; }
 
 .bg-secondary { background-color: var(--bg-secondary); }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 12px 28px;
-  border-radius: 9999px; /* rounded-full для кнопок */
+  border-radius: 9999px; 
   font-weight: 600;
   line-height: 1;
   transition: var(--transition-fast);
@@ -382,7 +382,7 @@ ul { list-style: none; }
  color: white;
  background-clip: padding-box;
  width: fit-content;
- min-width: 160px; /* Минимальная ширина для кнопок */
+ min-width: 160px; 
  text-align: center;
 }
 
@@ -451,7 +451,7 @@ ul { list-style: none; }
   text-decoration: none;
 }
 
-/* --- Header / Nav --- */
+
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: rgba(3, 3, 4, 0.85); backdrop-filter: blur(12px);
@@ -464,7 +464,7 @@ ul { list-style: none; }
 .nav-links a { font-weight: 500; font-size: 0.95rem; }
 .nav-links a:hover { color: var(--accent-primary); }
 
-/* Mobile Menu Toggle */
+
 .mobile-menu-toggle {
   display: none;
   flex-direction: column;
@@ -488,7 +488,7 @@ ul { list-style: none; }
   border-radius: 2px;
 }
 
-/* Mobile menu styles */
+
 @media (max-width: 768px) {
   .mobile-menu-toggle {
     display: flex;
@@ -558,27 +558,27 @@ ul { list-style: none; }
   }
 }
 
-/* Mobile header spacing + safe-area (iOS notch / rounded corners) */
+
 @media (max-width: 768px) {
   .header{
-    /* больше "воздуха" сверху/снизу + учитываем вырез/статусбар */
+    
     padding-top: calc(10px + env(safe-area-inset-top));
     padding-bottom: 10px;
   }
 
-  /* ВАЖНО: хедер использует .container, поэтому делаем отступы именно здесь */
+  
   .header .container{
     padding-left: calc(16px + env(safe-area-inset-left));
     padding-right: calc(16px + env(safe-area-inset-right));
   }
 
-  /* немного пространства между логотипом и кнопкой */
+  
   .nav-flex{
     gap: 12px;
   }
 }
 
-/* ещё плотнее для совсем маленьких экранов */
+
 @media (max-width: 480px) {
   .header .container{
     padding-left: calc(14px + env(safe-area-inset-left));
@@ -586,21 +586,21 @@ ul { list-style: none; }
   }
 
   .brand{
-    font-size: 1.05rem; /* чтобы "AI Architect" не упирался */
+    font-size: 1.05rem; 
   }
 
   .header .btn{
-    padding: 10px 14px;  /* у тебя уже есть — просто фиксируем */
-    min-width: auto;     /* убираем давление min-width */
+    padding: 10px 14px;  
+    min-width: auto;     
   }
 }
 
-/* --- Hero Section --- */
+
 .hero {
   padding-top: 160px; padding-bottom: 100px;
  display: flex; align-items: center;
- min-height: 90vh;   /* fallback */
- min-height: 90svh;  /* стабильная высота на мобилках при видимой адресной строке */
+ min-height: 90vh;   
+ min-height: 90svh;  
 }
 .hero-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
@@ -639,7 +639,7 @@ ul { list-style: none; }
 
 .hero-img[loading="lazy"] {
   opacity: 0;
-  /* Фиксация размеров для предотвращения сдвигов */
+  
   width: 400px;
   height: 400px;
 }
@@ -649,7 +649,7 @@ ul { list-style: none; }
 }
 
 
-/* --- Key Competencies Section --- */
+
 .services-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
 }
@@ -686,7 +686,7 @@ ul { list-style: none; }
   color: var(--accent-primary);
 }
 
-/* --- Academic & Professional Background Section --- */
+
 .timeline-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
 }
@@ -711,7 +711,7 @@ ul { list-style: none; }
   content: '•'; color: var(--accent-primary); position: absolute; left: 0; font-weight: bold;
 }
 
-/* --- Tech Stack Section --- */
+
 .stack-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center;
 }
@@ -723,7 +723,7 @@ ul { list-style: none; }
   padding: 20px;
   border-radius: 12px;
 
-  /* делаем одинаковую "рамку" и базовую глубину */
+  
   border: 1px solid var(--border-light);
 
   font-weight: 600;
@@ -732,7 +732,7 @@ ul { list-style: none; }
   justify-content: center;
   text-align: center;
   min-height: 80px;
-  /* Фиксация размеров для предотвращения CLS */
+  
   min-width: 140px;
   will-change: transform;
 
@@ -743,7 +743,7 @@ ul { list-style: none; }
     background-color 260ms ease;
 }
 
-/* мягкое "свечение" внутри карточки */
+
 .stack-item::before {
   content: "";
   position: absolute;
@@ -759,7 +759,7 @@ ul { list-style: none; }
  transition: opacity 260ms ease;
 }
 
-/* блик, который "пробегает" по карточке */
+
 .stack-item::after {
   content: "";
   position: absolute;
@@ -806,7 +806,7 @@ ul { list-style: none; }
   transform: translateX(240%) rotate(20deg);
 }
 
-/* аккуратная доступность: выключаем анимации если пользователь просит */
+
 @media (prefers-reduced-motion: reduce) {
   .stack-item,
   .stack-item::before,
@@ -819,7 +819,7 @@ ul { list-style: none; }
   }
 }
 
-/* --- Projects Section --- */
+
 .projects-grid {
   display: grid;
   gap: 48px;
@@ -850,7 +850,7 @@ ul { list-style: none; }
   content: '✓'; color: var(--accent-primary); position: absolute; left: 0; font-weight: bold;
 }
 
-/* --- Education & Awards --- */
+
 .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .edu-card {
     background: var(--bg-secondary);
@@ -877,7 +877,7 @@ ul { list-style: none; }
 }
 .edu-icon { font-size: 2rem; color: var(--accent-primary); }
 
-/* --- Footer --- */
+
 .footer {
   background: var(--bg-main);
   padding: 80px 0 32px;
@@ -889,7 +889,7 @@ ul { list-style: none; }
 }
 .copyright { color: var(--text-secondary); font-size: 0.875rem; }
 
-/* --- RESPONSIVE DESIGN --- */
+
 @media (max-width: 992px) {
   h1 { font-size: 3rem; }
  .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 48px; }
@@ -945,7 +945,7 @@ ul { list-style: none; }
     max-width: none;
   }
   
-  /* FIX: верхняя кнопка "Связаться" больше не тянется на всю ширину */
+  
   .header .btn {
     width: auto;
     max-width: none;
@@ -953,7 +953,7 @@ ul { list-style: none; }
     white-space: nowrap;
   }
   
-  /* Улучшение адаптивности для очень маленьких экранов */
+  
       @media (max-width: 480px) {
         .container {
           padding-left: calc(14px + env(safe-area-inset-left));
@@ -978,14 +978,14 @@ ul { list-style: none; }
         }
         
         .hero-cta .btn {
-          width: min(320px, 100%); /* ✅ одинаковая ширина + центр */
+          width: min(320px, 100%); 
           max-width: none;
         }
    }
 }
 
-/* Дополнительные адаптивные стили для мобильных устройств */
-/* === MOBILE HEADER FIX (put at the very end of style.min.css) === */
+
+
 
 @media (max-width: 768px) {
   .header{
@@ -993,7 +993,7 @@ ul { list-style: none; }
     padding-bottom: 12px;
   }
 
-  /* header content is inside .container (see index.html) */
+  
   .header .container{
     padding-left: calc(16px + env(safe-area-inset-left));
     padding-right: calc(16px + env(safe-area-inset-right));
@@ -1003,7 +1003,7 @@ ul { list-style: none; }
     gap: 12px;
   }
 
-  /* override global min-width:160 and ALSO possible inline min-width */
+  
   .header .btn{
     min-width: auto !important;
     width: auto;
