@@ -8,7 +8,6 @@
   --accent-primary: #F7931A; /* Bitcoin Orange - основной акцент */
   --accent-secondary: #EA580C; /* Burnt Orange - глубокий оранжевый */
   --accent-tertiary: #FFD600; /* Digital Gold - цвет ценности */
-  --accent-blue: #F7931A; /* Используем тот же цвет, что и accent-primary */
   --border-color: #1E293B; /* Dim Boundary - границы */
   --border-light: rgba(25, 255, 255, 0.1); /* Легкие границы */
   
@@ -322,7 +321,7 @@ h1 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-transparent: transparent;
+  color: transparent;
 }
 h2 {
  font-size: clamp(2rem, 4vw, 3rem);
@@ -332,7 +331,7 @@ h2 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-transparent: transparent;
+  color: transparent;
 }
 h3 {
   font-size: 1.5rem;
@@ -350,7 +349,7 @@ p.lead {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-transparent: transparent;
+  color: transparent;
 }
 .text-muted { color: var(--text-secondary); }
 
@@ -482,7 +481,7 @@ ul { list-style: none; }
 .hamburger {
   width: 100%;
   height: 3px;
-  background: var(--accent-blue);
+  background: var(--accent-primary);
   transition: all 0.3s linear;
   position: relative;
   transform-origin: center;
@@ -518,7 +517,7 @@ ul { list-style: none; }
   }
   
   .mobile-menu-toggle:focus {
-    outline: 2px solid var(--accent-blue);
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
   }
   
@@ -694,7 +693,7 @@ ul { list-style: none; }
 .timeline-col h3 { text-align: center; margin-bottom: 40px; position: relative; }
 .timeline-col h3::after {
  content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
-  width: 40px; height: 3px; background: var(--accent-blue); border-radius: 2px;
+  width: 40px; height: 3px; background: var(--accent-primary); border-radius: 2px;
 }
 .timeline-item {
   display: flex; gap: 24px; margin-bottom: 40px; position: relative;
@@ -839,16 +838,16 @@ ul { list-style: none; }
 }
 .project-card:hover {
   transform: translateY(-4px);
-  border-color: var(--accent-blue);
+  border-color: var(--accent-primary);
 }
 .project-role {
-  display: inline-block; font-size: 0.875rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 16px;
+  display: inline-block; font-size: 0.875rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 16px;
 }
 .project-results li {
   margin-bottom: 12px; padding-left: 24px; position: relative;
 }
 .project-results li::before {
-  content: '✓'; color: var(--accent-blue); position: absolute; left: 0; font-weight: bold;
+  content: '✓'; color: var(--accent-primary); position: absolute; left: 0; font-weight: bold;
 }
 
 /* --- Education & Awards --- */
@@ -986,53 +985,40 @@ ul { list-style: none; }
 }
 
 /* Дополнительные адаптивные стили для мобильных устройств */
+/* === MOBILE HEADER FIX (put at the very end of style.min.css) === */
+
+@media (max-width: 768px) {
+  .header{
+    padding-top: calc(12px + env(safe-area-inset-top));
+    padding-bottom: 12px;
+  }
+
+  /* header content is inside .container (see index.html) */
+  .header .container{
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
+  }
+
+  .nav-flex{
+    gap: 12px;
+  }
+
+  /* override global min-width:160 and ALSO possible inline min-width */
+  .header .btn{
+    min-width: auto !important;
+    width: auto;
+    padding: 10px 14px;
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 480px) {
-  .hero-badge {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-  }
-  
-  .hero-cta {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    align-items: center;   /* ✅ центр по горизонтали */
-    width: 100%;
+  .header .container{
+    padding-left: calc(14px + env(safe-area-inset-left));
+    padding-right: calc(14px + env(safe-area-inset-right));
   }
 
-  .hero-cta .btn {
-    width: min(320px, 100%); /* ✅ одинаковая ширина */
-    margin-inline: auto;     /* ✅ подстраховка центровки */
-  }
-  
-  .trust-badges {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .timeline-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .edu-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .stack-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  h2 {
-    font-size: clamp(1.5rem, 8vw, 2rem);
-  }
-  
-  .font-mono {
-    font-size: 0.875rem;
+  .brand{
+    font-size: 1.05rem;
   }
 }
