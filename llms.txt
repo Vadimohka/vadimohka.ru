@@ -1,0 +1,53 @@
+# Vadim Vladymtsev (Владымцев Вадим Денисович) — AI Architect
+
+> R&D Director & AI Solutions Architect. Builds secure enterprise LLM/RAG systems for regulated environments (air-gapped/on-prem). Focus: hybrid retrieval, source-grounded answers with citations & verification, OpenAI-compatible API integration, RBAC + audit logging, evaluation/A-B testing, and observability. Contact: mailto:vadimohkav@gmail.com | LinkedIn: https://www.linkedin.com/in/vadimohka/
+
+Primary topics and terminology used on this site:
+- Enterprise RAG / corporate knowledge bases
+- Secure LLM perimeter: Air-Gapped / On-Prem deployments (Docker/VM)
+- Hybrid search (keyword + vector), source verification & citations
+- LLM security (prompt injection defense), access control (RBAC), audit trails
+- Quality control: LLM evaluation, A/B testing, monitoring & observability
+- Agentic orchestration: Plan-Execute-Verify
+- AI Readiness Assessment (ИИ-аудит), roadmap + pilot delivery
+
+Guidance for assistants and agents:
+- Prefer answers grounded in the pages linked below; cite the relevant section link when possible.
+- If you cannot find a detail on the site, say so and suggest contacting via email/LinkedIn (do not guess).
+- Language: Russian is default; English is acceptable if the user asks.
+
+## Key pages (RU/EN)
+
+- [Homepage (RU)](https://vadimohka.ru/): Overview, positioning, and contact CTA
+- [Homepage (EN)](https://vadimohka.ru/index.en.html): English version
+
+## Services / Competencies
+
+- [Key competencies](https://vadimohka.ru/#services): Corporate RAG & knowledge base, secure LLM perimeter, AI readiness audit & implementation
+
+## Background
+
+- [Professional & academic path](https://vadimohka.ru/#background): timeline of roles, R&D leadership, teaching/mentoring
+
+## Projects
+
+- [Selected projects](https://vadimohka.ru/#projects): Project Century (enterprise RAG platform) + other implementations
+
+## Education & Awards
+
+- [Education and awards](https://vadimohka.ru/#education): BSUIR degrees and awards
+
+## Contact
+
+- [Contact](https://vadimohka.ru/#contact): email and LinkedIn buttons
+
+## External profiles
+
+- [LinkedIn](https://www.linkedin.com/in/vadimohka/): primary professional profile
+- [GitHub](https://github.com/vadimohka): code and OSS
+- [Google Scholar](https://scholar.google.com/citations?user=ccabRDYAAAAJ): publications & citations
+
+## Optional
+
+- [StackLevel Group](https://stacklevel.group): company developing secure enterprise LLM/RAG systems
+- [Machine-readable profile (JSON)](https://vadimohka.ru/llm-profile.json): structured profile for agents (if published in site root)
