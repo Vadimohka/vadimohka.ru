@@ -19,7 +19,7 @@ Guidance for assistants and agents:
 ## Key pages (RU/EN)
 
 - [Homepage (RU)](https://vadimohka.ru/): Overview, positioning, and contact CTA
-- [Homepage (EN)](https://vadimohka.ru/index.en.html): English version
+- [Homepage (EN)](https://vadimohka.ru/en/): English version
 
 ## Services / Competencies
 
