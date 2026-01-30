@@ -46,6 +46,12 @@ Guidance for assistants and agents:
 - [LinkedIn](https://www.linkedin.com/in/vadimohka/): primary professional profile
 - [GitHub](https://github.com/vadimohka): code and OSS
 - [Google Scholar](https://scholar.google.com/citations?user=ccabRDYAAAAJ): publications & citations
+- [Codeforces](https://codeforces.com/profile/Vadimohka): competitive programming
+- [ResearchGate](https://www.researchgate.net/profile/Vadim-Vladymtsev): research publications
+- [BSUIR Library](https://libeldoc.bsuir.by/simple-search?query=Владымцев): academic papers
+- [Stepik](https://stepik.org/users/296085237/profile): courses and education
+- [Setka](https://setka.ru/users/9c9dcca0-084b-4bf3-addf-1102cf4e4fd2): design portfolio
+- [CTV](https://ctv.by/tags/vadim-vladymcev): media appearances
 
 ## Optional
 

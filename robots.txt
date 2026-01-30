@@ -1,5 +1,7 @@
 User-agent: *
+
 Disallow: /.git
 Disallow: /.github
 Disallow: /.gitignore
+
 Sitemap: https://vadimohka.ru/sitemap.xml
