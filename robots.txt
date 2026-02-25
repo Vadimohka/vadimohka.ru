@@ -1,7 +1,13 @@
 User-agent: *
+Allow: /
 
-Disallow: /.git
-Disallow: /.github
-Disallow: /.gitignore
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: YandexAdditionalBot
+Allow: /
 
 Sitemap: https://vadimohka.ru/sitemap.xml
