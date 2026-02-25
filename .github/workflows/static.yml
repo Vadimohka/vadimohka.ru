@@ -1,5 +1,4 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy static content to GitHub Pages
 
 on:
   push:
@@ -12,45 +11,382 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
+
+env:
+  # Если deploy-pages не вернет page_url (редко, но бывает), используем ваш custom domain.
+  FALLBACK_BASE_URL: https://vadimohka.ru
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   validate:
+    name: Validate SEO/AEO artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install validators
+      - name: Install validation tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq libxml2-utils
+          sudo apt-get install -y jq libxml2-utils rsync
 
-      - name: Validate AEO/SEO artifacts
+      - name: Make scripts executable
+        run: |
+          if [ -d scripts ]; then
+            chmod +x scripts/*.sh || true
+          fi
+
+      # Используем ваш существующий валидатор как основной source of truth.
+      - name: Validate AEO/SEO artifacts (project script)
         run: ./scripts/validate-seo.sh
 
-  deploy:
-    needs: validate
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      # Дополнительные sanity-checks прямо в workflow (чтобы ловить CI-регрессии быстрее).
+      - name: Validate key files formatting
+        run: |
+          test -f robots.txt
+          test -f sitemap.xml
+          test -f llms.txt
+          test -f llm-profile.json
+          test -f person.jsonld
+          test -f index.html
+          test -f en/index.html
+          test -f .nojekyll
+
+          # robots.txt должен быть построчным (никаких склеенных директив)
+          if grep -Eq 'User-agent: .* (Allow|Disallow|Sitemap):' robots.txt; then
+            echo "::error::robots.txt contains multiple directives on one line"
+            exit 1
+          fi
+
+          # JSON must be valid
+          jq -e . llm-profile.json >/dev/null
+          jq -e . person.jsonld >/dev/null
+
+          # XML must be valid
+          xmllint --noout sitemap.xml
+
+          # Быстрый контроль наличия критичных блоков
+          grep -Fqx "User-agent: *" robots.txt
+          grep -Fqx "User-agent: OAI-SearchBot" robots.txt
+          grep -Fqx "User-agent: GPTBot" robots.txt
+          grep -Fqx "User-agent: YandexAdditionalBot" robots.txt
+          grep -Fqx "Sitemap: https://vadimohka.ru/sitemap.xml" robots.txt
+
+  package:
+    name: Build Pages artifact (dist) + debug snapshot
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: validate
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync jq libxml2-utils
+
+      - name: Prepare dist directory
+        run: |
+          rm -rf dist
+          mkdir -p dist
+
+          # Копируем только сайт + machine-readable артефакты.
+          # Исключаем инфраструктурный мусор репозитория, чтобы deploy был детерминированным.
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='scripts/' \
+            --exclude='dist/' \
+            --exclude='.gitignore' \
+            --exclude='README*' \
+            --exclude='LICENSE*' \
+            ./ dist/
+
+          # Гарантируем, что Pages не будет обрабатывать Jekyll.
+          touch dist/.nojekyll
+
+      - name: Validate dist contents
+        run: |
+          required=(
+            "dist/.nojekyll"
+            "dist/index.html"
+            "dist/en/index.html"
+            "dist/robots.txt"
+            "dist/sitemap.xml"
+            "dist/llms.txt"
+            "dist/llm-profile.json"
+            "dist/person.jsonld"
+            "dist/index.html.md"
+            "dist/en/index.html.md"
+          )
+          for f in "${required[@]}"; do
+            [[ -f "$f" ]] || { echo "::error::Missing in dist: $f"; exit 1; }
+          done
+
+          jq -e . dist/llm-profile.json >/dev/null
+          jq -e . dist/person.jsonld >/dev/null
+          xmllint --noout dist/sitemap.xml
+
+      - name: Create deploy manifest (hashes)
+        run: |
+          cat > dist/_deploy_manifest.txt <<'EOF'
+          robots.txt
+          sitemap.xml
+          llms.txt
+          llm-profile.json
+          person.jsonld
+          index.html.md
+          en/index.html.md
+          index.html
+          en/index.html
+          EOF
+
+          pushd dist >/dev/null
+          while IFS= read -r p; do
+            [ -f "$p" ] || { echo "::error::Manifest entry missing: $p"; exit 1; }
+            sha256sum "$p"
+          done < _deploy_manifest.txt > _deploy_manifest.sha256
+          popd >/dev/null
+
+      - name: Show dist tree (debug)
+        run: |
+          echo "=== DIST TREE ==="
+          find dist -maxdepth 3 -type f | sort
+          echo "=== HASHES ==="
+          cat dist/_deploy_manifest.sha256
+
+      # Артефакт для post-deploy smoke теста (сравнение live vs built).
+      - name: Upload debug artifact (dist snapshot)
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dist-debug
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # NOTE: GitHub Pages does NOT allow setting custom Cache-Control headers for assets.
-      # If you need long-lived caching headers (max-age=31536000, immutable), put Cloudflare/another CDN in front,
-      # or host on a platform that supports custom headers.
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
-      
-      - name: Deploy to GitHub Pages
+          path: dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: package
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke:
+    name: Post-deploy smoke test (live vs artifact)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: deploy
+
+    steps:
+      - name: Install test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq libxml2-utils curl
+
+      - name: Download built dist snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: site-dist-debug
+          path: _dist
+
+      - name: Resolve base URL
+        id: base
+        run: |
+          BASE="${{ needs.deploy.outputs.page_url }}"
+          if [[ -z "${BASE}" ]]; then
+            BASE="${FALLBACK_BASE_URL}"
+          fi
+          echo "base_url=${BASE%/}" >> "$GITHUB_OUTPUT"
+          echo "Using base URL: ${BASE%/}"
+
+      - name: Wait for propagation (HEAD/GET retries)
+        env:
+          BASE_URL: ${{ steps.base.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          urls=(
+            "/"
+            "/en/"
+            "/robots.txt"
+            "/sitemap.xml"
+            "/llms.txt"
+            "/llm-profile.json"
+            "/person.jsonld"
+            "/index.html.md"
+            "/en/index.html.md"
+          )
+
+          for u in "${urls[@]}"; do
+            ok=0
+            for i in {1..20}; do
+              # Query param снижает риск edge-cache stale response по text/json файлам
+              if curl -fsSIL "${BASE_URL}${u}?_smoke=${GITHUB_RUN_ID}-${i}" >/dev/null; then
+                ok=1
+                break
+              fi
+              echo "Waiting for ${u} to become available... attempt ${i}/20"
+              sleep 10
+            done
+            if [[ $ok -ne 1 ]]; then
+              echo "::error::URL not available after retries: ${BASE_URL}${u}"
+              exit 1
+            fi
+          done
+
+      - name: Validate HTTP status + content-types
+        env:
+          BASE_URL: ${{ steps.base.outputs.base_url }}
+        run: |
+          set -euo pipefail
+
+          check_ct () {
+            local path="$1"
+            local expected_regex="$2"
+            local headers
+            headers="$(mktemp)"
+            curl -fsSI "${BASE_URL}${path}?_smoke=${GITHUB_RUN_ID}" -D "$headers" -o /dev/null
+            echo "--- ${path} ---"
+            cat "$headers"
+            grep -Eiq "^content-type:\s*${expected_regex}" "$headers" || {
+              echo "::error::Unexpected Content-Type for ${path}"
+              exit 1
+            }
+            rm -f "$headers"
+          }
+
+          # HTML
+          check_ct "/" "text/html"
+          check_ct "/en/" "text/html"
+
+          # Text / XML / JSON (допускаем вариации text/plain + charset и application/*)
+          check_ct "/robots.txt" "text/plain|text/text"
+          check_ct "/llms.txt" "text/plain|text/markdown|text/x-markdown"
+          check_ct "/index.html.md" "text/plain|text/markdown|text/x-markdown"
+          check_ct "/en/index.html.md" "text/plain|text/markdown|text/x-markdown"
+          check_ct "/sitemap.xml" "application/xml|text/xml"
+          check_ct "/llm-profile.json" "application/json|text/plain"
+          check_ct "/person.jsonld" "application/ld\+json|application/json|text/plain"
+
+      - name: Compare live files with built artifact (byte-for-byte where practical)
+        env:
+          BASE_URL: ${{ steps.base.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          mkdir -p _live
+
+          # Файлы, которые должны совпадать побайтно (статические текстовые/JSON/XML)
+          compare_files=(
+            "robots.txt"
+            "sitemap.xml"
+            "llms.txt"
+            "llm-profile.json"
+            "person.jsonld"
+            "index.html.md"
+            "en/index.html.md"
+          )
+
+          for f in "${compare_files[@]}"; do
+            url="${BASE_URL}/${f}?_smoke=${GITHUB_RUN_ID}"
+            local_path="_dist/${f}"
+            live_path="_live/${f}"
+            mkdir -p "$(dirname "$live_path")"
+
+            curl -fsSL "$url" -o "$live_path"
+
+            if ! cmp -s "$local_path" "$live_path"; then
+              echo "::error::LIVE MISMATCH for ${f}"
+              echo "Local sha256: $(sha256sum "$local_path" | awk '{print $1}')"
+              echo "Live  sha256: $(sha256sum "$live_path"  | awk '{print $1}')"
+              echo "--- local (first 120 lines) ---"
+              sed -n '1,120p' "$local_path" || true
+              echo "--- live (first 120 lines) ---"
+              sed -n '1,120p' "$live_path" || true
+              exit 1
+            fi
+          done
+
+          echo "Byte-for-byte live comparison passed."
+
+      - name: Sanity-validate live robots/sitemap/json
+        env:
+          BASE_URL: ${{ steps.base.outputs.base_url }}
+        run: |
+          set -euo pipefail
+
+          curl -fsSL "${BASE_URL}/robots.txt?_smoke=${GITHUB_RUN_ID}" -o /tmp/robots.txt
+          curl -fsSL "${BASE_URL}/sitemap.xml?_smoke=${GITHUB_RUN_ID}" -o /tmp/sitemap.xml
+          curl -fsSL "${BASE_URL}/llms.txt?_smoke=${GITHUB_RUN_ID}" -o /tmp/llms.txt
+          curl -fsSL "${BASE_URL}/llm-profile.json?_smoke=${GITHUB_RUN_ID}" -o /tmp/llm-profile.json
+          curl -fsSL "${BASE_URL}/person.jsonld?_smoke=${GITHUB_RUN_ID}" -o /tmp/person.jsonld
+
+          # robots.txt format + required user-agents
+          grep -Fqx "User-agent: *" /tmp/robots.txt
+          grep -Fqx "User-agent: OAI-SearchBot" /tmp/robots.txt
+          grep -Fqx "User-agent: GPTBot" /tmp/robots.txt
+          grep -Fqx "User-agent: YandexAdditionalBot" /tmp/robots.txt
+          grep -Fqx "Sitemap: https://vadimohka.ru/sitemap.xml" /tmp/robots.txt
+          if grep -Eq 'User-agent: .* (Allow|Disallow|Sitemap):' /tmp/robots.txt; then
+            echo "::error::Live robots.txt contains multiple directives on one line"
+            exit 1
+          fi
+
+          # XML/JSON validity
+          xmllint --noout /tmp/sitemap.xml
+          jq -e . /tmp/llm-profile.json >/dev/null
+          jq -e . /tmp/person.jsonld >/dev/null
+
+          # sitemap contains expected URLs
+          for u in \
+            "https://vadimohka.ru/" \
+            "https://vadimohka.ru/en/" \
+            "https://vadimohka.ru/llms.txt" \
+            "https://vadimohka.ru/llm-profile.json" \
+            "https://vadimohka.ru/person.jsonld" \
+            "https://vadimohka.ru/index.html.md" \
+            "https://vadimohka.ru/en/index.html.md"; do
+            grep -Fq "$u" /tmp/sitemap.xml || { echo "::error::Live sitemap missing $u"; exit 1; }
+          done
+
+      - name: Summary
+        env:
+          BASE_URL: ${{ steps.base.outputs.base_url }}
+        run: |
+          cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          ## ✅ GitHub Pages deploy smoke test passed
+
+          **Base URL:** ${BASE_URL}
+
+          Verified:
+          - HTTP availability for page + machine-readable artifacts
+          - Content-Type sanity checks
+          - Byte-for-byte comparison (robots/sitemap/llms/json/md) between built artifact and live site
+          - Live robots.txt/sitemap.xml/json validity and expected entries
+          EOF
