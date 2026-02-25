@@ -45,4 +45,5 @@ Vadim Vladymtsev is a Corporate AI Architect and R&D Director focused on secure 
 ## Citation sources
 
 - Main page: https://vadimohka.ru/en/
+- Person JSON-LD: https://vadimohka.ru/person.jsonld
 - JSON-LD profile: https://vadimohka.ru/llm-profile.json

@@ -45,4 +45,5 @@ Canonical URL: https://vadimohka.ru/
 ## Источники для цитирования
 
 - Основная страница: https://vadimohka.ru/
+- Person JSON-LD: https://vadimohka.ru/person.jsonld
 - JSON-LD профиль: https://vadimohka.ru/llm-profile.json

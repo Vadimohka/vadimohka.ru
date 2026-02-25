@@ -25,6 +25,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://vadimohka.ru/person.jsonld</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://vadimohka.ru/index.html.md</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>

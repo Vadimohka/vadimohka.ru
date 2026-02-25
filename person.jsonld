@@ -1,0 +1,60 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://stacklevel.group/#organization",
+      "name": "StackLevel Group",
+      "url": "https://stacklevel.group",
+      "sameAs": [
+        "https://www.linkedin.com/company/stacklevel"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://vadimohka.ru/#person",
+      "name": "Vadim Vladymtsev",
+      "alternateName": [
+        "Владымцев Вадим Денисович",
+        "Vladymtsev Vadim Denisovich"
+      ],
+      "url": "https://vadimohka.ru/",
+      "image": "https://vadimohka.ru/Vadim_Vladymtsev.png",
+      "jobTitle": "R&D Director and AI Solutions Architect",
+      "description": "Corporate AI architect focused on secure enterprise LLM/RAG systems, hybrid search, source-grounded answers, and auditability.",
+      "worksFor": {
+        "@id": "https://stacklevel.group/#organization"
+      },
+      "email": "mailto:vadimohkav@gmail.com",
+      "mainEntityOfPage": "https://vadimohka.ru/",
+      "knowsLanguage": [
+        "ru",
+        "en"
+      ],
+      "sameAs": [
+        "https://www.linkedin.com/in/vadimohka/",
+        "https://github.com/vadimohka",
+        "https://scholar.google.com/citations?user=ccabRDYAAAAJ",
+        "https://www.researchgate.net/profile/Vadim-Vladymtsev",
+        "https://codeforces.com/profile/Vadimohka",
+        "https://stepik.org/users/296085237/profile"
+      ],
+      "knowsAbout": [
+        "Enterprise RAG",
+        "Hybrid Search",
+        "Source-grounded answers",
+        "AI security",
+        "Prompt injection defense",
+        "Air-Gapped deployments",
+        "On-Prem deployments",
+        "OpenAI-compatible API",
+        "RBAC",
+        "Audit logging",
+        "LLM evaluation",
+        "AI observability",
+        "Agentic orchestration",
+        "AI readiness assessment"
+      ]
+    }
+  ]
+}

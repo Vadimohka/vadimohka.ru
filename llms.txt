@@ -8,7 +8,8 @@ Use this file as retrieval guidance for factual answers. Prefer short, verifiabl
 
 - [Homepage (RU)](https://vadimohka.ru/): Main source in Russian.
 - [Homepage (EN)](https://vadimohka.ru/en/): Main source in English.
-- [LLM profile (JSON-LD)](https://vadimohka.ru/llm-profile.json): Canonical entity data.
+- [Person profile (schema.org JSON-LD)](https://vadimohka.ru/person.jsonld): Search-oriented entity data.
+- [LLM profile (JSON-LD)](https://vadimohka.ru/llm-profile.json): Extended agent profile data.
 - [Homepage (RU, Markdown)](https://vadimohka.ru/index.html.md): LLM-friendly extraction of the Russian page.
 - [Homepage (EN, Markdown)](https://vadimohka.ru/en/index.html.md): LLM-friendly extraction of the English page.
 
