@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <title>Подход к работе | Вадим Владымцев</title>
+  <meta name="description" content="Как обычно устроена работа над корпоративным AI: контекст задачи, оценка применимости, архитектура и реалистичное внедрение.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="author" content="Vadim Vladymtsev">
+  <link rel="canonical" href="https://vadimohka.ru/approach/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="Vadim Vladymtsev">
+  <meta property="og:url" content="https://vadimohka.ru/approach/">
+  <meta property="og:title" content="Подход к работе | Вадим Владымцев">
+  <meta property="og:description" content="Контекст задачи, оценка применимости AI, архитектура и реалистичный порядок внедрения.">
+  <meta property="og:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png">
+  <meta property="og:image:alt" content="Портрет Вадима Владымцева">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Подход к работе | Вадим Владымцев">
+  <meta name="twitter:description" content="Как обычно строится работа над корпоративным AI-проектом: от контекста задачи до внедрения.">
+  <meta name="twitter:image" content="https://vadimohka.ru/Vadim_Vladymtsev.png">
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="alternate" hreflang="ru" href="https://vadimohka.ru/approach/">
+  <link rel="alternate" hreflang="en" href="https://vadimohka.ru/en/approach/">
+  <link rel="alternate" hreflang="x-default" href="https://vadimohka.ru/approach/">
+  <script>
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
+    })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=105913979', 'ym');
+    ym(105913979, 'init', { ssr: true, webvisor: true, clickmap: true, ecommerce: 'dataLayer', referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
+  </script>
+</head>
+<body class="page page--approach page--ru">
+  <noscript><div class="tracker-noscript"><img src="https://mc.yandex.ru/watch/105913979" alt=""></div></noscript>
+  <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+  <div class="site-shell">
+    <header class="site-header" id="top">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html" aria-label="Главная Vadim Vladymtsev">
+          <span class="brand-mark">VV</span>
+          <span class="brand-copy">
+            <strong>Vadim Vladymtsev</strong>
+            <span>Корпоративный AI</span>
+          </span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Переключить навигацию" aria-controls="site-navigation" data-nav-toggle>
+          <span></span><span></span><span></span>
+        </button>
+        <div class="nav-panel" id="site-navigation" data-nav-panel>
+          <nav class="primary-nav" aria-label="Основная навигация">
+            <a href="../index.html">Главная</a>
+            <a href="../projects/index.html">Проекты</a>
+            <a href="../context/index.html">Контекст</a>
+            <a href="../approach/index.html" aria-current="page">Подход</a>
+          </nav>
+          <div class="header-actions">
+            <div class="lang-switch" role="group" aria-label="Переключение языка">
+              <a class="lang-switch__link is-current" href="../approach/index.html" aria-current="page">RU</a>
+              <a class="lang-switch__link" href="../en/approach/index.html">EN</a>
+            </div>
+            <a class="btn btn--primary btn--small" href="../index.html#contact">Связаться</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero hero--subpage">
+        <div class="container">
+          <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="../index.html">Главная</a><span class="breadcrumbs__sep">/</span><span>Подход</span></nav>
+          <div class="subpage-hero">
+            <div class="hero-copy hero-copy--wide reveal">
+              <p class="eyebrow">Подход к работе</p>
+              <h1>Как обычно строится работа над корпоративным AI-проектом.</h1>
+              <p class="hero-lead">Без лишней риторики: сначала задача и ограничения, затем оценка применимости AI, после этого архитектура и только потом внедрение.</p>
+            </div>
+            <aside class="hero-summary glass reveal">
+              <p class="eyebrow">Короткая логика</p>
+              <p class="hero-summary__lead">Обычно порядок решений важнее количества технологий.</p>
+              <div class="signal-list">
+                <div class="signal-line"><span class="signal-line__id">01</span><div><strong>Контекст</strong><p>зафиксировать задачу, ограничения и критерии результата</p></div></div>
+                <div class="signal-line"><span class="signal-line__id">02</span><div><strong>Архитектура</strong><p>собрать контур вокруг данных, доступа, безопасности и наблюдаемости</p></div></div>
+                <div class="signal-line"><span class="signal-line__id">03</span><div><strong>Внедрение</strong><p>запустить решение в объёме, который оправдан задачей</p></div></div>
+              </div>
+              <div class="pill-row">
+                <span class="pill">Контекст задачи</span>
+                <span class="pill">Контур системы</span>
+                <span class="pill">Реалистичный запуск</span>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--tight">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Когда это полезно</p>
+            <h2>Четыре ситуации, где особенно нужен архитектурный взгляд.</h2>
+          </div>
+          <div class="cards cards--4">
+            <article class="card glass reveal">
+              <h3>Когда решение влияет на чувствительный контур</h3>
+              <p>Если AI затрагивает деньги, регуляторику, безопасность или репутацию, обычно нужен более аккуратный уровень проектирования.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Когда AI должен встроиться в существующую среду</h3>
+              <p>Речь уже не про демонстрацию, а про данные, права доступа, аудит, процессы и поддержку.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Когда нужно проверить уместность самой идеи</h3>
+              <p>Иногда лучший результат это вовремя сузить задачу, изменить сценарий или не запускать AI вовсе.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Когда нужно согласовать бизнес, безопасность и инженерию</h3>
+              <p>На стыке этих ролей чаще всего и появляются дорогие ошибки.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Формат участия</p>
+            <h2>Основные направления, в которых обычно происходит работа.</h2>
+          </div>
+          <div class="cards cards--4">
+            <article class="card glass reveal">
+              <span class="card-badge">Оценка</span>
+              <h3>Оценка готовности к AI</h3>
+              <p>Проверка того, насколько задача подходит для AI и готов ли текущий контур к такому сценарию.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">Архитектура</span>
+              <h3>Безопасные LLM/RAG-системы</h3>
+              <p>Проектирование систем с опорой на источники, разграничением доступа, наблюдаемостью и управляемым развёртыванием.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">Корпоративные знания</span>
+              <h3>Внутренние ассистенты и знания</h3>
+              <p>Работа с системами, где ответ должен быть понятным, проверяемым и встроенным в повседневные процессы.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">Внедрение</span>
+              <h3>Сопровождение запуска</h3>
+              <p>Выбор разумного масштаба пилота или промышленного запуска с учётом рисков и ограничений среды.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Как идёт работа</p>
+            <h2>Обычно работа проходит в пять шагов.</h2>
+          </div>
+          <div class="cards cards--5">
+            <article class="card glass reveal">
+              <span class="card-badge">01</span>
+              <h3>Контекст</h3>
+              <p>Фиксируем задачу, ограничения, заинтересованные стороны, инфраструктуру и критерии результата.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">02</span>
+              <h3>Оценка</h3>
+              <p>Смотрим, нужен ли AI в этой задаче и какой сценарий действительно имеет смысл.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">03</span>
+              <h3>Архитектура</h3>
+              <p>Определяем контур, данные, модельный слой, правила доступа и стратегию запуска.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">04</span>
+              <h3>Пилот</h3>
+              <p>Запускаем пилот или промышленный контур в том масштабе, который оправдан задачей.</p>
+            </article>
+            <article class="card glass reveal">
+              <span class="card-badge">05</span>
+              <h3>Сопровождение</h3>
+              <p>Доводим систему до устойчивой эксплуатации и адаптируем её по мере роста требований.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Принципы</p>
+            <h2>Несколько базовых принципов, которые помогают не усложнять проект без необходимости.</h2>
+          </div>
+          <div class="cards cards--4">
+            <article class="card glass reveal">
+              <h3>AI нужен не в каждой задаче</h3>
+              <p>Если нет понятной пользы и условий для эксплуатации, иногда лучше не запускать AI вообще.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Демо не равно внедрение</h3>
+              <p>Прототип без логирования, контроля и модели сопровождения редко переживает первый интерес.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Контроль важнее эффекта</h3>
+              <p>В чувствительных средах важны источники, доступы, аудит и наблюдаемость, а не только впечатление от модели.</p>
+            </article>
+            <article class="card glass reveal">
+              <h3>Хорошее решение можно объяснить</h3>
+              <p>Рабочая AI-система должна быть понятной для бизнеса, проверяемой для безопасности и поддерживаемой для команды.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <div class="container footer-grid glass">
+        <div>
+          <p class="eyebrow">Контакт</p>
+          <h2>Если нужен разговор о задаче и ограничениях, удобнее всего написать напрямую.</h2>
+          <p class="footer-lead">Обычно достаточно коротко описать контекст, чтобы понять следующий шаг.</p>
+        </div>
+        <div class="footer-cta-group">
+          <a class="btn btn--primary" href="mailto:vadimohkav@gmail.com?subject=Architecture%20discussion">Email</a>
+          <a class="btn btn--ghost" href="https://www.linkedin.com/in/vadimohka/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+      <div class="container footer-meta">
+        <p>© 2026 Vadim Vladymtsev · Корпоративный AI · проекты · контекст · подход к работе.</p>
+        <div class="footer-links">
+          <a href="../index.html">Главная</a>
+          <a href="../projects/index.html">Проекты</a>
+          <a href="../context/index.html">Контекст</a>
+          <a href="../llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="../assets/site.js" defer></script>
+</body>
+</html>

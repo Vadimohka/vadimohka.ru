@@ -1,41 +1,53 @@
 # Vadim Vladymtsev (Vladymtsev Vadim Denisovich)
 
-Last updated: 2026-02-25  
-Language: en  
+Last updated: 2026-03-27
+Language: en
 Canonical URL: https://vadimohka.ru/en/
 
 ## Who this is
 
-Vadim Vladymtsev is a Corporate AI Architect and R&D Director focused on secure enterprise LLM/RAG systems for business and regulated environments.
+Vadim Vladymtsev is a corporate AI architect. He helps CEOs and CISOs launch corporate AI where mistakes are expensive.
 
-## Core competencies
+## Positioning
 
-1. Enterprise RAG and knowledge base systems.
-2. Secure LLM perimeter (Air-Gapped / On-Prem).
-3. AI Readiness Assessment and implementation.
+- Corporate AI for environments where the cost of error is high.
+- Secure LLM/RAG for fintech and other sensitive environments.
+- Focus on on-prem and isolated deployment, audit, RBAC, observability, and answers grounded in source materials.
 
-## Professional and academic background (summary)
+## Site structure
 
-- StackLevel Group: Deputy Director for R&D (since 2025).
-- Engineering leadership and software delivery experience.
-- Teaching, olympiad, and research initiatives linked to BSUIR.
+- Home: https://vadimohka.ru/en/
+- Projects: https://vadimohka.ru/en/projects/
+- Context: https://vadimohka.ru/en/context/
+- Approach: https://vadimohka.ru/en/approach/
 
-## Selected projects
+## Where he creates the most value
 
-- Project Century (Enterprise RAG Platform).
-- E-commerce Personalization System.
-- Enterprise Knowledge Base System.
+- AI readiness and solution audit.
+- Secure LLM/RAG architecture.
+- Corporate knowledge systems and grounded retrieval.
+- Expert implementation support in regulated environments.
 
-## Technical focus areas
+## Public and professional context
 
-- Hybrid search, source grounding, and citation-based answers.
-- OpenAI-compatible API, RBAC, request/response audit.
-- LLM evaluation, A/B testing, and observability.
+- StackLevel Group / Century.
+- LinkedIn and GitHub.
+- Google Scholar and ResearchGate.
+- BSUIR, teaching, and research background.
 
-## Education and awards
+## Selected project directions
 
-- BSUIR: Bachelor's and Master's programs.
-- Professional and industry recognition (including AI-related awards, 2025).
+- Century as a platform for safe LLM adoption.
+- Corporate knowledge systems.
+- AI architecture for scenarios where errors are expensive.
+
+## How work progresses
+
+1. Context and constraint mapping.
+2. Audit and AI readiness check.
+3. Architecture and control-layer decisions.
+4. Pilot or production-grade implementation.
+5. Support and adaptation as requirements evolve.
 
 ## Contact
 
@@ -45,5 +57,8 @@ Vadim Vladymtsev is a Corporate AI Architect and R&D Director focused on secure 
 ## Citation sources
 
 - Main page: https://vadimohka.ru/en/
+- Projects: https://vadimohka.ru/en/projects/
+- Context: https://vadimohka.ru/en/context/
+- Approach: https://vadimohka.ru/en/approach/
 - Person JSON-LD: https://vadimohka.ru/person.jsonld
 - JSON-LD profile: https://vadimohka.ru/llm-profile.json

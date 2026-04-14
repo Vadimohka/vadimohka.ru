@@ -6,7 +6,7 @@
       "@id": "https://vadimohka.ru/#website",
       "url": "https://vadimohka.ru/",
       "name": "Vadimohka.ru",
-      "description": "Official profile website of Vadim Vladymtsev (Владымцев Вадим Денисович), Corporate AI Architect and R&D Director.",
+      "description": "Official profile website of Vadim Vladymtsev focused on corporate AI, secure LLM/RAG systems, projects, public context, and working approach.",
       "inLanguage": [
         "ru-RU",
         "en"
@@ -19,7 +19,7 @@
       "@type": "WebPage",
       "@id": "https://vadimohka.ru/#page-ru",
       "url": "https://vadimohka.ru/",
-      "name": "Владымцев Вадим Денисович — Архитектор корпоративного AI | R&D Director",
+      "name": "Вадим Владымцев — Архитектор корпоративного AI",
       "isPartOf": {
         "@id": "https://vadimohka.ru/#website"
       },
@@ -27,13 +27,13 @@
         "@id": "https://vadimohka.ru/#person"
       },
       "inLanguage": "ru-RU",
-      "dateModified": "2026-02-25"
+      "dateModified": "2026-03-27"
     },
     {
       "@type": "WebPage",
       "@id": "https://vadimohka.ru/#page-en",
       "url": "https://vadimohka.ru/en/",
-      "name": "Vadim Vladymtsev — Corporate AI Architect | R&D Director",
+      "name": "Vadim Vladymtsev — Corporate AI Architect | Secure LLM / RAG",
       "isPartOf": {
         "@id": "https://vadimohka.ru/#website"
       },
@@ -41,7 +41,118 @@
         "@id": "https://vadimohka.ru/#person"
       },
       "inLanguage": "en",
-      "dateModified": "2026-02-25"
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#projects-ru",
+      "url": "https://vadimohka.ru/projects/",
+      "name": "Проекты | Владымцев Вадим Денисович — Архитектор корпоративного AI",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "ru-RU",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#context-ru",
+      "url": "https://vadimohka.ru/context/",
+      "name": "Контекст и доверие | Вадим Владымцев",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "ru-RU",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#approach-ru",
+      "url": "https://vadimohka.ru/approach/",
+      "name": "Подход к работе | Вадим Владымцев",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "ru-RU",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#projects-en",
+      "url": "https://vadimohka.ru/en/projects/",
+      "name": "Projects | Vadim Vladymtsev — Corporate AI Architect",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "en",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#context-en",
+      "url": "https://vadimohka.ru/en/context/",
+      "name": "Context and Trust Signals | Vadim Vladymtsev — Corporate AI Architect",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "en",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vadimohka.ru/#approach-en",
+      "url": "https://vadimohka.ru/en/approach/",
+      "name": "Working Approach | Vadim Vladymtsev — Corporate AI Architect",
+      "isPartOf": {
+        "@id": "https://vadimohka.ru/#website"
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
+      },
+      "inLanguage": "en",
+      "dateModified": "2026-03-27"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://vadimohka.ru/#site-sections",
+      "name": "Main site sections",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Context"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Approach"
+        }
+      ]
     },
     {
       "@type": "Organization",
@@ -62,8 +173,8 @@
       ],
       "url": "https://vadimohka.ru/",
       "image": "https://vadimohka.ru/Vadim_Vladymtsev.png",
-      "jobTitle": "R&D Director and AI Solutions Architect",
-      "description": "Corporate AI architect focused on secure enterprise LLM/RAG systems, hybrid search, source-grounded answers, and auditability.",
+      "jobTitle": "Corporate AI Architect for Regulated Business",
+      "description": "Corporate AI architect focused on secure enterprise LLM/RAG systems, AI readiness, grounded answers, auditability, and deployment in sensitive environments. The site includes sections for projects, public context, and working approach.",
       "worksFor": {
         "@id": "https://stacklevel.group/#organization"
       },
@@ -97,20 +208,17 @@
         }
       ],
       "knowsAbout": [
+        "Secure LLM",
         "Enterprise RAG",
-        "Hybrid Search",
         "Source-grounded answers",
         "AI security",
-        "Prompt injection defense",
         "Air-Gapped deployments",
         "On-Prem deployments",
         "OpenAI-compatible API",
         "RBAC",
         "Audit logging",
-        "LLM evaluation",
         "AI observability",
-        "Agentic orchestration",
-        "AI Readiness Assessment"
+        "AI readiness assessment"
       ],
       "alumniOf": {
         "@type": "EducationalOrganization",
@@ -141,17 +249,17 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Enterprise RAG and knowledge base systems"
+          "name": "AI readiness and solution audit"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Secure LLM perimeter (Air-Gapped / On-Prem)"
+          "name": "Secure LLM and RAG architecture"
         },
         {
           "@type": "ListItem",
           "position": 3,
-          "name": "AI Readiness Assessment and implementation"
+          "name": "Corporate knowledge systems for regulated environments"
         }
       ]
     }
