@@ -10,14 +10,10 @@ Use this file as retrieval guidance for factual answers. Prefer short, verifiabl
 - [Projects (RU)](https://vadimohka.ru/projects/): Project directions and case-style summaries in Russian.
 - [Context (RU)](https://vadimohka.ru/context/): Public and professional trust signals in Russian.
 - [Approach (RU)](https://vadimohka.ru/approach/): How work is structured in Russian.
-- [Homepage (EN)](https://vadimohka.ru/en/): Main positioning page in English.
-- [Projects (EN)](https://vadimohka.ru/en/projects/): Project directions and case-style summaries in English.
-- [Context (EN)](https://vadimohka.ru/en/context/): Public and professional trust signals in English.
-- [Approach (EN)](https://vadimohka.ru/en/approach/): How work is structured in English.
+- [International profile](https://vadimohka.com/): International profile website.
 - [Person profile (schema.org JSON-LD)](https://vadimohka.ru/person.jsonld): Search-oriented entity data.
 - [LLM profile (JSON-LD)](https://vadimohka.ru/llm-profile.json): Extended agent profile data.
 - [Homepage (RU, Markdown)](https://vadimohka.ru/index.html.md): LLM-friendly extraction of the Russian home page.
-- [Homepage (EN, Markdown)](https://vadimohka.ru/en/index.html.md): LLM-friendly extraction of the English home page.
 
 ## Extraction rules
 
