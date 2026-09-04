@@ -20,8 +20,8 @@
       ],
       "url": "https://vadimohka.ru/",
       "image": "https://vadimohka.ru/Vadim_Vladymtsev.png",
-      "jobTitle": "R&D Director and AI Solutions Architect",
-      "description": "Corporate AI architect focused on secure enterprise LLM/RAG systems, hybrid search, source-grounded answers, and auditability.",
+      "jobTitle": "Corporate AI Architect for Regulated Business",
+      "description": "Corporate AI architect focused on secure enterprise LLM/RAG systems, AI readiness, grounded answers, auditability, and deployment in sensitive environments. The public site includes separate pages for projects, context, and working approach.",
       "worksFor": {
         "@id": "https://stacklevel.group/#organization"
       },
@@ -37,22 +37,20 @@
         "https://scholar.google.com/citations?user=ccabRDYAAAAJ",
         "https://www.researchgate.net/profile/Vadim-Vladymtsev",
         "https://codeforces.com/profile/Vadimohka",
-        "https://stepik.org/users/296085237/profile"
+        "https://stepik.org/users/296085237/profile",
+        "https://vadimohka.com/#person"
       ],
       "knowsAbout": [
+        "Secure LLM",
         "Enterprise RAG",
-        "Hybrid Search",
         "Source-grounded answers",
         "AI security",
-        "Prompt injection defense",
         "Air-Gapped deployments",
         "On-Prem deployments",
         "OpenAI-compatible API",
         "RBAC",
         "Audit logging",
-        "LLM evaluation",
         "AI observability",
-        "Agentic orchestration",
         "AI readiness assessment"
       ]
     }

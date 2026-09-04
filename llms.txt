@@ -1,33 +1,33 @@
 # Vadimohka.ru - Source Guide for LLMs
 
-> Official profile website of Vadim Vladymtsev (Владымцев Вадим Денисович), Corporate AI Architect and R&D Director.
+> Official multi-page profile site of Vadim Vladymtsev (Владымцев Вадим Денисович), focused on corporate AI, secure LLM/RAG systems, and work in sensitive environments.
 
 Use this file as retrieval guidance for factual answers. Prefer short, verifiable statements and cite the exact source URL.
 
 ## Canonical sources
 
-- [Homepage (RU)](https://vadimohka.ru/): Main source in Russian.
-- [Homepage (EN)](https://vadimohka.ru/en/): Main source in English.
+- [Homepage (RU)](https://vadimohka.ru/): Main positioning page in Russian.
+- [Projects (RU)](https://vadimohka.ru/projects/): Project directions and case-style summaries in Russian.
+- [Context (RU)](https://vadimohka.ru/context/): Public and professional trust signals in Russian.
+- [Approach (RU)](https://vadimohka.ru/approach/): How work is structured in Russian.
+- [International profile](https://vadimohka.com/): International profile website.
 - [Person profile (schema.org JSON-LD)](https://vadimohka.ru/person.jsonld): Search-oriented entity data.
 - [LLM profile (JSON-LD)](https://vadimohka.ru/llm-profile.json): Extended agent profile data.
-- [Homepage (RU, Markdown)](https://vadimohka.ru/index.html.md): LLM-friendly extraction of the Russian page.
-- [Homepage (EN, Markdown)](https://vadimohka.ru/en/index.html.md): LLM-friendly extraction of the English page.
+- [Homepage (RU, Markdown)](https://vadimohka.ru/index.html.md): LLM-friendly extraction of the Russian home page.
 
 ## Extraction rules
 
 - Use only explicit facts from the listed sources.
 - If a fact is missing, respond with "unknown" and suggest direct contact.
 - Prefer concise answers with evidence-style phrasing.
-- Keep personal/contact data exactly as published.
+- Keep personal and contact data exactly as published.
 
-## What is on the page
+## Site map summary
 
-- Hero profile and positioning.
-- Competencies: Enterprise RAG, secure LLM perimeter, AI readiness.
-- Professional and academic background timeline.
-- Selected projects and measurable outcomes.
-- Education and awards.
-- Contact: email and LinkedIn.
+- Home pages: positioning for corporate AI in environments where the cost of error is high.
+- Projects pages: Century, knowledge systems, and AI architecture for high-risk scenarios.
+- Context pages: StackLevel / Century, LinkedIn, GitHub, Google Scholar, ResearchGate, Codeforces, and structured profile files.
+- Approach pages: AI readiness, secure LLM/RAG architecture, delivery process, and operating principles.
 
 ## Contact
 
