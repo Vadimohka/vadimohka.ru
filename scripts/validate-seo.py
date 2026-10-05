@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Validate static SEO metadata and the Russian site's domain boundaries."""
+"""Validate metadata, local navigation, content coverage and domain boundaries.
+
+Uses only the Python standard library, so it runs locally and in Pages CI.
+"""
 import json
 import re
 import struct
@@ -11,7 +14,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://vadimohka.ru/'
-PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'context', 'approach')}}
+PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'background', 'context', 'approach')}}
 COM = re.compile(r'vadimohka\.com\b', re.I)
 IMAGE = 'assets/vadim-vladymtsev-2026.jpg'
 
@@ -33,21 +36,18 @@ class Page(HTMLParser):
     def __init__(self, text, name):
         super().__init__(convert_charrefs=True)
         self.name = name
-        self.tags = []
+        self.tags, self.json_blocks = [], []
         self.ids = set()
         self.title = ''
-        self.title_count = 0
-        self.in_title = False
-        self.in_head = False
-        self.h1_count = 0
-        self.json_blocks = []
-        self.json_text = None
-        self.anchor = None
+        self.title_count = self.h1_count = 0
+        self.in_title = self.in_head = False
+        self.json_text = self.anchor = None
         self.feed(text)
         self.close()
 
     def handle_starttag(self, tag, pairs):
         attrs = dict(pairs)
+        require(len(attrs) == len(pairs), f'{self.name}: duplicate HTML attribute on {tag}')
         self.tags.append((tag, attrs))
         if tag == 'head':
             self.in_head = True
@@ -69,7 +69,7 @@ class Page(HTMLParser):
             self.anchor = {'attrs': attrs, 'text': ''}
         for key, value in pairs:
             if value and COM.search(value):
-                require(tag == 'a' and key == 'href', f'{self.name}: .com is only allowed in English links, not {tag}[{key}]')
+                require(tag == 'a' and key == 'href', f'{self.name}: .com is only allowed in English links')
                 require(urlsplit(value).hostname == 'vadimohka.com' and value.startswith('https://'), f'{self.name}: invalid English URL')
 
     def handle_endtag(self, tag):
@@ -87,6 +87,7 @@ class Page(HTMLParser):
                 label = attrs.get('aria-label', '').lower()
                 require(text in ('en', 'english', 'english version', 'английская версия') or 'английская версия' in label,
                         f'{self.name}: .com link must explicitly identify the English version')
+                require(attrs.get('hreflang') == 'en', f'{self.name}: English link needs hreflang')
             self.anchor = None
 
     def handle_data(self, data):
@@ -136,11 +137,10 @@ def jpeg_dimensions(path):
 
 
 def main():
-    titles, descriptions, pages = set(), set(), {}
+    pages = {name: Page((ROOT / name).read_text(encoding='utf-8'), name) for name in PAGES}
+    titles, descriptions = set(), set()
     for name, canonical in PAGES.items():
-        text = (ROOT / name).read_text(encoding='utf-8')
-        page = Page(text, name)
-        pages[name] = page
+        page = pages[name]
         canonicals = [a['href'] for t, a in page.tags if t == 'link' and a.get('rel') == 'canonical']
         require(canonicals == [canonical], f'{name}: wrong canonical')
         require(any(t == 'html' and a.get('lang', '').startswith('ru') for t, a in page.tags), f'{name}: wrong language')
@@ -155,17 +155,26 @@ def main():
         require(page.meta('og:url') == canonical, f'{name}: wrong og:url')
         require(page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong Twitter card')
         for key in ('og:image', 'twitter:image'):
-            require(page.meta(key).startswith(BASE), f'{name}: image must be hosted on .ru')
-            local_file(page.meta(key), canonical)
+            require(page.meta(key) == BASE + IMAGE, f'{name}: use the supplied portrait on .ru')
+        require(page.json_blocks, f'{name}: missing structured data')
+        hrefs = {a.get('href') for t, a in page.tags if t == 'a'}
+        require({'/', '/projects/', '/background/', '/approach/', '/context/'} <= hrefs, f'{name}: incomplete site navigation')
         for tag, attrs in page.tags:
             require(not (tag == 'meta' and attrs.get('http-equiv', '').lower() == 'refresh'), f'{name}: unexpected redirect')
+            if tag == 'img':
+                require('alt' in attrs, f'{name}: image without alt')
+            if tag == 'a' and attrs.get('target') == '_blank':
+                require('noopener' in attrs.get('rel', '').split(), f'{name}: unsafe external link')
             for key in ('href', 'src'):
-                if attrs.get(key):
-                    target = local_file(attrs[key], canonical)
-                    fragment = urlsplit(attrs[key]).fragment
-                    if target == (ROOT / name).resolve() and fragment:
-                        require(unquote(fragment) in page.ids, f'{name}: broken anchor {fragment}')
-        require('© 2026' in text, f'{name}: copyright must show 2026')
+                if not attrs.get(key):
+                    continue
+                target = local_file(attrs[key], canonical)
+                fragment = unquote(urlsplit(attrs[key]).fragment)
+                if target and fragment and target.suffix == '.html':
+                    target_name = target.relative_to(ROOT).as_posix()
+                    target_page = pages.get(target_name) or Page(target.read_text(encoding='utf-8'), target_name)
+                    require(fragment in target_page.ids, f'{name}: broken cross-page anchor {attrs[key]}')
+        require('© 2026' in (ROOT / name).read_text(encoding='utf-8'), f'{name}: copyright must show 2026')
 
     home = pages['index.html']
     heroes = [a for t, a in home.tags if t == 'img' and 'hero-img' in a.get('class', '').split()]
@@ -174,9 +183,6 @@ def main():
     require(hero.get('src') == '/' + IMAGE and hero.get('alt'), 'Wrong hero image or missing alt')
     require(hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Hero must load eagerly at high priority')
     require((int(hero['width']), int(hero['height'])) == jpeg_dimensions(ROOT / IMAGE), 'Hero dimensions differ from JPEG')
-    require(home.meta('og:image') == BASE + IMAGE, 'Home social image must match the new portrait')
-    require(home.meta('twitter:image') == BASE + IMAGE, 'Twitter image must match the new portrait')
-
     profiles = {}
     for name in ('person.jsonld', 'llm-profile.json'):
         text = (ROOT / name).read_text(encoding='utf-8')
@@ -186,6 +192,14 @@ def main():
     people = [node for doc in profiles.values() for node in doc['@graph'] if node.get('@type') == 'Person']
     require(len(people) == 2 and people[0] == people[1], 'Person data must stay synchronized')
     require(people[0]['@id'] == BASE + '#person' and people[0]['url'] == BASE and people[0]['image'] == BASE + IMAGE, 'Person must use .ru identity and the new image')
+    # The redesign must not silently drop the case studies or career sections.
+    require({'century', 'knowledge', 'ecommerce', 'high-risk'} <= pages['projects/index.html'].ids, 'Missing case study or legacy project anchor')
+    require({'industry', 'academia', 'education', 'awards'} <= pages['background/index.html'].ids, 'Missing career section')
+    require({'services', 'projects', 'background', 'education', 'contact'} <= home.ids, 'Broken legacy homepage section links')
+    background = (ROOT / 'background/index.html').read_text(encoding='utf-8')
+    for text in ('StackLevel Group', 'Teach IT', 'БГУИР', '2023 — 2026', '2017 — 2021', 'ICPC'):
+        require(text in background, f'Career content lost: {text}')
+    require('прототип' in (ROOT / 'projects/index.html').read_text(encoding='utf-8').lower(), 'E-commerce must still be labelled a prototype')
 
     sitemap = ET.parse(ROOT / 'sitemap.xml')
     ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9', 'image': 'http://www.google.com/schemas/sitemap-image/1.1'}
@@ -199,8 +213,6 @@ def main():
         require(line in robots, f'robots.txt: missing {line}')
     require((ROOT / 'CNAME').read_text().strip() == 'vadimohka.ru', 'Wrong custom domain')
     require((ROOT / '.nojekyll').is_file(), 'Missing .nojekyll')
-
-    # Only English navigation and the retired /en/ handoffs may use .com.
     for path in ROOT.rglob('*'):
         if not path.is_file():
             continue
@@ -209,12 +221,12 @@ def main():
             continue
         if path.suffix in ('.json', '.jsonld', '.txt', '.md', '.xml', '.css', '.js'):
             require(not COM.search(path.read_text(encoding='utf-8')), f'{path.relative_to(ROOT)}: unexpected .com reference')
-        elif path.suffix == '.html' and str(path.relative_to(ROOT)) not in PAGES:
-            Page(path.read_text(encoding='utf-8'), str(path.relative_to(ROOT)))
+        elif path.suffix == '.html' and path.relative_to(ROOT).as_posix() not in PAGES:
+            Page(path.read_text(encoding='utf-8'), path.relative_to(ROOT).as_posix())
     for name in ('index.html', 'projects/index.html', 'context/index.html', 'approach/index.html'):
         text = (ROOT / 'en' / name).read_text(encoding='utf-8')
         require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{name}: invalid English handoff')
-    print('SEO validation passed: 4 Russian pages, canonical URLs, portrait, metadata, JSON-LD, sitemap and English-only .com links.')
+    print(f'SEO validation passed: {len(PAGES)} Russian pages, local links and fragments, cases, career, portrait, JSON-LD and English-only .com links.')
 
 
 if __name__ == '__main__':

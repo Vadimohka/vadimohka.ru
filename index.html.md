@@ -1,48 +1,40 @@
-# Владымцев Вадим Денисович (Vadim Vladymtsev)
+# Вадим Владымцев — корпоративный AI
 
-Last updated: 2026-10-03
-Language: ru-RU
-Canonical URL: https://vadimohka.ru/
+Обновлено: 2026-10-05
+Язык: ru-RU
+Канонический адрес: https://vadimohka.ru/
 
-## Профиль
+## Безопасный AI. Для бизнеса.
 
-Вадим Владымцев — архитектор корпоративного AI. Проектирует безопасные LLM/RAG-системы: локальное и изолированное развёртывание, гибридный поиск, ответы с цитатами, разграничение доступа, аудит и наблюдаемость.
+Корпоративные LLM и RAG. В вашем контуре. Под вашим контролем.
+
+Владымцев Вадим Денисович — R&D директор и архитектор корпоративного AI.
 
 ## Компетенции
 
-- Корпоративный RAG и базы знаний: индексация документов, гибридный поиск и ответы по источникам.
-- Безопасный LLM-контур: air-gapped/on-prem, Docker/VM, OpenAI-совместимый API, RBAC и аудит.
-- AI Readiness Assessment: оценка задач, данных и инфраструктуры, дорожная карта и пилот.
+Корпоративный RAG — ответы с опорой на источники.
+On-prem и air-gapped — контроль данных и инфраструктуры.
+AI-аудит — от оценки идеи до внедрения.
 
-## Проекты
+## Избранные кейсы
 
-- Century — корпоративная платформа безопасного внедрения LLM.
-- E-commerce Personalization System — прототип рекомендательной системы на базе LLM.
-- Enterprise Knowledge Base System — корпоративная база знаний с гибридным поиском и цитированием.
+- Century: платформа для безопасного внедрения LLM.
+- Корпоративный RAG: поиск по документам и ответы с источниками.
+- E-commerce: прототип персонализации на базе LLM.
 
-Описание проектов: https://vadimohka.ru/#projects
-Проектный контекст: https://vadimohka.ru/projects/
+Подробности: https://vadimohka.ru/projects/
 
-## Профессиональный и академический путь
+## Мой путь
 
-Исторические даты работы, преподавания, образования и наград приведены на главной странице и не заменяются годом обновления сайта.
+StackLevel Group — корпоративный AI и R&D.
+БГУИР — инженерия, исследования, преподавание.
+Teach IT — образование и развитие бизнеса.
 
-- Профессиональный путь: https://vadimohka.ru/#background
-- Образование и награды: https://vadimohka.ru/#education
-- Публичные источники и профили: https://vadimohka.ru/context/
-- Подход к работе: https://vadimohka.ru/approach/
-
-## Фотография
-
-https://vadimohka.ru/assets/vadim-vladymtsev-2026.jpg
+Опыт, образование и награды: https://vadimohka.ru/background/
+Подход к работе: https://vadimohka.ru/approach/
+Публичные профили: https://vadimohka.ru/context/
 
 ## Контакты
 
-- Email: mailto:vadimohkav@gmail.com
-- LinkedIn: https://www.linkedin.com/in/vadimohka/
-
-## Структурированные источники
-
-- https://vadimohka.ru/person.jsonld
-- https://vadimohka.ru/llm-profile.json
-- https://vadimohka.ru/llms.txt
+Email: mailto:vadimohkav@gmail.com
+LinkedIn: https://www.linkedin.com/in/vadimohka/
