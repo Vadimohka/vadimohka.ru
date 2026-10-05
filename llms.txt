@@ -1,40 +1,31 @@
-# Vadimohka.ru - Source Guide for LLMs
+# Вадим Владымцев — корпоративный AI
 
-> Official multi-page profile site of Vadim Vladymtsev (Владымцев Вадим Денисович), focused on corporate AI, secure LLM/RAG systems, and work in sensitive environments.
+> Русскоязычный персональный сайт Владымцева Вадима Денисовича (Vadim Vladymtsev): безопасные корпоративные LLM/RAG-системы, проекты, профессиональный контекст и подход к работе.
 
-Use this file as retrieval guidance for factual answers. Prefer short, verifiable statements and cite the exact source URL.
+Обновлено: 2026-10-03. Язык: ru-RU.
+Основной домен и источник русскоязычного профиля: https://vadimohka.ru/
 
-## Canonical sources
+## Канонические страницы
 
-- [Homepage (RU)](https://vadimohka.ru/): Main positioning page in Russian.
-- [Projects (RU)](https://vadimohka.ru/projects/): Project directions and case-style summaries in Russian.
-- [Context (RU)](https://vadimohka.ru/context/): Public and professional trust signals in Russian.
-- [Approach (RU)](https://vadimohka.ru/approach/): How work is structured in Russian.
-- [International profile](https://vadimohka.com/): International profile website.
-- [Person profile (schema.org JSON-LD)](https://vadimohka.ru/person.jsonld): Search-oriented entity data.
-- [LLM profile (JSON-LD)](https://vadimohka.ru/llm-profile.json): Extended agent profile data.
-- [Homepage (RU, Markdown)](https://vadimohka.ru/index.html.md): LLM-friendly extraction of the Russian home page.
+- [Главная](https://vadimohka.ru/): компетенции, профессиональный путь, проекты, образование и контакты.
+- [Проекты](https://vadimohka.ru/projects/): Century, корпоративные знания и AI-архитектура для чувствительных сценариев.
+- [Контекст](https://vadimohka.ru/context/): профессиональная среда и публичные источники.
+- [Подход](https://vadimohka.ru/approach/): оценка задачи, архитектура, пилот и сопровождение.
 
-## Extraction rules
+## Структурированные источники
 
-- Use only explicit facts from the listed sources.
-- If a fact is missing, respond with "unknown" and suggest direct contact.
-- Prefer concise answers with evidence-style phrasing.
-- Keep personal and contact data exactly as published.
+- [Профиль Person](https://vadimohka.ru/person.jsonld): данные о человеке и организации.
+- [Профиль сайта](https://vadimohka.ru/llm-profile.json): WebSite, WebPage, Person и Organization.
+- [Главная в Markdown](https://vadimohka.ru/index.html.md): текстовое описание русскоязычного профиля.
+- [Сводный источник](https://vadimohka.ru/llms-full.txt): обзор страниц.
 
-## Site map summary
+## Правила использования
 
-- Home pages: positioning for corporate AI in environments where the cost of error is high.
-- Projects pages: Century, knowledge systems, and AI architecture for high-risk scenarios.
-- Context pages: StackLevel / Century, LinkedIn, GitHub, Google Scholar, ResearchGate, Codeforces, and structured profile files.
-- Approach pages: AI readiness, secure LLM/RAG architecture, delivery process, and operating principles.
+Используйте только явно опубликованные факты и ссылайтесь на конкретную страницу этого домена. Не переносите канонический адрес русскоязычного профиля на другой домен. Не меняйте исторические даты работы, образования и наград на год обновления сайта. Отсутствующие сведения не додумывайте; для уточнений используйте опубликованные контакты.
 
-## Contact
+## Контакты и навигация
 
 - [Email](mailto:vadimohkav@gmail.com)
 - [LinkedIn](https://www.linkedin.com/in/vadimohka/)
-
-## Discovery files
-
-- [Sitemap](https://vadimohka.ru/sitemap.xml)
+- [Карта сайта](https://vadimohka.ru/sitemap.xml)
 - [Robots](https://vadimohka.ru/robots.txt)

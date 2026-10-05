@@ -1,0 +1,20 @@
+name: Validate static site SEO
+
+on:
+  push:
+    branches-ignore: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate Russian pages, structured data and English-only domain links
+        run: bash scripts/validate-seo.sh
