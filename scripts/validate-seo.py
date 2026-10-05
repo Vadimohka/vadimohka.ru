@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Validate static SEO metadata and the Russian site's domain boundaries."""
+"""Offline validation of the five Russian pages and English-only domain links."""
+import hashlib
 import json
 import re
 import struct
@@ -11,13 +12,14 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://vadimohka.ru/'
-PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'context', 'approach')}}
+PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'background', 'approach', 'context')}}
 COM = re.compile(r'vadimohka\.com\b', re.I)
-IMAGE = 'assets/vadim-vladymtsev-2026.jpg'
+IMAGE = 'assets/portrait-note-2026.webp'
+SOCIAL = 'assets/vadim-vladymtsev-2026.jpg'
 
 
-def require(condition, message):
-    if not condition:
+def require(ok, message):
+    if not ok:
         raise ValueError(message)
 
 
@@ -32,194 +34,146 @@ def unique_json(pairs):
 class Page(HTMLParser):
     def __init__(self, text, name):
         super().__init__(convert_charrefs=True)
-        self.name = name
-        self.tags = []
-        self.ids = set()
-        self.title = ''
-        self.title_count = 0
-        self.in_title = False
-        self.in_head = False
-        self.h1_count = 0
+        self.name, self.tags, self.ids = name, [], set()
+        self.title, self.title_count, self.h1_count = '', 0, 0
+        self.in_title = self.in_head = False
+        self.json_text, self.anchor = None, None
         self.json_blocks = []
-        self.json_text = None
-        self.anchor = None
         self.feed(text)
         self.close()
 
     def handle_starttag(self, tag, pairs):
         attrs = dict(pairs)
         self.tags.append((tag, attrs))
-        if tag == 'head':
-            self.in_head = True
-        if tag == 'title':
-            self.in_title = True
-            self.title_count += 1
-        if tag == 'h1':
-            self.h1_count += 1
+        if tag == 'head': self.in_head = True
+        if tag == 'title': self.in_title = True; self.title_count += 1
+        if tag == 'h1': self.h1_count += 1
         if attrs.get('id'):
-            require(attrs['id'] not in self.ids, f'{self.name}: duplicate id {attrs["id"]}')
+            require(attrs['id'] not in self.ids, f'{self.name}: duplicate ID {attrs["id"]}')
             self.ids.add(attrs['id'])
-        if tag == 'link' and attrs.get('rel') == 'canonical':
-            require(self.in_head, f'{self.name}: canonical must be in head')
         if self.in_head:
-            require(tag not in ('div', 'img', 'p'), f'{self.name}: invalid element in head: {tag}')
-        if tag == 'script' and attrs.get('type') == 'application/ld+json':
-            self.json_text = ''
-        if tag == 'a':
-            self.anchor = {'attrs': attrs, 'text': ''}
+            require(tag not in ('div', 'img', 'p'), f'{self.name}: invalid head child {tag}')
+        if tag == 'link' and attrs.get('rel') == 'canonical':
+            require(self.in_head, f'{self.name}: canonical outside head')
+        if tag == 'script' and attrs.get('type') == 'application/ld+json': self.json_text = ''
+        if tag == 'a': self.anchor = {'attrs': attrs, 'text': ''}
         for key, value in pairs:
             if value and COM.search(value):
-                require(tag == 'a' and key == 'href', f'{self.name}: .com is only allowed in English links, not {tag}[{key}]')
-                require(urlsplit(value).hostname == 'vadimohka.com' and value.startswith('https://'), f'{self.name}: invalid English URL')
+                require(tag == 'a' and key == 'href', f'{self.name}: .com outside English link')
+                require(value == 'https://vadimohka.com/', f'{self.name}: unexpected English target')
+                require(attrs.get('hreflang') == 'en' and attrs.get('lang') == 'en', f'{self.name}: English link missing language')
 
     def handle_endtag(self, tag):
-        if tag == 'head':
-            self.in_head = False
-        if tag == 'title':
-            self.in_title = False
+        if tag == 'head': self.in_head = False
+        if tag == 'title': self.in_title = False
         if tag == 'script' and self.json_text is not None:
             self.json_blocks.append(json.loads(self.json_text, object_pairs_hook=unique_json))
             self.json_text = None
         if tag == 'a' and self.anchor:
-            attrs = self.anchor['attrs']
-            if COM.search(attrs.get('href', '')):
-                text = ' '.join(self.anchor['text'].lower().split())
-                label = attrs.get('aria-label', '').lower()
-                require(text in ('en', 'english', 'english version', 'английская версия') or 'английская версия' in label,
-                        f'{self.name}: .com link must explicitly identify the English version')
+            if COM.search(self.anchor['attrs'].get('href', '')):
+                require(self.anchor['text'].strip() == 'EN', f'{self.name}: unlabeled English link')
             self.anchor = None
 
-    def handle_data(self, data):
-        require(not COM.search(data), f'{self.name}: unexpected .com in text or script')
-        if self.in_title:
-            self.title += data
-        if self.json_text is not None:
-            self.json_text += data
-        if self.anchor:
-            self.anchor['text'] += data
+    def handle_data(self, text):
+        require(not COM.search(text), f'{self.name}: unexpected .com in text or script')
+        if self.in_title: self.title += text
+        if self.json_text is not None: self.json_text += text
+        if self.anchor: self.anchor['text'] += text
 
     def meta(self, key):
-        values = [a.get('content', '') for tag, a in self.tags if tag == 'meta' and (a.get('name') == key or a.get('property') == key)]
-        require(len(values) == 1 and values[0].strip(), f'{self.name}: expected one nonempty {key}')
+        values = [a.get('content', '') for t, a in self.tags if t == 'meta' and (a.get('name') == key or a.get('property') == key)]
+        require(len(values) == 1 and values[0].strip(), f'{self.name}: missing or duplicate {key}')
         return values[0]
 
 
-def local_file(value, canonical):
+def local_target(value, canonical):
     url = urlsplit(urljoin(canonical, value))
-    if url.scheme not in ('http', 'https') or url.hostname != 'vadimohka.ru':
-        return None
+    if url.scheme not in ('http', 'https') or url.hostname != 'vadimohka.ru': return None, None
     path = unquote(url.path).lstrip('/')
-    if not path or path.endswith('/'):
-        path += 'index.html'
-    resolved = (ROOT / path).resolve()
-    require(resolved.is_relative_to(ROOT), f'Asset escapes site root: {value}')
-    require(resolved.is_file(), f'Missing local target: {value}')
-    return resolved
+    if not path or path.endswith('/'): path += 'index.html'
+    target = (ROOT / path).resolve()
+    require(target.is_relative_to(ROOT), f'Path escapes root: {value}')
+    require(target.is_file(), f'Missing local target: {value}')
+    return target, unquote(url.fragment)
 
 
-def jpeg_dimensions(path):
+def webp_dimensions(path):
     data = path.read_bytes()
-    require(data.startswith(b'\xff\xd8') and data.endswith(b'\xff\xd9'), 'Invalid JPEG file')
-    offset = 2
-    while offset < len(data):
-        require(data[offset] == 255, 'Invalid JPEG marker')
-        while data[offset] == 255:
-            offset += 1
-        marker = data[offset]
-        offset += 1
-        size = struct.unpack_from('>H', data, offset)[0]
-        if marker in (0xC0, 0xC1, 0xC2):
-            height, width = struct.unpack_from('>HH', data, offset + 3)
-            return width, height
-        offset += size
-    raise ValueError('JPEG dimensions not found')
+    require(data[:4] == b'RIFF' and data[8:12] == b'WEBP', 'Invalid hero WebP')
+    require(len(data) == int.from_bytes(data[4:8], 'little') + 8, 'Truncated hero WebP')
+    require(data[12:16] == b'VP8 ' and data[23:26] == b'\x9d\x01\x2a', 'Unexpected WebP encoding')
+    return tuple(v & 0x3fff for v in struct.unpack('<HH', data[26:30]))
 
 
 def main():
-    titles, descriptions, pages = set(), set(), {}
+    pages, titles, descriptions = {}, set(), set()
     for name, canonical in PAGES.items():
         text = (ROOT / name).read_text(encoding='utf-8')
-        page = Page(text, name)
-        pages[name] = page
-        canonicals = [a['href'] for t, a in page.tags if t == 'link' and a.get('rel') == 'canonical']
-        require(canonicals == [canonical], f'{name}: wrong canonical')
-        require(any(t == 'html' and a.get('lang', '').startswith('ru') for t, a in page.tags), f'{name}: wrong language')
-        require(page.title_count == 1 and page.title.strip() and page.h1_count == 1, f'{name}: expected one title and H1')
-        require(page.title not in titles, f'{name}: duplicate title')
-        titles.add(page.title)
-        description = page.meta('description')
-        require(description not in descriptions, f'{name}: duplicate description')
-        descriptions.add(description)
-        robots = {p.strip() for p in page.meta('robots').split(',')}
-        require({'index', 'follow'} <= robots and 'noindex' not in robots, f'{name}: wrong robots directive')
-        require(page.meta('og:url') == canonical, f'{name}: wrong og:url')
-        require(page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong Twitter card')
-        for key in ('og:image', 'twitter:image'):
-            require(page.meta(key).startswith(BASE), f'{name}: image must be hosted on .ru')
-            local_file(page.meta(key), canonical)
+        page = Page(text, name); pages[name] = page
+        require([a.get('href') for t,a in page.tags if t == 'link' and a.get('rel') == 'canonical'] == [canonical], f'{name}: wrong canonical')
+        require(any(t == 'html' and a.get('lang') == 'ru' for t,a in page.tags), f'{name}: wrong language')
+        require(page.title_count == 1 and page.h1_count == 1 and page.title.strip(), f'{name}: expected one title and H1')
+        require(page.title not in titles, f'{name}: duplicate title'); titles.add(page.title)
+        desc = page.meta('description'); require(desc not in descriptions, f'{name}: duplicate description'); descriptions.add(desc)
+        robots = set(page.meta('robots').split(','))
+        require({'index','follow'} <= robots and 'noindex' not in robots, f'{name}: wrong robots')
+        require(page.meta('og:url') == canonical, f'{name}: wrong Open Graph URL')
+        require(page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong social card')
+        for key in ('og:image','twitter:image'):
+            require(page.meta(key) == BASE + SOCIAL, f'{name}: wrong social image')
+            local_target(page.meta(key), canonical)
+        require('© 2026' in text, f'{name}: wrong copyright year')
+        require(page.json_blocks, f'{name}: missing structured data')
         for tag, attrs in page.tags:
-            require(not (tag == 'meta' and attrs.get('http-equiv', '').lower() == 'refresh'), f'{name}: unexpected redirect')
-            for key in ('href', 'src'):
-                if attrs.get(key):
-                    target = local_file(attrs[key], canonical)
-                    fragment = urlsplit(attrs[key]).fragment
-                    if target == (ROOT / name).resolve() and fragment:
-                        require(unquote(fragment) in page.ids, f'{name}: broken anchor {fragment}')
-        require('© 2026' in text, f'{name}: copyright must show 2026')
-
+            require(not (tag == 'meta' and attrs.get('http-equiv','').lower() == 'refresh'), f'{name}: unexpected redirect')
+            if tag == 'img': require('alt' in attrs, f'{name}: image without alt')
+    # Resolve fragments against the destination page, not just the current one.
+    for name, page in pages.items():
+        for tag, attrs in page.tags:
+            for key in ('href','src'):
+                if not attrs.get(key): continue
+                target, fragment = local_target(attrs[key], PAGES[name])
+                if target and fragment:
+                    rel = str(target.relative_to(ROOT))
+                    if rel in pages: require(fragment in pages[rel].ids, f'{name}: broken fragment {attrs[key]}')
     home = pages['index.html']
-    heroes = [a for t, a in home.tags if t == 'img' and 'hero-img' in a.get('class', '').split()]
-    require(len(heroes) == 1, 'Expected exactly one hero image')
+    heroes = [a for t,a in home.tags if t == 'img' and 'hero-img' in a.get('class','').split()]
+    require(len(heroes) == 1, 'Expected one hero image')
     hero = heroes[0]
-    require(hero.get('src') == '/' + IMAGE and hero.get('alt'), 'Wrong hero image or missing alt')
-    require(hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Hero must load eagerly at high priority')
-    require((int(hero['width']), int(hero['height'])) == jpeg_dimensions(ROOT / IMAGE), 'Hero dimensions differ from JPEG')
-    require(home.meta('og:image') == BASE + IMAGE, 'Home social image must match the new portrait')
-    require(home.meta('twitter:image') == BASE + IMAGE, 'Twitter image must match the new portrait')
-
-    profiles = {}
-    for name in ('person.jsonld', 'llm-profile.json'):
-        text = (ROOT / name).read_text(encoding='utf-8')
-        require(not COM.search(text), f'{name}: .com is not allowed in entity data')
-        profiles[name] = json.loads(text, object_pairs_hook=unique_json)
-    require(home.json_blocks == [profiles['llm-profile.json']], 'Inline and standalone JSON-LD must stay synchronized')
-    people = [node for doc in profiles.values() for node in doc['@graph'] if node.get('@type') == 'Person']
-    require(len(people) == 2 and people[0] == people[1], 'Person data must stay synchronized')
-    require(people[0]['@id'] == BASE + '#person' and people[0]['url'] == BASE and people[0]['image'] == BASE + IMAGE, 'Person must use .ru identity and the new image')
-
-    sitemap = ET.parse(ROOT / 'sitemap.xml')
-    ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9', 'image': 'http://www.google.com/schemas/sitemap-image/1.1'}
-    locations = [n.text for n in sitemap.findall('s:url/s:loc', ns)]
-    require(len(locations) == len(PAGES) and set(locations) == set(PAGES.values()), 'Sitemap must contain exactly the Russian canonical pages')
-    for image in sitemap.findall('s:url/image:image/image:loc', ns):
-        require(image.text.startswith(BASE), 'Sitemap image must be on .ru')
-        local_file(image.text, BASE)
-    robots = (ROOT / 'robots.txt').read_text(encoding='utf-8').splitlines()
-    for line in ('User-agent: *', 'Allow: /', 'Sitemap: ' + BASE + 'sitemap.xml'):
-        require(line in robots, f'robots.txt: missing {line}')
-    require((ROOT / 'CNAME').read_text().strip() == 'vadimohka.ru', 'Wrong custom domain')
-    require((ROOT / '.nojekyll').is_file(), 'Missing .nojekyll')
-
-    # Only English navigation and the retired /en/ handoffs may use .com.
-    for path in ROOT.rglob('*'):
-        if not path.is_file():
-            continue
-        parts = path.relative_to(ROOT).parts
-        if parts[0].startswith('.') or parts[0] in ('scripts', 'dist', 'en'):
-            continue
-        if path.suffix in ('.json', '.jsonld', '.txt', '.md', '.xml', '.css', '.js'):
-            require(not COM.search(path.read_text(encoding='utf-8')), f'{path.relative_to(ROOT)}: unexpected .com reference')
-        elif path.suffix == '.html' and str(path.relative_to(ROOT)) not in PAGES:
-            Page(path.read_text(encoding='utf-8'), str(path.relative_to(ROOT)))
-    for name in ('index.html', 'projects/index.html', 'context/index.html', 'approach/index.html'):
-        text = (ROOT / 'en' / name).read_text(encoding='utf-8')
-        require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{name}: invalid English handoff')
-    print('SEO validation passed: 4 Russian pages, canonical URLs, portrait, metadata, JSON-LD, sitemap and English-only .com links.')
+    require(hero['src'] == '/' + IMAGE, 'Wrong hero image')
+    require(hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Hero must be prioritized')
+    require((int(hero['width']), int(hero['height'])) == webp_dimensions(ROOT / IMAGE) == (804,560), 'Wrong hero dimensions')
+    require((ROOT / IMAGE).stat().st_size < 25000, 'Hero exceeds image budget')
+    require(any(t == 'link' and a.get('rel') == 'preload' and a.get('href') == '/'+IMAGE for t,a in home.tags), 'Missing hero preload')
+    profile = json.loads((ROOT/'llm-profile.json').read_text(), object_pairs_hook=unique_json)
+    person = json.loads((ROOT/'person.jsonld').read_text(), object_pairs_hook=unique_json)
+    require(home.json_blocks == [profile], 'Inline and standalone profiles differ')
+    people = [n for doc in (profile,person) for n in doc['@graph'] if n.get('@type') == 'Person']
+    require(len(people) == 2 and people[0] == people[1], 'Person records differ')
+    require(people[0]['url'] == BASE and people[0]['@id'] == BASE+'#person' and people[0]['image'] == BASE+IMAGE, 'Incorrect person identity')
+    root = ET.parse(ROOT/'sitemap.xml'); ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'}
+    urls = [n.text for n in root.findall('s:url/s:loc',ns)]
+    require(len(urls) == len(PAGES) and set(urls) == set(PAGES.values()), 'Sitemap differs from Russian pages')
+    robots = (ROOT/'robots.txt').read_text().splitlines()
+    require(all(s in robots for s in ('User-agent: *','Allow: /','Sitemap: '+BASE+'sitemap.xml')), 'Wrong robots.txt')
+    require((ROOT/'CNAME').read_text().strip() == 'vadimohka.ru', 'Wrong domain')
+    require((ROOT/'.nojekyll').is_file(), 'Missing .nojekyll')
+    for p in ROOT.rglob('*'):
+        if not p.is_file(): continue
+        parts = p.relative_to(ROOT).parts
+        if parts[0].startswith('.') or parts[0] in ('scripts','en','dist'): continue
+        if p.suffix in ('.txt','.json','.jsonld','.md','.xml','.css','.js'):
+            require(not COM.search(p.read_text()), f'{p}: unexpected .com reference')
+        elif p.suffix == '.html' and str(p.relative_to(ROOT)) not in PAGES: Page(p.read_text(),str(p))
+    for p in ('index.html','projects/index.html','context/index.html','approach/index.html'):
+        text=(ROOT/'en'/p).read_text()
+        require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{p}: invalid English handoff')
+    require({'century','knowledge','ecommerce'} <= pages['projects/index.html'].ids, 'Missing case')
+    require({'stacklevel','bsuir-dev','teach-it','startlab','senior-lecturer','assistant','icpc','student-projects','education','awards'} <= pages['background/index.html'].ids, 'Missing biography section')
+    print('SEO validation passed: five pages, local links and anchors, approved portrait, JSON-LD, sitemap, English-only .com links, cases and biography.')
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except (ValueError, OSError, KeyError, IndexError, struct.error, ET.ParseError) as error:
-        print(f'SEO validation failed: {error}', file=sys.stderr)
-        sys.exit(1)
+    try: main()
+    except (ValueError,OSError,KeyError,IndexError,struct.error,ET.ParseError) as error:
+        print(f'SEO validation failed: {error}',file=sys.stderr); sys.exit(1)

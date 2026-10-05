@@ -6,21 +6,34 @@
       "@id": "https://stacklevel.group/#organization",
       "name": "StackLevel Group",
       "url": "https://stacklevel.group",
-      "sameAs": ["https://www.linkedin.com/company/stacklevel"]
+      "sameAs": [
+        "https://www.linkedin.com/company/stacklevel"
+      ]
     },
     {
       "@type": "Person",
       "@id": "https://vadimohka.ru/#person",
       "name": "Владымцев Вадим Денисович",
-      "alternateName": ["Вадим Владымцев", "Vadim Vladymtsev", "Vladymtsev Vadim Denisovich"],
+      "alternateName": [
+        "Вадим Владымцев",
+        "Vadim Vladymtsev",
+        "Vladymtsev Vadim Denisovich"
+      ],
       "url": "https://vadimohka.ru/",
-      "image": "https://vadimohka.ru/assets/vadim-vladymtsev-2026.jpg",
+      "image": "https://vadimohka.ru/assets/portrait-note-2026.webp",
       "jobTitle": "R&D Director & AI Solutions Architect",
-      "description": "Архитектор корпоративных LLM/RAG-систем. Безопасное внедрение ИИ: air-gapped/on-prem развёртывание, гибридный поиск, верификация источников, аудит и наблюдаемость.",
-      "worksFor": {"@id": "https://stacklevel.group/#organization"},
+      "description": "Проектирую и разрабатываю ИИ-системы для компаний: поиск по документам, языковые модели на локальных серверах, проверка источников и аудит запросов.",
+      "worksFor": {
+        "@id": "https://stacklevel.group/#organization"
+      },
       "email": "mailto:vadimohkav@gmail.com",
-      "mainEntityOfPage": {"@id": "https://vadimohka.ru/#webpage"},
-      "knowsLanguage": ["ru", "en"],
+      "mainEntityOfPage": {
+        "@id": "https://vadimohka.ru/#webpage"
+      },
+      "knowsLanguage": [
+        "ru",
+        "en"
+      ],
       "sameAs": [
         "https://www.linkedin.com/in/vadimohka/",
         "https://github.com/vadimohka",
@@ -29,7 +42,19 @@
         "https://codeforces.com/profile/Vadimohka",
         "https://stepik.org/users/296085237/profile"
       ],
-      "knowsAbout": ["Secure LLM", "Enterprise RAG", "Source-grounded answers", "AI security", "Air-Gapped deployments", "On-Prem deployments", "OpenAI-compatible API", "RBAC", "Audit logging", "AI observability", "AI readiness assessment"]
+      "knowsAbout": [
+        "Secure LLM",
+        "Enterprise RAG",
+        "Source-grounded answers",
+        "AI security",
+        "Air-Gapped deployments",
+        "On-Prem deployments",
+        "OpenAI-compatible API",
+        "RBAC",
+        "Audit logging",
+        "AI observability",
+        "AI readiness assessment"
+      ]
     }
   ]
 }
