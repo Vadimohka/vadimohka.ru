@@ -1,0 +1,5 @@
+/* Biography and skills precede projects; additions do not alter the approved portrait. */
+.home .about-band { background: #fff; border-top: 1px solid var(--line); }
+#skills .principles-grid { row-gap: 32px; }
+#skills > .text-link { margin-top: 22px; }
+.timeline-row > div > p + p { margin-top: 12px; }
