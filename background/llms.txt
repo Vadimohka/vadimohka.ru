@@ -1,0 +1,14 @@
+# Путь и образование — Вадим Владымцев
+
+> От профильного лицея и БГУИР — к преподаванию, собственному бизнесу и архитектуре ИИ-платформы. Сейчас совмещаю разработку, работу с командой и обучение других.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/background/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/background/)
+- [Основная страница](https://vadimohka.ru/background/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)

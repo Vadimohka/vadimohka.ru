@@ -1,0 +1,14 @@
+# Публикации и материалы — Вадим Владымцев
+
+> Материалы о преподавании и тренерстве, мои тексты, исследования и открытый код.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/context/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/context/)
+- [Основная страница](https://vadimohka.ru/context/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)

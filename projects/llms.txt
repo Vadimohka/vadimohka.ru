@@ -1,0 +1,14 @@
+# Проекты — Вадим Владымцев
+
+> Развиваю Century вместе с командой. Для собственного интереса занимаюсь белорусскоязычной моделью Belka и парсером Multiverse.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/projects/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/projects/)
+- [Основная страница](https://vadimohka.ru/projects/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)

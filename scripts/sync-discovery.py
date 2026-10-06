@@ -9,6 +9,7 @@ import copy
 import html
 import json
 import re
+import runpy
 import sys
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
@@ -38,6 +39,7 @@ META = {
         'Публикации, патент и учебные материалы — Вадим Владымцев',
         'Мои научные публикации, патент BY 24499 C1, курс C++, тренерство ICPC и бесплатные консультации GenAI.by. Канал «Кайдзен AI» и открытый код.'),
 }
+LLM_PAGES = runpy.run_path(str(ROOT / 'scripts/llm-pages.py'))
 VOID = {'area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'}
 
 
@@ -168,12 +170,16 @@ def replace_head(source, title, description, graph, path):
     # Replace only discovery links. All visible markup, assets and scripts remain unchanged.
     head = re.sub(r'<link rel="(?:icon|apple-touch-icon)"[^>]*>\s*', '', head)
     head = re.sub(r'<link rel="(?:alternate|describedby)"[^>]*type="(?:text/markdown|application/ld\+json)"[^>]*>\s*', '', head)
+    head = re.sub(r'<link rel="alternate" type="text/html" title="Текстовая версия"[^>]*>\s*', '', head)
+    head = re.sub(r'<link rel="describedby" type="text/plain"[^>]*>\s*', '', head)
     head = re.sub(r'<meta name="twitter:url"[^>]*>\s*', '', head)
     links = [
         '<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">',
         '<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml">',
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">',
         '<link rel="alternate" type="text/markdown" href="/'+path+'.md">',
+        '<link rel="alternate" type="text/html" title="Текстовая версия" href="/'+LLM_PAGES['lite_path'](path).removesuffix('index.html')+'">',
+        '<link rel="describedby" type="text/plain" href="/'+LLM_PAGES['index_path'](path)+'">',
         '<link rel="describedby" type="application/ld+json" href="/person.jsonld">',
         '<meta name="twitter:url" content="'+canonical(path)+'">',
     ]
@@ -288,15 +294,15 @@ def generate():
     outputs['person.jsonld'] = json.dumps({'@context':'https://schema.org','@graph':[person,organization]},ensure_ascii=False,separators=(',',':'))+'\n'
     outputs['llms-full.txt'] = '\n\n---\n\n'.join(texts)
     lines = ['# Вадим Владымцев','', '> '+ROLE+'. Проектирую системы, пишу код, организую разработку, преподаю и тренирую команды ICPC.',
-             '', '## Обо мне, моём пути и работе','']
+             '', '## Страницы в Markdown','']
     for path in PAGES:
         title, description = title_description(path,docs[path])
-        lines.append('- ['+title+']('+canonical(path)+'): '+description)
-    lines += ['', '## Текстовые версии страниц','']
+        lines.append('- ['+title+']('+BASE+path+'.md): '+description)
+    lines += ['', '## Текстовые HTML-версии','']
     for path in PAGES:
         title = title_description(path,docs[path])[0]
-        lines.append('- ['+title+']('+BASE+path+'.md)')
-    lines += ['', '## Дополнительные форматы','',
+        lines.append('- ['+title+']('+BASE+LLM_PAGES['lite_path'](path).removesuffix('index.html')+')')
+    lines += ['', '## Optional','',
               '- [Полный текст](https://vadimohka.ru/llms-full.txt)',
               '- [Структурированный профиль](https://vadimohka.ru/llm-profile.json)',
               '- [Person](https://vadimohka.ru/person.jsonld)',
@@ -313,6 +319,8 @@ def generate():
             sitemap += ['    <image:image><image:loc>'+IMAGE+'</image:loc></image:image>']
         sitemap += ['  </url>']
     outputs['sitemap.xml'] = '\n'.join(sitemap+['</urlset>',''])
+    outputs.update(LLM_PAGES['generate'](docs, outputs, BASE))
+    LLM_PAGES['validate'](docs, outputs, BASE, Document)
     return outputs
 
 
@@ -320,7 +328,7 @@ def validate(outputs):
     robots = RobotFileParser()
     robots.parse((ROOT/'robots.txt').read_text().splitlines())
     for bot in ('Googlebot','Bingbot','Yandex','OAI-SearchBot','ChatGPT-User','PerplexityBot','Claude-SearchBot'):
-        for path in PAGES + ['llms.txt','assets/hero-vadim-2026.webp','assets/studio.css']:
+        for path in PAGES + list(outputs) + ['llms.txt','assets/hero-vadim-2026.webp','assets/studio.css']:
             if not robots.can_fetch(bot,canonical(path) if path in PAGES else BASE+path):
                 raise ValueError('Blocked crawler: '+bot+' '+path)
     for path in PAGES:
@@ -365,7 +373,7 @@ def main():
     elif changed:
         raise ValueError('Discovery files are stale; run python3 scripts/sync-discovery.py --write: '+', '.join(changed))
     else:
-        print('SEO/GEO sync passed: five pages, consistent Person, ProfilePage/Article/collections, canonical links, faithful Markdown and crawler rules.')
+        print('SEO/GEO sync passed: five pages, consistent Person, ProfilePage/Article/collections, canonical links, faithful Markdown, five text-only HTML pages, page indexes and crawler rules.')
 
 
 if __name__ == '__main__':
