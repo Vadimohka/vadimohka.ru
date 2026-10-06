@@ -1,0 +1,11 @@
+/* The hero uses a real photograph, never a scaled screenshot of the mockup.
+   The vector silhouette removes only the backdrop; facial pixels are untouched. */
+.home .hero-portrait { display: grid; grid-template-columns: minmax(0, 500fr) minmax(0, 304fr); align-items: center; gap: 0; mask-image: none; -webkit-mask-image: none; }
+.home .portrait-photo { aspect-ratio: 500 / 715; overflow: hidden; min-width: 0; }
+.home .hero-img { display: block; width: 100%; height: auto; aspect-ratio: 500 / 800; object-fit: cover; object-position: center; mix-blend-mode: normal; mask-image: url('/assets/portrait-mask.svg'); -webkit-mask-image: url('/assets/portrait-mask.svg'); mask-size: 100% 100%; -webkit-mask-size: 100% 100%; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; }
+.home .portrait-caption { margin: 0; min-width: 0; padding: 0 12% 20% 0; }
+.home .portrait-caption img { display: block; width: 100%; height: auto; }
+@media (max-width: 767px) {
+  .home .hero-portrait { width: min(100%, 520px); margin-inline: auto; }
+  .home .portrait-caption { padding-right: 4%; }
+}
