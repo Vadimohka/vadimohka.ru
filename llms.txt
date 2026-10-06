@@ -2,19 +2,25 @@
 
 > Co-Founder Century | CTO StackLevel GROUP. Проектирую системы, пишу код, организую разработку, преподаю и тренирую команды ICPC.
 
-## Страницы
+## Обо мне, моём пути и работе
 
-- [Главная](https://vadimohka.ru/): обо мне, моём пути, навыках и текущих проектах.
-- [Путь и навыки](https://vadimohka.ru/background/): моя история, руководство АСПЗиЗ, Teach IT, So Stuffy, ICPC, ROZUM, GenAI.by и обучение в МФТИ.
-- [Проекты](https://vadimohka.ru/projects/): моя работа над Century, Belka, Multiverse, АСПЗиЗ, медицинским мониторингом, телематикой МАЗ × БГУИР и мобильными приложениями.
-- [Подход](https://vadimohka.ru/approach/): как применяю кайдзен, проектирую AI core и распределяю работу между кодом, моделями и человеком.
-- [Профили и материалы](https://vadimohka.ru/context/): мои публикации, патент BY 24499 C1, курс C++, открытый код и канал «Кайдзен AI».
-- [GenAI.by](https://genai.by/): вместе с партнёрами по Century провожу бесплатные консультации для ИТ-специалистов.
+- [Вадим Владымцев — архитектор ИИ и автоматизации, CTO](https://vadimohka.ru/): Я — Вадим Владымцев, Co-Founder Century | CTO StackLevel GROUP. Проектирую ИИ-системы, пишу код, руковожу разработкой и тренирую команды ICPC.
+- [Путь, навыки и образование — Вадим Владымцев](https://vadimohka.ru/background/): Мой путь в разработке и управлении: Century, АСПЗиЗ БГУИР и Teach IT. Архитектура систем, подготовка So Stuffy к ICPC, преподавание и обучение в МФТИ.
+- [Проекты и исследования — Вадим Владымцев](https://vadimohka.ru/projects/): Моя работа над Century, Belka и Multiverse. Руководство АСПЗиЗ, медицинский мониторинг и патент BY 24499 C1, телематика МАЗ × БГУИР.
+- [Подход к внедрению ИИ и автоматизации | Вадим Владымцев](https://vadimohka.ru/approach/): Как я подхожу к внедрению ИИ: разбираю процессы, готовлю данные, проектирую автоматизацию и движение к AI core. Кайдзен, контроль и польза для бизнеса.
+- [Публикации, патент и учебные материалы — Вадим Владымцев](https://vadimohka.ru/context/): Мои научные публикации, патент BY 24499 C1, курс C++, тренерство ICPC и бесплатные консультации GenAI.by. Канал «Кайдзен AI» и открытый код.
 
-## Форматы профиля
+## Текстовые версии страниц
 
+- [Вадим Владымцев — архитектор ИИ и автоматизации, CTO](https://vadimohka.ru/index.html.md)
+- [Путь, навыки и образование — Вадим Владымцев](https://vadimohka.ru/background/index.html.md)
+- [Проекты и исследования — Вадим Владымцев](https://vadimohka.ru/projects/index.html.md)
+- [Подход к внедрению ИИ и автоматизации | Вадим Владымцев](https://vadimohka.ru/approach/index.html.md)
+- [Публикации, патент и учебные материалы — Вадим Владымцев](https://vadimohka.ru/context/index.html.md)
+
+## Дополнительные форматы
+
+- [Полный текст](https://vadimohka.ru/llms-full.txt)
+- [Структурированный профиль](https://vadimohka.ru/llm-profile.json)
 - [Person](https://vadimohka.ru/person.jsonld)
-- [Профиль](https://vadimohka.ru/llm-profile.json)
-- [Обо мне в Markdown](https://vadimohka.ru/index.html.md)
-- [Полное описание](https://vadimohka.ru/llms-full.txt)
 - [Карта сайта](https://vadimohka.ru/sitemap.xml)

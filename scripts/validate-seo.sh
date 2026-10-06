@@ -5,3 +5,4 @@ python3 scripts/validate-seo.py
 python3 scripts/validate-profile.py
 python3 scripts/validate-approach.py
 python3 scripts/validate-english.py
+python3 scripts/sync-discovery.py --check
