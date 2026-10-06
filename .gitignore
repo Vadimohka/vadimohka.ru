@@ -1,1 +1,36 @@
+# Local OS and editor files
 .DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local dependencies and build output
+node_modules/
+/dist/
+/_dist/
+/_live/
+/coverage/
+/test-results/
+/playwright-report/
+*.log
+
+# Local secrets; example configuration may be committed
+.env
+.env.*
+!.env.example
+
+# Generated site Markdown, llms.txt, JSON-LD and /llm/ are published assets.
+# Keep these files tracked and update them with scripts/sync-discovery.py.
