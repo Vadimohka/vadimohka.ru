@@ -12,8 +12,11 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Generate and validate candidate
         run: |
+          set -euo pipefail
           python3 scripts/sync-discovery.py --write
           bash scripts/validate-seo.sh | tee /tmp/seo-checks.txt
       - name: Prepare Git tree without changing main
