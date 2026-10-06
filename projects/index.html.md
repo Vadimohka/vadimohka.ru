@@ -38,7 +38,7 @@ NoCode не отменяет проектирование. Сложные сце
 
 На форуме «IT Академград» Century получила диплом III степени в категории AI Product Leader.
 
-[Платформа Century](https://century-ai.ru) [Мой подход к автоматизации](https://vadimohka.ru/approach/)
+[Платформа Century](https://century-ai.by) [Мой подход к автоматизации](https://vadimohka.ru/approach/)
 
 Личный проект · В разработке
 

@@ -30,7 +30,7 @@ META = {
         'Я — Вадим Владымцев, Co-Founder Century | CTO StackLevel GROUP. Проектирую ИИ-системы, пишу код, руковожу разработкой и тренирую команды ICPC.'),
     'background/index.html': (
         'Путь, навыки и образование — Вадим Владымцев',
-        'Мой путь в разработке и управлении: Century, АСПЗиЗ БГУИР и Teach IT. Архитектура систем, подготовка So Stuffy к ICPC, преподавание и обучение в МФТИ.'),
+        'Мой путь в разработке и управлении: Century, АСПЗиЗ БГУИР, iTechArt и Teach IT. Тренерство ICPC, преподавание, повышение квалификации в МФТИ и НовГУ.'),
     'projects/index.html': (
         'Проекты и исследования — Вадим Владымцев',
         'Моя работа над Century, Belka и Multiverse. Руководство АСПЗиЗ, медицинский мониторинг и патент BY 24499 C1, телематика МАЗ × БГУИР.'),
@@ -193,13 +193,24 @@ def generate():
     person['givenName'], person['familyName'] = 'Вадим', 'Владымцев'
     person['description'] = ('Я — сооснователь Century и CTO StackLevel GROUP. Проектирую системы, '
                              'пишу код и организую разработку. Преподаю и тренирую команды ICPC.')
-    person['hasCredential'] = {
-        '@type':'EducationalOccupationalCredential',
-        'name':'Спортивное программирование для тренеров',
-        'credentialCategory':'Повышение квалификации',
-        'recognizedBy':{'@type':'CollegeOrUniversity','name':'МФТИ'},
-        'url':BASE+'background/#mipt',
-    }
+    person['hasCredential'] = [
+        {
+            '@type':'EducationalOccupationalCredential',
+            'name':'Спортивное программирование для тренеров',
+            'credentialCategory':'Повышение квалификации',
+            'recognizedBy':{'@type':'CollegeOrUniversity','name':'МФТИ'},
+            'url':BASE+'background/#mipt',
+        },
+        {
+            '@type':'EducationalOccupationalCredential',
+            'name':'Методика разработки программ ДПО инженерной направленности',
+            'credentialCategory':'Повышение квалификации',
+            'recognizedBy':{'@type':'CollegeOrUniversity',
+                            'name':'Новгородский государственный университет имени Ярослава Мудрого',
+                            'alternateName':'НовГУ'},
+            'url':BASE+'background/#novsu',
+        },
+    ]
     organization = copy.deepcopy(next(n for n in profile['@graph'] if n.get('@type') == 'Organization'))
     website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':'Вадим Владымцев',
                'alternateName':'Vadimohka','inLanguage':'ru-RU','publisher':ref(PERSON_ID)}
