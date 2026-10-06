@@ -1,0 +1,168 @@
+name: Prepare LLM pages and archive obsolete branches
+on:
+  push:
+    branches: [maintenance/llm-pages-20261006]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply and validate reviewed content
+        run: |
+          set -euo pipefail
+          python3 .github/apply-llm-update.py
+          python3 scripts/sync-discovery.py --write
+          bash scripts/validate-seo.sh | tee /tmp/checks.txt
+      - name: Prepare content-only Git tree for review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, runpy, shutil, subprocess, urllib.request
+          root = pathlib.Path('.')
+          base = 'e249fa0c827988ade47ac143dd9daa78655a1db7'
+          base_tree = '9ed5f1d585d9c0aa6f18bc90ed964edf71436710'
+          module = runpy.run_path('scripts/sync-discovery.py')
+          generated = module['generate']()
+          names = sorted(set(generated) | {'scripts/llm-pages.py','scripts/sync-discovery.py'})
+          bodies = {}
+          for name in module['PAGES']:
+              before = subprocess.check_output(['git','show',base+':'+name]).decode().split('</head>',1)[1]
+              after = (root/name).read_text().split('</head>',1)[1]
+              if name == 'background/index.html':
+                  before = before.replace('id="itechart"><p class="timeline-date">Обучение и адаптация</p>', 'id="itechart"><p class="timeline-date">2021</p>')
+              assert before == after, name
+              bodies[name] = True
+          for name in ['robots.txt','assets/hero-vadim-2026.webp','assets/studio.css','favicon.ico','favicon.svg','apple-touch-icon.png']:
+              assert subprocess.check_output(['git','show',base+':'+name]) == (root/name).read_bytes(), name
+          entries = [{'path':name,'type':'blob','mode':'100644','content':(root/name).read_text()} for name in names]
+          payload = json.dumps({'base_tree':base_tree,'tree':entries},ensure_ascii=False).encode()
+          request = urllib.request.Request('https://api.github.com/repos/Vadimohka/vadimohka.ru/git/trees',data=payload,method='POST',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'})
+          with urllib.request.urlopen(request,timeout=60) as response:
+              tree = json.load(response)
+          out = root/'candidate'
+          out.mkdir()
+          hashes = {}
+          for name in names:
+              data = (root/name).read_bytes()
+              hashes[name] = hashlib.sha256(data).hexdigest()
+              dest = out/'files'/name
+              dest.parent.mkdir(parents=True,exist_ok=True)
+              dest.write_bytes(data)
+          manifest = {'base_commit':base,'tree_sha':tree['sha'],'hashes':hashes,'body_preservation':bodies}
+          (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
+          shutil.copy('/tmp/checks.txt',out/'checks.txt')
+          print(json.dumps(manifest,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llm-pages-candidate
+          path: candidate
+          retention-days: 7
+  verify-and-cleanup:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: llm-pages-candidate
+          path: candidate
+      - name: Verify publication and safely archive obsolete branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, time, urllib.error, urllib.parse, urllib.request
+          api_root = 'https://api.github.com/repos/Vadimohka/vadimohka.ru/'
+          headers = {'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'}
+          def api(path, method='GET', data=None):
+              req = urllib.request.Request(api_root+path,data=None if data is None else json.dumps(data).encode(),headers=headers,method=method)
+              with urllib.request.urlopen(req,timeout=40) as response:
+                  raw=response.read()
+                  return json.loads(raw) if raw else None
+          manifest = json.loads(pathlib.Path('candidate/manifest.json').read_text())
+          deadline = time.monotonic()+900
+          while True:
+              head = api('git/ref/heads/main')['object']['sha']
+              commit = api('git/commits/'+head)
+              ready = commit['tree']['sha'] == manifest['tree_sha']
+              if ready:
+                  runs = api('actions/runs?head_sha='+head+'&per_page=100')['workflow_runs']
+                  deploy = next((r for r in runs if r['path']=='.github/workflows/static.yml'),None)
+                  ready = deploy is not None and deploy['status']=='completed' and deploy['conclusion']=='success'
+              if ready:
+                  break
+              if time.monotonic()>=deadline:
+                  raise RuntimeError('Reviewed tree not published successfully; no branches were removed')
+              time.sleep(10)
+          report={'main_commit':head,'resources':{},'deleted':[],'retained':[],'archived':{}}
+          for name, expected in manifest['hashes'].items():
+              if name.startswith('scripts/'):
+                  continue
+              path=name.removesuffix('index.html') if name.endswith('index.html') else name
+              url='https://vadimohka.ru/'+path+'?_verify='+os.environ['GITHUB_RUN_ID']
+              with urllib.request.urlopen(url,timeout=40) as response:
+                  data=response.read()
+                  assert response.status==200, name
+              assert hashlib.sha256(data).hexdigest()==expected, name
+              report['resources'][name]={'http_status':200,'sha256':expected}
+          old = {
+              'design/editorial-cases-and-path':'5f4f3bf823f8c4c2acbc516bae59c2626cfaaf6c',
+              'maintenance/approved-portrait-20261006':'a193ee26d061232b6b9a331b5b3aa6b89f35ac2e',
+              'maintenance/seo-geo-20261006':'08edc3f6197b8762727da7190b2a8df7a8f02285',
+              'maintenance/timeline-20261006':'b1a6398abb7a7e7ab30eda1e29a9905604d0279b',
+              'refresh-2026-photo-seo':'9e924265d20e9037d94cf2de918c99801e381bcc',
+          }
+          own=os.environ['GITHUB_REF_NAME']
+          assert own=='maintenance/llm-pages-20261006'
+          old[own]=os.environ['GITHUB_SHA']
+          for branch, expected in old.items():
+              assert branch!='main'
+              quoted=urllib.parse.quote(branch,safe='')
+              branch_data=api('branches/'+quoted)
+              if branch_data['protected'] or branch_data['commit']['sha']!=expected:
+                  report['retained'].append({'branch':branch,'reason':'protected or changed'})
+                  continue
+              pulls=api('pulls?state=open&per_page=100&head='+urllib.parse.quote('Vadimohka:'+branch,safe=''))
+              if pulls:
+                  report['retained'].append({'branch':branch,'reason':'open pull request'})
+                  continue
+              tag='archive/20261006/'+branch
+              try:
+                  saved=api('git/ref/tags/'+urllib.parse.quote(tag,safe=''))
+                  assert saved['object']['sha']==expected, tag
+              except urllib.error.HTTPError as exc:
+                  if exc.code!=404:
+                      raise
+                  api('git/refs','POST',{'ref':'refs/tags/'+tag,'sha':expected})
+              saved=api('git/ref/tags/'+urllib.parse.quote(tag,safe=''))
+              assert saved['object']['sha']==expected, tag
+              report['archived'][branch]={'tag':tag,'commit':expected}
+              # A lease prevents deletion if a collaborator updates the branch meanwhile.
+              result=subprocess.run(['git','push','--force-with-lease=refs/heads/'+branch+':'+expected,'origin',':refs/heads/'+branch],capture_output=True,text=True)
+              if result.returncode:
+                  report['retained'].append({'branch':branch,'reason':'lease or permission prevented deletion'})
+              else:
+                  report['deleted'].append(branch)
+          report['remaining_branches']=[b['name'] for b in api('branches?per_page=100')]
+          pathlib.Path('llm-publication-cleanup.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: llm-publication-cleanup
+          path: llm-publication-cleanup.json
+          retention-days: 14
