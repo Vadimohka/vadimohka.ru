@@ -7,7 +7,7 @@
       "url": "https://vadimohka.ru/",
       "name": "Вадим Владымцев",
       "alternateName": "Vadimohka.ru",
-      "description": "Создаю ИИ-системы, которые ищут ответы в документах и работают на серверах компании. Проекты Вадима Владымцева, опыт разработки и преподавания.",
+      "description": "Вадим Владымцев — архитектор корпоративных ИИ-систем и руководитель R&D. Экспертиза в LLM, RAG и безопасности, проекты, опыт разработки и преподавания.",
       "inLanguage": "ru-RU",
       "publisher": {
         "@id": "https://vadimohka.ru/#person"
@@ -17,15 +17,12 @@
       "@type": "WebPage",
       "@id": "https://vadimohka.ru/#webpage",
       "url": "https://vadimohka.ru/",
-      "name": "Вадим Владымцев — ИИ для бизнеса, LLM и RAG",
-      "description": "Создаю ИИ-системы, которые ищут ответы в документах и работают на серверах компании. Проекты Вадима Владымцева, опыт разработки и преподавания.",
+      "name": "Вадим Владымцев — архитектор ИИ и руководитель R&D",
+      "description": "Вадим Владымцев — архитектор корпоративных ИИ-систем и руководитель R&D. Экспертиза в LLM, RAG и безопасности, проекты, опыт разработки и преподавания.",
       "inLanguage": "ru-RU",
-      "dateModified": "2026-10-05",
+      "dateModified": "2026-10-06",
       "isPartOf": {
         "@id": "https://vadimohka.ru/#website"
-      },
-      "about": {
-        "@id": "https://vadimohka.ru/#person"
       },
       "mainEntity": {
         "@id": "https://vadimohka.ru/#person"
@@ -35,6 +32,9 @@
         "url": "https://vadimohka.ru/assets/portrait-note-2026.webp",
         "width": 804,
         "height": 560
+      },
+      "about": {
+        "@id": "https://vadimohka.ru/#person"
       }
     },
     {
@@ -49,7 +49,7 @@
       "url": "https://vadimohka.ru/",
       "image": "https://vadimohka.ru/assets/portrait-note-2026.webp",
       "jobTitle": "R&D Director & AI Solutions Architect",
-      "description": "Проектирую и разрабатываю ИИ-системы для компаний: поиск по документам, языковые модели на локальных серверах, проверка источников и аудит запросов.",
+      "description": "Архитектор корпоративных ИИ-систем и руководитель исследований и разработки. Специализация: LLM, RAG, безопасность данных и локальное развёртывание. Опыт преподавания и подготовки команд к ICPC в БГУИР.",
       "worksFor": {
         "@id": "https://stacklevel.group/#organization"
       },
