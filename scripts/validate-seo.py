@@ -181,8 +181,14 @@ def main():
             require(not COM.search(path.read_text()), f'{path}: unexpected .com reference')
         elif path.suffix == '.html' and str(path.relative_to(ROOT)) not in PAGES: Page(path.read_text(),str(path))
     for path in ('index.html','projects/index.html','context/index.html','approach/index.html'):
-        text=(ROOT/'en'/path).read_text()
-        require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{path}: invalid English handoff')
+        text = (ROOT/'en'/path).read_text()
+        require('noindex' in text, f'en/{path}: invalid English handoff')
+        en_page = Page(text, f'en/{path}')
+        handoff_links = [a.get('href', '') for t, a in en_page.tags if t == 'a' and a.get('href')]
+        require(any(
+            (u.scheme, u.hostname, u.path, u.query, u.fragment) == ('https', 'vadimohka.com', '/', '', '')
+            for u in (urlsplit(href) for href in handoff_links)
+        ), f'en/{path}: invalid English handoff')
     require({'century','knowledge','ecommerce'} <= pages['projects/index.html'].ids, 'Missing case')
     require({'stacklevel','bsuir-dev','teach-it','startlab','senior-lecturer','assistant','icpc','student-projects','education','awards'} <= pages['background/index.html'].ids, 'Missing biography section')
     print('SEO validation passed: five pages, real portrait, CTO role, JSON-LD, local links, sitemap, English-only domain links and retained cases/career.')
