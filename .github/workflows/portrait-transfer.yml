@@ -1,4 +1,4 @@
-name: Verify approved portrait transfer
+name: Prepare approved site update
 on:
   push:
     branches: ["maintenance/approved-portrait-20261006"]
@@ -11,15 +11,15 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify and assemble portrait
+      - name: Build and verify candidate tree without publishing
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
-        run: python3 scripts/assemble-portrait.py
+        run: python3 scripts/build-approved-release.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: portrait-transfer-review
-          path: _portrait-transfer
+          name: approved-site-candidate
+          path: /tmp/approved-site-release
           if-no-files-found: error
           retention-days: 1

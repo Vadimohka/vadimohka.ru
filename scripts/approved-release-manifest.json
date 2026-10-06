@@ -1,0 +1,20 @@
+{
+  "index.html": "10d8c30d444f39022e9f3a9a59790c357a2c0bda2d22c21edd620dfda589bd65",
+  "projects/index.html": "b932bfdc60f06c283f9613da054269874fa92282549d01952656257ff3ae0749",
+  "background/index.html": "5dbfa61df8724a711d45ce08b60230b58a909cc9c1786061d08ce15e04151749",
+  "context/index.html": "e3103340850e6e511abde559af54297942e3749ec40d06e84e7a4eca66372f31",
+  "approach/index.html": "de288baf4322677b276f92602efa21de19c5c95092aef0d005a0e0796d73c8e2",
+  "assets/approach.css": "71ae72e9302a7f095cb8635ac984381ad6a33e63b72b31efa2b41f9d91a17efd",
+  "assets/portrait.css": "5bde8bb7a01a3ca250fae20e0d04caa506e22a6d76b57c9745cb9df519678276",
+  "assets/hero-vadim-2026.webp": "7861caaa5608ecbc2bcebc4760fd30c79eeb08f035bfee48456f6428db87ff13",
+  "index.html.md": "a0a15521749a6ff964ce055e159a7d8e3b504e66786c50fa0e1ef5cf3d4c5efb",
+  "llm-profile.json": "c10265efbb95e9a33d2aa5b9633291208527ddb175e20c7326179bb1724d4b7f",
+  "person.jsonld": "b6d50a0b8c6f49354f572fc8665832fcb368b2f3c2756cfd0437a6bff013ba2f",
+  "llms.txt": "9800a8d3064ba63a36b50c96038ae71692a5b98124787a515eb92862f54805eb",
+  "llms-full.txt": "1fc9dd4c842b70e8ada0b6b3f5fb6ba1f7bd3b1ef63989410a85a1693f8d9b54",
+  "sitemap.xml": "e918a86292ab8633d0d63416dfefa8710e967a7b9a8761af051148dc9dd7fdb3",
+  "scripts/content/approach.md": "e0e4c93a6d6227efb22df59130e82a10dc19b39dd33624f143a7f643233ef596",
+  "scripts/validate-seo.py": "74257985f9ed03851e9715fd0a7188880b0351e2a75f326e2453ac92ceeb28fb",
+  "scripts/validate-approach.py": "f20519ec8166a60e51147d250e9ef205ef3e0741cf02995f31235c2faade1ebd",
+  "scripts/validate-seo.sh": "d160dff32822c010eb404456016f241e04f7efde50d2671013c75865bf7f6e82"
+}
