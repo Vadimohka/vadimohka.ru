@@ -1,0 +1,133 @@
+name: Prepare and verify SEO GEO update
+on:
+  push:
+    branches: [maintenance/seo-geo-20261006]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate and validate candidate
+        run: |
+          python3 scripts/sync-discovery.py --write
+          bash scripts/validate-seo.sh | tee /tmp/seo-checks.txt
+      - name: Prepare Git tree without changing main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, runpy, shutil, subprocess, urllib.request
+          root = pathlib.Path('.')
+          base_commit = 'cc17a465173f388978ada26e05bf96a1080430a8'
+          base_tree = '62c9d2136367a9781bed133bc64cf56fa4ca6de5'
+          module = runpy.run_path('scripts/sync-discovery.py')
+          generated = module['generate']()
+          names = sorted(set(generated) | {'scripts/sync-discovery.py', 'scripts/validate-seo.sh'})
+          preserved = {}
+          for name in module['PAGES']:
+              original = subprocess.check_output(['git','show',base_commit+':'+name])
+              current = (root/name).read_bytes()
+              assert original.split(b'</head>',1)[1] == current.split(b'</head>',1)[1], name
+              preserved[name] = True
+          protected = ['robots.txt','assets/hero-vadim-2026.webp','assets/studio.css','favicon.ico','favicon.svg','apple-touch-icon.png']
+          protected_hashes = {}
+          for name in protected:
+              original = subprocess.check_output(['git','show',base_commit+':'+name])
+              current = (root/name).read_bytes()
+              assert original == current, name
+              protected_hashes[name] = hashlib.sha256(current).hexdigest()
+          entries = [{'path':n,'mode':'100755' if n.endswith('.sh') else '100644','type':'blob','content':(root/n).read_text()} for n in names]
+          payload = json.dumps({'base_tree':base_tree,'tree':entries},ensure_ascii=False).encode()
+          request = urllib.request.Request('https://api.github.com/repos/Vadimohka/vadimohka.ru/git/trees',data=payload,method='POST',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+          with urllib.request.urlopen(request,timeout=60) as response:
+              tree = json.load(response)
+          out = root/'candidate'
+          out.mkdir()
+          files = {}
+          for name in names:
+              raw = (root/name).read_bytes()
+              files[name] = {'sha256':hashlib.sha256(raw).hexdigest(),'git_blob':hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest(),'bytes':len(raw)}
+              target = out/'files'/name
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_bytes(raw)
+          manifest = {'base_commit':base_commit,'base_tree':base_tree,'tree_sha':tree['sha'],'files':files,'unchanged_page_bodies':preserved,'protected_files':protected_hashes}
+          (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
+          shutil.copy('/tmp/seo-checks.txt',out/'checks.txt')
+          print('Prepared tree:',tree['sha'])
+          print('Files:',len(files))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seo-geo-candidate
+          path: candidate/
+          retention-days: 3
+  verify-publication:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: seo-geo-candidate
+          path: candidate/
+      - name: Verify published pages and resource bytes
+        run: |
+          python3 - <<'PY'
+          import concurrent.futures, datetime, hashlib, json, os, pathlib, time, urllib.request
+          manifest = json.loads(pathlib.Path('candidate/manifest.json').read_text())
+          expected = {n:v['sha256'] for n,v in manifest['files'].items() if not n.startswith('scripts/')}
+          expected.update(manifest['protected_files'])
+          pages = ['index.html','background/index.html','projects/index.html','approach/index.html','context/index.html']
+          base = 'https://vadimohka.ru/'
+          def fetch(name, agent='Mozilla/5.0 (compatible; SiteVerification/1.0)'):
+              path = name.removesuffix('index.html') if name in pages else name
+              url = base+path+'?_seo_check='+os.environ['GITHUB_RUN_ID']
+              request = urllib.request.Request(url,headers={'User-Agent':agent})
+              with urllib.request.urlopen(request,timeout=20) as response:
+                  raw = response.read()
+                  result = {'path':name,'status':response.status,'content_type':response.headers.get('Content-Type'),'sha256':hashlib.sha256(raw).hexdigest(),'user_agent':agent,'url':response.url}
+                  assert result['status'] == 200, result
+                  assert result['sha256'] == expected[name], 'Waiting for published bytes: '+name
+                  if name in pages:
+                      assert 'text/html' in result['content_type'], result
+                      assert 'noindex' not in response.headers.get('X-Robots-Tag','').lower(), result
+                  return result
+          # Publication is performed separately through the repository connector.
+          for attempt in range(60):
+              try:
+                  fetch('index.html')
+                  break
+              except Exception:
+                  print('Waiting for the reviewed update to be published:',attempt+1,flush=True)
+                  time.sleep(8)
+          else:
+              raise RuntimeError('The reviewed homepage was not published within the verification window')
+          for attempt in range(6):
+              try:
+                  with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
+                      results = list(pool.map(fetch,expected))
+                  break
+              except Exception as exc:
+                  print(str(exc),flush=True)
+                  if attempt == 5:
+                      raise
+                  time.sleep(8)
+          agents = ['Googlebot','Bingbot','Yandex','OAI-SearchBot','ChatGPT-User']
+          with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
+              agent_results = list(pool.map(lambda pair: fetch(*pair), [(name,agent) for name in pages for agent in agents]))
+          report = {'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'base_url':base,'candidate_tree':manifest['tree_sha'],'resources':results,'user_agent_requests':agent_results,'note':'HTTP requests from GitHub Actions using these User-Agent headers; not proof of indexing or requests from search-engine IP addresses.'}
+          pathlib.Path('seo-geo-live-checks.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print('Live verification passed:',len(results),'resource hashes and',len(agent_results),'User-Agent requests.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seo-geo-live-checks
+          path: seo-geo-live-checks.json
+          retention-days: 7
