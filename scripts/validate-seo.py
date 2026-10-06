@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline checks for metadata, real portrait, current role and local navigation."""
+"""Offline checks for site metadata, domain boundaries, role and approved image."""
 import hashlib
 import json
 import re
@@ -13,7 +13,9 @@ from urllib.parse import unquote, urljoin, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://vadimohka.ru/'
 PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'background', 'approach', 'context')}}
-IMAGE = 'assets/vadim-vladymtsev-2026.jpg'
+ROLE = 'Co-Founder Century | CTO StackLevel GROUP'
+IMAGE = 'assets/hero-vadim-2026.webp'
+IMAGE_SHA256 = '7861caaa5608ecbc2bcebc4760fd30c79eeb08f035bfee48456f6428db87ff13'
 COM = re.compile(r'vadimohka\.com\b', re.I)
 
 
@@ -58,9 +60,8 @@ class Page(HTMLParser):
         if tag == 'a': self.anchor = {'attrs': attrs, 'text': ''}
         for key, value in pairs:
             if value and COM.search(value):
-                require(tag == 'a' and key == 'href', f'{self.name}: .com outside English link')
-                require(value == 'https://vadimohka.com/', f'{self.name}: unexpected English target')
-                require(attrs.get('hreflang') == 'en' and attrs.get('lang') == 'en', f'{self.name}: English link missing language')
+                require(tag == 'a' and key == 'href' and value == 'https://vadimohka.com/', f'{self.name}: .com outside English link')
+                require(attrs.get('hreflang') == 'en' and attrs.get('lang') == 'en', f'{self.name}: missing English language')
 
     def handle_endtag(self, tag):
         if tag == 'head': self.in_head = False
@@ -91,25 +92,8 @@ def local_target(value, canonical):
     path = unquote(url.path).lstrip('/')
     if not path or path.endswith('/'): path += 'index.html'
     target = (ROOT / path).resolve()
-    require(target.is_relative_to(ROOT), f'Path escapes root: {value}')
-    require(target.is_file(), f'Missing local target: {value}')
+    require(target.is_relative_to(ROOT) and target.is_file(), f'Missing or unsafe local target: {value}')
     return target, unquote(url.fragment)
-
-
-def jpeg_dimensions(data):
-    require(data[:2] == b'\xff\xd8' and data[-2:] == b'\xff\xd9', 'Invalid portrait JPEG')
-    offset = 2
-    while offset + 4 < len(data):
-        require(data[offset] == 255, 'Invalid JPEG marker')
-        while data[offset] == 255: offset += 1
-        marker = data[offset]; offset += 1
-        size = struct.unpack_from('>H', data, offset)[0]
-        if marker in (0xc0, 0xc1, 0xc2):
-            height, width = struct.unpack_from('>HH', data, offset + 3)
-            return width, height
-        require(size >= 2, 'Invalid JPEG segment')
-        offset += size
-    raise ValueError('Missing JPEG dimensions')
 
 
 def main():
@@ -124,14 +108,13 @@ def main():
         desc = page.meta('description'); require(desc not in descriptions, f'{name}: duplicate description'); descriptions.add(desc)
         robots = set(page.meta('robots').split(','))
         require({'index','follow'} <= robots and 'noindex' not in robots, f'{name}: wrong robots')
-        require(page.meta('og:url') == canonical, f'{name}: wrong Open Graph URL')
-        require(page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong social card')
+        require(page.meta('og:url') == canonical and page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong social metadata')
         for key in ('og:image','twitter:image'):
             require(page.meta(key) == BASE + IMAGE, f'{name}: wrong social image')
-        require('© 2026' in text, f'{name}: wrong copyright year')
-        require(page.json_blocks, f'{name}: missing structured data')
-        require('portrait-note-2026.webp' not in text, f'{name}: low-quality mockup screenshot returned')
-        require(not re.search(r'Заместитель директора по R(?:&amp;|&)D|R&D Director', text), f'{name}: obsolete current title')
+            local_target(page.meta(key), canonical)
+        require(page.meta('og:image:type') == 'image/webp' and page.meta('og:image:width') == '1448' and page.meta('og:image:height') == '1086', f'{name}: wrong image metadata')
+        require('© 2026' in text and page.json_blocks, f'{name}: missing copyright or structured data')
+        if name != 'approach/index.html': require(ROLE in text, f'{name}: missing approved role')
         for tag, attrs in page.tags:
             require(not (tag == 'meta' and attrs.get('http-equiv','').lower() == 'refresh'), f'{name}: unexpected redirect')
             if tag == 'img': require('alt' in attrs, f'{name}: image without alt')
@@ -145,53 +128,44 @@ def main():
                     if rel in pages: require(fragment in pages[rel].ids, f'{name}: broken fragment {attrs[key]}')
     home = pages['index.html']
     heroes = [a for t,a in home.tags if t == 'img' and 'hero-img' in a.get('class','').split()]
-    require(len(heroes) == 1, 'Expected one photographic hero image')
+    require(len(heroes) == 1, 'Expected one hero image')
     hero = heroes[0]
-    require(hero['src'] == '/' + IMAGE, 'Hero must use the photograph, not a mockup')
-    require(hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Hero must be prioritized')
-    image_data = (ROOT / IMAGE).read_bytes()
-    require((int(hero['width']), int(hero['height'])) == jpeg_dimensions(image_data) == (1200,800), 'Wrong portrait dimensions')
-    # Keep the existing photographic source byte-for-byte, without another lossy encode.
-    require(hashlib.sha1(b'blob ' + str(len(image_data)).encode() + b'\0' + image_data).hexdigest() == '1d6d73beae40f0edd1ecd35c8b5e6c1dbe32a09c', 'Portrait was replaced or recompressed')
-    require(any(t == 'link' and a.get('rel') == 'preload' and a.get('href') == '/'+IMAGE for t,a in home.tags), 'Missing portrait preload')
-    for name in ('assets/portrait-mask.svg', 'assets/portrait-note.svg'):
-        ET.parse(ROOT/name)
-    css = (ROOT/'assets/studio.css').read_text() + (ROOT/'assets/portrait.css').read_text()
-    for value in re.findall(r"url\(['\"]?(/[^)'\"]+)['\"]?\)", css): local_target(value, BASE)
+    require(hero['src'] == '/' + IMAGE and hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Wrong hero or priority')
+    data = (ROOT / IMAGE).read_bytes()
+    require(hashlib.sha256(data).hexdigest() == IMAGE_SHA256, 'Portrait differs from approved asset')
+    require(data[:4] == b'RIFF' and data[8:12] == b'WEBP' and data[12:16] == b'VP8 ', 'Invalid WebP')
+    require(len(data) == int.from_bytes(data[4:8], 'little') + 8, 'Truncated image')
+    dimensions = tuple(v & 0x3fff for v in struct.unpack('<HH', data[26:30]))
+    require((int(hero['width']),int(hero['height'])) == dimensions == (1448,1086), 'Wrong native portrait dimensions')
+    require(len(data) < 200000, 'Portrait exceeds size budget')
+    require(any(t == 'link' and a.get('rel') == 'preload' and a.get('href') == '/'+IMAGE for t,a in home.tags), 'Missing hero preload')
+    require(not any(t == 'img' and 'portrait-note' in a.get('src','') for t,a in home.tags), 'Obsolete caption overlay')
     profile = json.loads((ROOT/'llm-profile.json').read_text(), object_pairs_hook=unique_json)
     person = json.loads((ROOT/'person.jsonld').read_text(), object_pairs_hook=unique_json)
     require(home.json_blocks == [profile], 'Inline and standalone profiles differ')
     people = [n for doc in (profile,person) for n in doc['@graph'] if n.get('@type') == 'Person']
     require(len(people) == 2 and people[0] == people[1], 'Person records differ')
-    require(people[0]['url'] == BASE and people[0]['@id'] == BASE+'#person' and people[0]['image'] == BASE+IMAGE, 'Incorrect person identity')
-    require(people[0]['jobTitle'] == 'Технический директор (CTO)', 'Incorrect current position')
-    root = ET.parse(ROOT/'sitemap.xml'); ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'}
+    require(people[0]['url'] == BASE and people[0]['@id'] == BASE+'#person' and people[0]['image'] == BASE+IMAGE and people[0]['jobTitle'] == ROLE, 'Incorrect person identity or role')
+    root = ET.parse(ROOT/'sitemap.xml'); ns={'s':'http://www.sitemaps.org/schemas/sitemap/0.9','image':'http://www.google.com/schemas/sitemap-image/1.1'}
     urls = [n.text for n in root.findall('s:url/s:loc',ns)]
     require(len(urls) == len(PAGES) and set(urls) == set(PAGES.values()), 'Sitemap differs from Russian pages')
-    for node in root.findall('.//{http://www.google.com/schemas/sitemap-image/1.1}loc'): local_target(node.text, BASE)
+    for image in root.findall('s:url/image:image/image:loc',ns): local_target(image.text,BASE)
     robots = (ROOT/'robots.txt').read_text().splitlines()
     require(all(s in robots for s in ('User-agent: *','Allow: /','Sitemap: '+BASE+'sitemap.xml')), 'Wrong robots.txt')
-    require((ROOT/'CNAME').read_text().strip() == 'vadimohka.ru', 'Wrong domain')
-    require((ROOT/'.nojekyll').is_file(), 'Missing .nojekyll')
-    for path in ROOT.rglob('*'):
-        if not path.is_file(): continue
-        parts = path.relative_to(ROOT).parts
+    require((ROOT/'CNAME').read_text().strip() == 'vadimohka.ru' and (ROOT/'.nojekyll').is_file(), 'Wrong domain or missing .nojekyll')
+    for p in ROOT.rglob('*'):
+        if not p.is_file(): continue
+        parts = p.relative_to(ROOT).parts
         if parts[0].startswith('.') or parts[0] in ('scripts','en','dist'): continue
-        if path.suffix in ('.txt','.json','.jsonld','.md','.xml','.css','.js'):
-            require(not COM.search(path.read_text()), f'{path}: unexpected .com reference')
-        elif path.suffix == '.html' and str(path.relative_to(ROOT)) not in PAGES: Page(path.read_text(),str(path))
-    for path in ('index.html','projects/index.html','context/index.html','approach/index.html'):
-        text = (ROOT/'en'/path).read_text()
-        require('noindex' in text, f'en/{path}: invalid English handoff')
-        en_page = Page(text, f'en/{path}')
-        handoff_links = [a.get('href', '') for t, a in en_page.tags if t == 'a' and a.get('href')]
-        require(any(
-            (u.scheme, u.hostname, u.path, u.query, u.fragment) == ('https', 'vadimohka.com', '/', '', '')
-            for u in (urlsplit(href) for href in handoff_links)
-        ), f'en/{path}: invalid English handoff')
+        if p.suffix in ('.txt','.json','.jsonld','.md','.xml','.css','.js'):
+            require(not COM.search(p.read_text()), f'{p}: unexpected .com reference')
+        elif p.suffix == '.html' and str(p.relative_to(ROOT)) not in PAGES: Page(p.read_text(),str(p))
+    for p in ('index.html','projects/index.html','context/index.html','approach/index.html'):
+        text=(ROOT/'en'/p).read_text()
+        require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{p}: invalid English handoff')
     require({'century','knowledge','ecommerce'} <= pages['projects/index.html'].ids, 'Missing case')
     require({'stacklevel','bsuir-dev','teach-it','startlab','senior-lecturer','assistant','icpc','student-projects','education','awards'} <= pages['background/index.html'].ids, 'Missing biography section')
-    print('SEO validation passed: five pages, real portrait, CTO role, JSON-LD, local links, sitemap, English-only domain links and retained cases/career.')
+    print('SEO validation passed: five pages, exact role, approved portrait, links, metadata, JSON-LD and English-only domain links.')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,23 @@
+/* Long-form author copy; deliberately scoped to the approach page. */
+.approach-heading { max-width: 832px; padding-block: 68px 56px; }
+.approach-heading h1 { font-size: clamp(36px, 4.2vw, 54px); line-height: 1.14; max-width: 760px; }
+.approach-heading .lead { max-width: none; font-size: 19px; line-height: 1.75; margin-top: 28px; }
+.approach-heading p:last-child { margin-top: 28px; }
+.approach-content { max-width: 832px; padding-bottom: 36px; }
+.approach-section { border-top: 1px solid var(--line); padding-block: 44px 48px; scroll-margin-top: 28px; }
+.approach-section h2 { font-size: clamp(28px, 3vw, 35px); font-weight: 500; line-height: 1.25; margin-bottom: 24px; }
+.approach-section p { font-size: 17px; line-height: 1.8; }
+.approach-section p + p { margin-top: 20px; }
+.approach-topic { margin-top: 32px; }
+.approach-topic h3 { font-size: 21px; font-weight: 500; line-height: 1.45; margin-bottom: 14px; }
+#debt-example { background: var(--paper); padding: 32px; margin-block: 0 12px; border: 0; border-radius: 8px; }
+#contact.approach-section { padding-bottom: 38px; }
+.approach-section a:not(.button) { display: inline; min-height: 0; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 767px) {
+ .approach-heading { padding-block: 32px 38px; }
+ .approach-heading .lead { font-size: 17px; margin-top: 22px; }
+ .approach-section { padding-block: 32px; }
+ .approach-section p { font-size: 16px; line-height: 1.75; }
+ .approach-topic h3 { font-size: 20px; }
+ #debt-example { padding: 24px 20px; }
+}
