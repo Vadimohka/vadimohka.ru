@@ -1,0 +1,25 @@
+name: Verify approved portrait transfer
+on:
+  push:
+    branches: ["maintenance/approved-portrait-20261006"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and assemble portrait
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: python3 scripts/assemble-portrait.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portrait-transfer-review
+          path: _portrait-transfer
+          if-no-files-found: error
+          retention-days: 1
