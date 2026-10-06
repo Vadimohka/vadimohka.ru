@@ -1,0 +1,121 @@
+name: Prepare reviewed timeline update
+on:
+  push:
+    branches: [maintenance/timeline-20261006]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Apply the reviewed content changes
+        run: |
+          set -euo pipefail
+          python3 .github/apply-timeline-update.py
+          python3 scripts/sync-discovery.py --write
+          bash scripts/validate-seo.sh | tee /tmp/timeline-checks.txt
+      - name: Verify hashes and prepare the content-only tree
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, shutil, subprocess, urllib.request
+          root = pathlib.Path('.')
+          base = '5400b9549774ba48b39a3e6b0b24f04a3f27691e'
+          base_tree = '0f19c8f5bb4073329d92e43cae49439698c2836c'
+          expected = {
+            'approach/index.html': '923d8d770a33f3e22c0cef84dbb5a004d6af264c52c39f4cd4ea54c8504c3039',
+            'background/index.html': '9ef8f385dda75bdaa74f7ea2cb334831d6ab5c993da6d250079dc32a44c94c57',
+            'background/index.html.md': 'f44f64ffab5f2e907389e1a5acb6482d3ff84635e69fb044ce1a338e4c934815',
+            'context/index.html': '25d203940550a3758b3583c3da8b017aa0496e9a0e8a9fcefeec00f5e2bf89c5',
+            'context/index.html.md': '063fd0f802c1f8226d1e0617920433b0a9105e659af72ed10c66668981b70630',
+            'index.html': '9a55d892b70abe0fa114aa54b1b932c336cd157cab9e62eff07eeb2259185c55',
+            'llm-profile.json': 'cd86feb7314e141b01da62d5bc454450832367003bb5c60822dd299beee9f5ff',
+            'llms-full.txt': '4b330c93e9256c8e3f98c73a2aa48679a3fdf4b8dd48120e0ec18abffd34e4c8',
+            'llms.txt': 'cec969d902bff98845576c9cef4a95ad78ae034463e90d8b530fcc83b2fc50ae',
+            'person.jsonld': '0a44c336f85fa7587983ce77168a66ab9b11b7785f3d09c2ee44997ab7e692c3',
+            'projects/index.html': '21b8c1e68cfb03b6e85ddeaf681c2ba7229ec8c096c87da146e8f410650e4398',
+            'projects/index.html.md': 'edf21f59d409332f544fcc8eeba290ef134d82b039f1b346687a16dec7cdd77c',
+            'scripts/sync-discovery.py': '76c19ed87579e6cfcbff55edb6fa0cc96f3e7d47be82f83401fe3a163e1a24b3',
+          }
+          changed = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()
+          assert set(changed) == set(expected), changed
+          for name, digest in expected.items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest() == digest, name
+          for name in ['index.html','approach/index.html']:
+              old = subprocess.check_output(['git','show',base+':'+name])
+              assert old.split(b'</head>',1)[1] == (root/name).read_bytes().split(b'</head>',1)[1], name
+          entries = [{'path':n,'mode':'100644','type':'blob','content':(root/n).read_text()} for n in expected]
+          payload = json.dumps({'base_tree':base_tree,'tree':entries},ensure_ascii=False).encode()
+          request = urllib.request.Request('https://api.github.com/repos/Vadimohka/vadimohka.ru/git/trees',data=payload,method='POST',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+          with urllib.request.urlopen(request,timeout=60) as response:
+              tree = json.load(response)
+          out = root/'candidate'
+          out.mkdir()
+          files = {}
+          for name, digest in expected.items():
+              raw = (root/name).read_bytes()
+              files[name] = {'sha256':digest,'git_blob':hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest(),'bytes':len(raw)}
+              target = out/'files'/name
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_bytes(raw)
+          manifest = {'base_commit':base,'base_tree':base_tree,'tree_sha':tree['sha'],'files':files,'home_and_approach_bodies_unchanged':True}
+          (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
+          shutil.copy('/tmp/timeline-checks.txt',out/'checks.txt')
+          print('Prepared content-only tree:',tree['sha'])
+          print('Verified file count:',len(files))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: timeline-update-candidate
+          path: candidate
+          retention-days: 3
+  verify-publication:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: timeline-update-candidate
+          path: candidate
+      - name: Verify the published content bytes
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, time, urllib.request
+          manifest=json.loads(pathlib.Path('candidate/manifest.json').read_text())
+          pending={p:v for p,v in manifest['files'].items() if not p.startswith('scripts/')}
+          report={'resources':{},'candidate_tree':manifest['tree_sha']}
+          deadline=time.time()+480
+          attempt=0
+          while pending and time.time()<deadline:
+              attempt+=1
+              for path, info in list(pending.items()):
+                  public_path=path.removesuffix('index.html') if path.endswith('index.html') else path
+                  url='https://vadimohka.ru/'+public_path+'?_timeline='+os.environ['GITHUB_RUN_ID']+'-'+str(attempt)
+                  try:
+                      with urllib.request.urlopen(url,timeout=15) as response:
+                          body=response.read()
+                          if response.status==200 and hashlib.sha256(body).hexdigest()==info['sha256']:
+                              report['resources'][path]={'status':200,'sha256':info['sha256'],'matches_candidate':True}
+                              del pending[path]
+                  except Exception:
+                      pass
+              if pending: time.sleep(8)
+          report['pending']=list(pending)
+          pathlib.Path('timeline-live-checks.json').write_text(json.dumps(report,indent=2))
+          assert not pending, 'Unverified live resources: '+str(list(pending))
+          print('Verified',len(report['resources']),'published resources against the reviewed candidate.')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: timeline-live-checks
+          path: timeline-live-checks.json
+          retention-days: 7
