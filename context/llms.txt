@@ -12,3 +12,5 @@
 
 - [Все разделы](https://vadimohka.ru/llms.txt)
 - [Профиль](https://vadimohka.ru/person.jsonld)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

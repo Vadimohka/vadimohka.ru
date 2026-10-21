@@ -1,0 +1,80 @@
+AICatalog = {
+  specVersion: text,
+  ? host: HostInfo,
+  entries: [* CatalogEntry],
+  ? extensions: { * text => any }
+}
+
+HostInfo = {
+  displayName: text,
+  ? identifier: text,
+  ? documentationUrl: text,
+  ? logoUrl: text
+}
+
+CatalogEntry = {
+  identifier: text,
+  ? displayName: text,
+  type: text,
+  (url: text // data: any),
+  ? version: text,
+  ? description: text,
+  ? tags: [* text],
+  ? publisher: Publisher,
+  ? trustManifest: TrustManifest,
+  ? updatedAt: tdate,
+  ? extensions: { * text => any }
+}
+
+Publisher = {
+  identifier: text,
+  displayName: text,
+  ? identityType: text
+}
+
+TrustManifest = {
+  identity: text,
+  ? identityType: text,
+  ? trustSchema: TrustSchema,
+  ? attestations: [* Attestation],
+  ? provenance: [* ProvenanceLink],
+  ? privacyPolicyUrl: text,
+  ? termsOfServiceUrl: text,
+  ? subject: Subject,
+  ? issuedAt: tdate,
+  ? expiresAt: tdate,
+  ? signature: text,
+  ? extensions: { * text => any }
+}
+
+Subject = {
+  identifier: text,
+  ? version: text,
+  type: text,
+  digest: text,
+  ? url: text
+}
+
+TrustSchema = {
+  identifier: text,
+  version: text,
+  ? governanceUri: text,
+  ? verificationMethods: [* text]
+}
+
+Attestation = {
+  type: text,
+  uri: text,
+  ? digest: text,
+  ? size: uint,
+  ? description: text
+}
+
+ProvenanceLink = {
+  relation: text,
+  sourceId: text,
+  ? sourceDigest: text,
+  ? registryUri: text,
+  ? statementUri: text,
+  ? signatureRef: text
+}

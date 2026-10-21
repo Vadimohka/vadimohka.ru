@@ -1,0 +1,39 @@
+{
+  "retrievedOn": "2026-10-21",
+  "ard": {
+    "repository": "ards-project/ard-spec",
+    "commit": "49eb4df6f3841ccecc5c31d5175117337b568bdf",
+    "path": "spec/schemas/ard-entry.schema.json",
+    "blob": "cf20f6d76ce85061f78ba53514b4d446474a476b",
+    "url": "https://raw.githubusercontent.com/ards-project/ard-spec/49eb4df6f3841ccecc5c31d5175117337b568bdf/spec/schemas/ard-entry.schema.json",
+    "manifestSchemaRef": "#/$defs/ArdManifest",
+    "modifications": "None; local schema bytes match the pinned Git blob.",
+    "license": "Apache-2.0",
+    "licensePath": "ARD-LICENSE",
+    "licenseSource": "https://github.com/ards-project/ard-spec/blob/49eb4df6f3841ccecc5c31d5175117337b568bdf/LICENSE",
+    "licenseBlob": "9bd0ef25cb6b7a535296f71e0f2d95ffe18d9a83"
+  },
+  "aiCatalog": {
+    "repository": "Agent-Card/ai-catalog",
+    "commit": "9316f00de22f8baf0a7bb526cf92e27a40ca047e",
+    "path": "specification/ai-catalog.md",
+    "blob": "076caeb139e7a3c68b10d22b063a133333c6c9f3",
+    "url": "https://github.com/Agent-Card/ai-catalog/blob/9316f00de22f8baf0a7bb526cf92e27a40ca047e/specification/ai-catalog.md",
+    "normativeSchema": "ai-catalog.normative.cddl",
+    "modifications": "The two CDDL blocks under CDDL Schema are joined with a blank line. The local JSON Schema is a manually reviewed JSON-compatible structural transcription; it is not an official upstream schema or a full CDDL engine.",
+    "localTranscription": "ai-catalog.local.schema.json",
+    "license": "CC-BY-4.0",
+    "licensePath": "AI-CATALOG-LICENSE.md",
+    "licenseSource": "https://github.com/Agent-Card/ai-catalog/blob/9316f00de22f8baf0a7bb526cf92e27a40ca047e/LICENSE.md",
+    "licenseBlob": "eafdd513565239ad2532e076a51b1f4d407a24b8"
+  },
+  "validationScope": "Offline structural validation and explicit site contracts. No proof of publisher identity, trust, signature validity, indexing, ranking or third-party client support is asserted.",
+  "sha256": {
+    "AI-CATALOG-LICENSE.md": "cf0a4c5523a74f989780b3ebb84372bc7d6343a9baef68175c3bca2bb1c5dc97",
+    "ARD-LICENSE": "dfe0e2a538e0e9004d43d1f57598177793109f5662706ccd1b1cb93c7fa34ce5",
+    "NOTICE": "6f7c6ff37d90676b2a5508188a21df35a89426ccc3a503a2594f27cf838a898d",
+    "ai-catalog.local.schema.json": "18db542d20386b11a99fa45be5cbc168ef8cc419dd408d75c8127cea5a526d57",
+    "ai-catalog.normative.cddl": "15411bb2e565aa08c0296d5a9861685161b872b402be2aa510dbd01ec658febc",
+    "ard-entry.schema.json": "3032dad432607ddae0ec088db5759fa456f36308e0e9f340165aaed504d535f4"
+  }
+}

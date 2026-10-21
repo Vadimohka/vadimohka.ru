@@ -5,7 +5,6 @@ Run with --write after editing the site, or --check in CI. Page bodies and the
 owner's approach text are never rewritten. Uses only the Python standard library.
 """
 import argparse
-import copy
 import html
 import json
 import re
@@ -13,32 +12,15 @@ import runpy
 import sys
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
-from pathlib import Path
 from urllib.parse import urljoin
 from urllib.robotparser import RobotFileParser
 
-ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://vadimohka.ru/'
-ROLE = 'Co-Founder Century | CTO StackLevel GROUP'
-PERSON_ID = BASE + '#person'
-IMAGE = BASE + 'assets/hero-vadim-2026.webp'
-PAGES = ['index.html', 'background/index.html', 'projects/index.html',
-         'approach/index.html', 'context/index.html']
-# The author's approach title and description are read unchanged from its HTML.
-META = {
-    'index.html': (
-        'Вадим Владымцев — архитектор ИИ и автоматизации, CTO',
-        'Я — Вадим Владымцев, Co-Founder Century | CTO StackLevel GROUP. Проектирую ИИ-системы, пишу код, руковожу разработкой и тренирую команды ICPC.'),
-    'background/index.html': (
-        'Путь, навыки и образование — Вадим Владымцев',
-        'Мой путь в разработке и управлении: Century, АСПЗиЗ БГУИР, iTechArt и Teach IT. Тренерство ICPC, преподавание, повышение квалификации в МФТИ и НовГУ.'),
-    'projects/index.html': (
-        'Проекты и исследования — Вадим Владымцев',
-        'Моя работа над Century, Belka и Multiverse. Руководство АСПЗиЗ, медицинский мониторинг и патент BY 24499 C1, телематика МАЗ × БГУИР.'),
-    'context/index.html': (
-        'Публикации, патент и учебные материалы — Вадим Владымцев',
-        'Мои научные публикации, патент BY 24499 C1, курс C++, тренерство ICPC и бесплатные консультации GenAI.by. Канал «Кайдзен AI» и открытый код.'),
-}
+from site_model import (
+    ROOT, BASE, ROLE, PERSON_ID, IMAGE, NAME, CONTACT, LANGUAGE,
+    SCHEMA_LANGUAGE, PAGES, PAGE_BY_PATH, RESOURCES, canonical, lite_path, index_path,
+    load_profile, catalog_links, catalog_index_lines, build_catalogs,
+)
+
 LLM_PAGES = runpy.run_path(str(ROOT / 'scripts/llm-pages.py'))
 VOID = {'area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'}
 
@@ -104,10 +86,6 @@ def ref(identifier):
     return {'@id': identifier}
 
 
-def canonical(path):
-    return BASE + path.removesuffix('index.html')
-
-
 def metadata(doc, name):
     return next(n.attrs['content'] for n in doc.all('meta')
                 if n.attrs.get('name', n.attrs.get('property')) == name)
@@ -152,7 +130,8 @@ def markdown(node, url):
 
 
 def title_description(path, doc):
-    return META.get(path, (doc.first('title').text(), metadata(doc,'description')))
+    # The primary HTML owns editorial metadata as well as visible copy.
+    return doc.first('title').text(), metadata(doc,'description')
 
 
 def replace_head(source, title, description, graph, path):
@@ -172,17 +151,19 @@ def replace_head(source, title, description, graph, path):
     head = re.sub(r'<link rel="(?:alternate|describedby)"[^>]*type="(?:text/markdown|application/ld\+json)"[^>]*>\s*', '', head)
     head = re.sub(r'<link rel="alternate" type="text/html" title="Текстовая версия"[^>]*>\s*', '', head)
     head = re.sub(r'<link rel="describedby" type="text/plain"[^>]*>\s*', '', head)
+    head = re.sub(r'<link rel="(?:ai-catalog|ard)"[^>]*>\s*', '', head)
     head = re.sub(r'<meta name="twitter:url"[^>]*>\s*', '', head)
     links = [
         '<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">',
         '<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml">',
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">',
         '<link rel="alternate" type="text/markdown" href="/'+path+'.md">',
-        '<link rel="alternate" type="text/html" title="Текстовая версия" href="/'+LLM_PAGES['lite_path'](path).removesuffix('index.html')+'">',
-        '<link rel="describedby" type="text/plain" href="/'+LLM_PAGES['index_path'](path)+'">',
+        '<link rel="alternate" type="text/html" title="Текстовая версия" href="/'+lite_path(path).removesuffix('index.html')+'">',
+        '<link rel="describedby" type="text/plain" href="/'+index_path(path)+'">',
         '<link rel="describedby" type="application/ld+json" href="/person.jsonld">',
         '<meta name="twitter:url" content="'+canonical(path)+'">',
     ]
+    links.extend(catalog_links())
     head = head.rstrip() + '\n' + '\n'.join(links) + '\n'
     return head + '</head>' + body
 
@@ -190,52 +171,25 @@ def replace_head(source, title, description, graph, path):
 def generate():
     sources = {p: (ROOT/p).read_text(encoding='utf-8') for p in PAGES}
     docs = {p: Document(s).root for p,s in sources.items()}
-    profile = json.loads((ROOT/'person.jsonld').read_text(encoding='utf-8'))
-    person = copy.deepcopy(next(n for n in profile['@graph'] if n.get('@type') == 'Person'))
-    if person['jobTitle'] != ROLE or person['@id'] != PERSON_ID:
-        raise ValueError('Unexpected personal identity or approved role')
-    person['name'] = 'Вадим Владымцев'
-    person['alternateName'] = ['Владымцев Вадим Денисович','Vadim Vladymtsev','Vladymtsev Vadim Denisovich','Vadimohka']
-    person['givenName'], person['familyName'] = 'Вадим', 'Владымцев'
-    person['description'] = ('Я — сооснователь Century и CTO StackLevel GROUP. Проектирую системы, '
-                             'пишу код и организую разработку. Преподаю и тренирую команды ICPC.')
-    person['hasCredential'] = [
-        {
-            '@type':'EducationalOccupationalCredential',
-            'name':'Спортивное программирование для тренеров',
-            'credentialCategory':'Повышение квалификации',
-            'recognizedBy':{'@type':'CollegeOrUniversity','name':'МФТИ'},
-            'url':BASE+'background/#mipt',
-        },
-        {
-            '@type':'EducationalOccupationalCredential',
-            'name':'Методика разработки программ ДПО инженерной направленности',
-            'credentialCategory':'Повышение квалификации',
-            'recognizedBy':{'@type':'CollegeOrUniversity',
-                            'name':'Новгородский государственный университет имени Ярослава Мудрого',
-                            'alternateName':'НовГУ'},
-            'url':BASE+'background/#novsu',
-        },
-    ]
-    organization = copy.deepcopy(next(n for n in profile['@graph'] if n.get('@type') == 'Organization'))
-    website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':'Вадим Владымцев',
-               'alternateName':'Vadimohka','inLanguage':'ru-RU','publisher':ref(PERSON_ID)}
+    profile = load_profile()
+    person = next(n for n in profile['@graph'] if n.get('@type') == 'Person')
+    organization = next(n for n in profile['@graph'] if n.get('@type') == 'Organization')
+    website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':NAME,
+               'alternateName':'Vadimohka','inLanguage':SCHEMA_LANGUAGE,'publisher':ref(PERSON_ID)}
     image = {'@type':'ImageObject','url':IMAGE,'width':1448,'height':1086}
     outputs, texts = {}, []
     for path, source in sources.items():
         doc, url = docs[path], canonical(path)
         title, description = title_description(path, doc)
         old_page = next(n for n in script_json(source)['@graph'] if n.get('@id') == url+'#webpage')
-        page = {'@type':'WebPage','@id':url+'#webpage','url':url,'name':title,'description':description,
-                'inLanguage':'ru-RU','isPartOf':ref(BASE+'#website'),'about':ref(PERSON_ID),
+        page = {'@type':PAGE_BY_PATH[path].schema_type,'@id':url+'#webpage','url':url,'name':title,'description':description,
+                'inLanguage':SCHEMA_LANGUAGE,'isPartOf':ref(BASE+'#website'),'about':ref(PERSON_ID),
                 'author':ref(PERSON_ID),'primaryImageOfPage':image,
                 'dateModified':old_page['dateModified']}
         nodes = [page, person, organization, website]
-        if path in ('index.html','background/index.html'):
-            page['@type'] = 'ProfilePage'
+        if page['@type'] == 'ProfilePage':
             page['mainEntity'] = ref(PERSON_ID)
-        elif path in ('projects/index.html','context/index.html'):
-            page['@type'] = 'CollectionPage'
+        elif page['@type'] == 'CollectionPage':
             listing = {'@type':'ItemList','@id':url+'#items','name':doc.first('h1').text(),'itemListElement':[]}
             page['mainEntity'] = ref(listing['@id'])
             if path == 'projects/index.html':
@@ -251,7 +205,7 @@ def generate():
             nodes.append(listing)
         else:
             article = {'@type':'Article','@id':url+'#article','url':url,'headline':doc.first('h1').text(),
-                       'description':description,'inLanguage':'ru-RU','author':ref(PERSON_ID),
+                       'description':description,'inLanguage':SCHEMA_LANGUAGE,'author':ref(PERSON_ID),
                        'publisher':ref(PERSON_ID),'mainEntityOfPage':ref(page['@id']),
                        'dateModified':page['dateModified'],'image':image,
                        'articleSection':[n.text() for n in doc.first('main').all('h2')]}
@@ -263,7 +217,7 @@ def generate():
             headline = re.search('«(Алгоритм.*?)»', paper_text)[1]
             publication = {'@type':'ScholarlyArticle','@id':url+'#heart-rate-publication',
                            'name':headline,'headline':headline,'url':paper.first('h2').first('a').attrs['href'],
-                           'inLanguage':'ru','author':[{'@type':'Person','name':n} for n in
+                           'inLanguage':LANGUAGE,'author':[{'@type':'Person','name':n} for n in
                            ['А. Н. Осипов','О. Ч. Ролич','А. П. Клюев']]+[ref(PERSON_ID)]+
                            [{'@type':'Person','name':n} for n in ['С. А. Мигалевич','И. О. Хазановский']]}
             patent = {'@type':'CreativeWork','@id':BASE+'projects/#medical-patent',
@@ -273,14 +227,12 @@ def generate():
             nodes.extend([publication,patent])
         if path != 'index.html':
             crumb = {'@type':'BreadcrumbList','@id':url+'#breadcrumb','itemListElement':[
-                {'@type':'ListItem','position':1,'name':'Главная','item':BASE},
-                {'@type':'ListItem','position':2,'name':{'background/index.html':'Путь',
-                    'projects/index.html':'Проекты','approach/index.html':'Подход',
-                    'context/index.html':'Профили и материалы'}[path],'item':url}]}
+                {'@type':'ListItem','position':1,'name':PAGE_BY_PATH['index.html'].breadcrumb,'item':BASE},
+                {'@type':'ListItem','position':2,'name':PAGE_BY_PATH[path].breadcrumb,'item':url}]}
             page['breadcrumb'] = ref(crumb['@id'])
             nodes.append(crumb)
         else:
-            page['hasPart'] = [ref(BASE+s+'/#webpage') for s in ('background','projects','approach','context')]
+            page['hasPart'] = [ref(canonical(p)+'#webpage') for p in PAGES if p != path]
         graph = {'@context':'https://schema.org','@graph':nodes}
         outputs[path] = replace_head(source,title,description,graph,path)
         if path == 'index.html':
@@ -288,12 +240,12 @@ def generate():
         main = markdown(doc.first('main'),url)
         main = re.sub(r'[ \t]+\n','\n',main)
         main = re.sub(r'\n{3,}','\n\n',main).strip()
-        text = '['+title+']('+url+')\n\n'+main+'\n\n[Написать мне](mailto:vadimohkav@gmail.com)\n'
+        text = '['+title+']('+url+')\n\n'+main+'\n\n[Написать мне]('+CONTACT+')\n'
         outputs[path+'.md'] = text
         texts.append(text)
-    outputs['person.jsonld'] = json.dumps({'@context':'https://schema.org','@graph':[person,organization]},ensure_ascii=False,separators=(',',':'))+'\n'
+    outputs['person.jsonld'] = json.dumps(profile,ensure_ascii=False,separators=(',',':'))+'\n'
     outputs['llms-full.txt'] = '\n\n---\n\n'.join(texts)
-    lines = ['# Вадим Владымцев','', '> '+ROLE+'. Проектирую системы, пишу код, организую разработку, преподаю и тренирую команды ICPC.',
+    lines = ['# '+NAME,'', '> '+ROLE+'. Проектирую системы, пишу код, организую разработку, преподаю и тренирую команды ICPC.',
              '', '## Страницы в Markdown','']
     for path in PAGES:
         title, description = title_description(path,docs[path])
@@ -301,12 +253,13 @@ def generate():
     lines += ['', '## Текстовые HTML-версии','']
     for path in PAGES:
         title = title_description(path,docs[path])[0]
-        lines.append('- ['+title+']('+BASE+LLM_PAGES['lite_path'](path).removesuffix('index.html')+')')
+        lines.append('- ['+title+']('+BASE+lite_path(path).removesuffix('index.html')+')')
     lines += ['', '## Optional','',
-              '- [Полный текст](https://vadimohka.ru/llms-full.txt)',
-              '- [Структурированный профиль](https://vadimohka.ru/llm-profile.json)',
-              '- [Person](https://vadimohka.ru/person.jsonld)',
-              '- [Карта сайта](https://vadimohka.ru/sitemap.xml)', '']
+              '- [Полный текст]('+BASE+'llms-full.txt)',
+              '- [Структурированный профиль]('+BASE+'llm-profile.json)',
+              '- [Person]('+BASE+'person.jsonld)',
+              '- [Карта сайта]('+BASE+'sitemap.xml)']
+    lines += catalog_index_lines() + ['']
     outputs['llms.txt'] = '\n'.join(lines)
     # Use genuine page edit dates, not today's build time. Keep only canonical Russian pages.
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -320,6 +273,9 @@ def generate():
         sitemap += ['  </url>']
     outputs['sitemap.xml'] = '\n'.join(sitemap+['</urlset>',''])
     outputs.update(LLM_PAGES['generate'](docs, outputs, BASE))
+    page_metadata = {path: title_description(path, doc) for path, doc in docs.items()}
+    for path, catalog in build_catalogs(page_metadata).items():
+        outputs[path] = json.dumps(catalog,ensure_ascii=False,indent=2)+'\n'
     LLM_PAGES['validate'](docs, outputs, BASE, Document)
     return outputs
 
@@ -373,7 +329,7 @@ def main():
     elif changed:
         raise ValueError('Discovery files are stale; run python3 scripts/sync-discovery.py --write: '+', '.join(changed))
     else:
-        print('SEO/GEO sync passed: five pages, consistent Person, ProfilePage/Article/collections, canonical links, faithful Markdown, five text-only HTML pages, page indexes and crawler rules.')
+        print(f'SEO/GEO sync passed: {len(PAGES)} pages, consistent Person, ProfilePage/Article/collections, canonical links, faithful Markdown, {len(PAGES)} text-only HTML pages, page indexes, {len(RESOURCES)} read-only resources in AI Catalog/ARD and crawler rules.')
 
 
 if __name__ == '__main__':
