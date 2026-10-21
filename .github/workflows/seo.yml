@@ -1,4 +1,4 @@
-name: Validate static site SEO
+name: Validate and build static site discovery
 
 on:
   push:
@@ -12,9 +12,46 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements-validation.txt
+
+      - name: Install validation dependencies
+        run: python3 -m pip install -r scripts/requirements-validation.txt
+
       - name: Validate Russian pages, structured data and English-only domain links
         run: bash scripts/validate-seo.sh
+
+      - name: Test discovery and delivery regressions
+        run: |
+          python3 scripts/test-discovery.py
+          python3 scripts/test-discovery-client.py
+          python3 scripts/test-delivery.py
+
+      - name: Build the same static artifact used for publication
+        id: build
+        run: python3 scripts/build-site.py --output dist --inventory _dist/inventory.json
+
+      - name: Exercise discovery from the built homepage
+        run: python3 scripts/check-discovery-client.py --serve-dir dist --report _dist/discovery-trace.json
+
+      - name: Save the branch build and discovery trace
+        if: always() && steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: |
+            dist/
+            _dist/inventory.json
+            _dist/discovery-trace.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

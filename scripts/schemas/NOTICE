@@ -1,0 +1,21 @@
+Pinned discovery specification inputs
+
+ard-entry.schema.json is copied without modification from ards-project/ard-spec
+commit 49eb4df6f3841ccecc5c31d5175117337b568bdf, under Apache-2.0.
+Copyright 2026 Agentic Resource Discovery project. See ARD-LICENSE.
+
+ai-catalog.normative.cddl combines the two normative CDDL code blocks from the
+AI Catalog specification by the Agent Card Working Group, Agent-Card/ai-catalog
+commit 9316f00de22f8baf0a7bb526cf92e27a40ca047e. The extraction removes only the
+surrounding Markdown headings and code fences. Specification material is
+CC-BY-4.0; see AI-CATALOG-LICENSE.md and
+https://creativecommons.org/licenses/by/4.0/legalcode.
+
+ai-catalog.local.schema.json is a local JSON-compatible structural transcription
+of that CDDL, created for this site. It is a modified derivative, not an official
+upstream JSON Schema or a general CDDL validator. Additional site contracts and
+semantic checks live in validate-discovery.py. It does not verify trust claims,
+signatures, publisher authority or third-party client support.
+
+Exact source URLs, commit/blob identifiers and local SHA-256 checksums are in
+provenance.json. No schema or context is downloaded during validation.

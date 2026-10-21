@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local JSON-compatible transcription of AI Catalog normative CDDL",
+  "$comment": "Local derivative of the Agent Card Working Group specification at commit 9316f00de22f8baf0a7bb526cf92e27a40ca047e (CC-BY-4.0). This is not an official JSON Schema or a general CDDL validator. See NOTICE and provenance.json.",
+  "$ref": "#/$defs/AICatalog",
+  "$defs": {
+    "AICatalog": {
+      "type": "object",
+      "required": ["specVersion", "entries"],
+      "properties": {
+        "specVersion": {"type": "string"},
+        "host": {"$ref": "#/$defs/HostInfo"},
+        "entries": {"type": "array", "items": {"$ref": "#/$defs/CatalogEntry"}},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "HostInfo": {
+      "type": "object",
+      "required": ["displayName"],
+      "properties": {
+        "displayName": {"type": "string"},
+        "identifier": {"type": "string"},
+        "documentationUrl": {"type": "string"},
+        "logoUrl": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "CatalogEntry": {
+      "type": "object",
+      "required": ["identifier", "type"],
+      "oneOf": [
+        {"required": ["url"], "not": {"required": ["data"]}},
+        {"required": ["data"], "not": {"required": ["url"]}}
+      ],
+      "properties": {
+        "identifier": {"type": "string"},
+        "displayName": {"type": "string"},
+        "type": {"type": "string"},
+        "url": {"type": "string"},
+        "data": {},
+        "version": {"type": "string"},
+        "description": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "publisher": {"$ref": "#/$defs/Publisher"},
+        "trustManifest": {"$ref": "#/$defs/TrustManifest"},
+        "updatedAt": {"type": "string", "format": "date-time"},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "Publisher": {
+      "type": "object",
+      "required": ["identifier", "displayName"],
+      "properties": {
+        "identifier": {"type": "string"},
+        "displayName": {"type": "string"},
+        "identityType": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "TrustManifest": {
+      "type": "object",
+      "required": ["identity"],
+      "properties": {
+        "identity": {"type": "string"},
+        "identityType": {"type": "string"},
+        "trustSchema": {"$ref": "#/$defs/TrustSchema"},
+        "attestations": {"type": "array", "items": {"$ref": "#/$defs/Attestation"}},
+        "provenance": {"type": "array", "items": {"$ref": "#/$defs/ProvenanceLink"}},
+        "privacyPolicyUrl": {"type": "string"},
+        "termsOfServiceUrl": {"type": "string"},
+        "subject": {"$ref": "#/$defs/Subject"},
+        "issuedAt": {"type": "string", "format": "date-time"},
+        "expiresAt": {"type": "string", "format": "date-time"},
+        "signature": {"type": "string"},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "Subject": {
+      "type": "object",
+      "required": ["identifier", "type", "digest"],
+      "properties": {
+        "identifier": {"type": "string"},
+        "version": {"type": "string"},
+        "type": {"type": "string"},
+        "digest": {"type": "string"},
+        "url": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "TrustSchema": {
+      "type": "object",
+      "required": ["identifier", "version"],
+      "properties": {
+        "identifier": {"type": "string"},
+        "version": {"type": "string"},
+        "governanceUri": {"type": "string"},
+        "verificationMethods": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "Attestation": {
+      "type": "object",
+      "required": ["type", "uri"],
+      "properties": {
+        "type": {"type": "string"},
+        "uri": {"type": "string"},
+        "digest": {"type": "string"},
+        "size": {"type": "integer", "minimum": 0},
+        "description": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "ProvenanceLink": {
+      "type": "object",
+      "required": ["relation", "sourceId"],
+      "properties": {
+        "relation": {"type": "string"},
+        "sourceId": {"type": "string"},
+        "sourceDigest": {"type": "string"},
+        "registryUri": {"type": "string"},
+        "statementUri": {"type": "string"},
+        "signatureRef": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -9,10 +9,11 @@ import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
+from site_model import PAGES as SOURCE_PAGES
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://vadimohka.ru/'
-PAGES = {'index.html': BASE, **{f'{s}/index.html': BASE + s + '/' for s in ('projects', 'background', 'approach', 'context')}}
+PAGES = {path: BASE + path.removesuffix('index.html') for path in SOURCE_PAGES}
 ROLE = 'Co-Founder Century | CTO StackLevel GROUP'
 IMAGE = 'assets/hero-vadim-2026.webp'
 IMAGE_SHA256 = '7861caaa5608ecbc2bcebc4760fd30c79eeb08f035bfee48456f6428db87ff13'
@@ -156,7 +157,7 @@ def main():
     for p in ROOT.rglob('*'):
         if not p.is_file(): continue
         parts = p.relative_to(ROOT).parts
-        if parts[0].startswith('.') or parts[0] in ('scripts','en','dist'): continue
+        if parts[0].startswith('.') or parts[0] in ('scripts','en','dist','_dist','_live'): continue
         if p.suffix in ('.txt','.json','.jsonld','.md','.xml','.css','.js'):
             require(not COM.search(p.read_text()), f'{p}: unexpected .com reference')
         elif p.suffix == '.html' and str(p.relative_to(ROOT)) not in PAGES: Page(p.read_text(),str(p))

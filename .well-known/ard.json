@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:profile:vadim-vladymtsev",
+      "displayName": "Вадим Владымцев — публичный профиль",
+      "type": "application/ld+json",
+      "url": "https://vadimohka.ru/person.jsonld",
+      "description": "Структурированные сведения об авторе: текущие роли, области работы, публичные профили и контакт.",
+      "tags": [
+        "profile",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Кто такой Вадим Владымцев и как с ним связаться?",
+        "Какие роли и области экспертизы указаны в профиле Вадима Владымцева?"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:docs:index",
+      "displayName": "Навигация по материалам Вадима Владымцева",
+      "type": "text/plain",
+      "url": "https://vadimohka.ru/llms.txt",
+      "description": "Индекс официальных материалов на русском языке: биография, проекты, подход, публикации и ссылки на текстовые версии.",
+      "tags": [
+        "documentation",
+        "portfolio",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Где найти официальные материалы Вадима Владымцева о его работе?",
+        "Где прочитать биографию, проекты и публикации Вадима Владымцева?"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:docs:background",
+      "displayName": "Путь, навыки и образование — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/background/index.html.md",
+      "description": "Мой путь в разработке и управлении: Century, АСПЗиЗ БГУИР, iTechArt и Teach IT. Тренерство ICPC, преподавание, повышение квалификации в МФТИ и НовГУ.",
+      "tags": [
+        "background",
+        "education",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Какой профессиональный путь прошёл Вадим Владымцев?",
+        "Какое образование и преподавательский опыт указаны у Вадима Владымцева?"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:docs:projects",
+      "displayName": "Проекты и исследования — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/projects/index.html.md",
+      "description": "Моя работа над Century, Belka и Multiverse. Руководство АСПЗиЗ, медицинский мониторинг и патент BY 24499 C1, телематика МАЗ × БГУИР.",
+      "tags": [
+        "projects",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Над какими проектами работает Вадим Владымцев?",
+        "Что такое Century, Belka и Multiverse и на какой стадии эти проекты?"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:docs:ai-automation-approach",
+      "displayName": "Подход к внедрению ИИ и автоматизации | Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/approach/index.html.md",
+      "description": "Как я подхожу к внедрению ИИ: разбираю процессы, готовлю данные, проектирую автоматизацию и движение к AI core. Кайдзен, контроль и польза для бизнеса.",
+      "tags": [
+        "ai",
+        "automation",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Как Вадим Владымцев подходит к внедрению ИИ в бизнес-процессы?",
+        "С чего начинать автоматизацию процесса и как оценивать её результат?"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:vadimohka.ru:docs:context",
+      "displayName": "Публикации, патент и учебные материалы — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/context/index.html.md",
+      "description": "Мои научные публикации, патент BY 24499 C1, курс C++, тренерство ICPC и бесплатные консультации GenAI.by. Канал «Кайдзен AI» и открытый код.",
+      "tags": [
+        "publications",
+        "teaching",
+        "ru"
+      ],
+      "representativeQueries": [
+        "Где найти научные публикации и учебные материалы Вадима Владымцева?",
+        "Какие публичные материалы связаны с преподаванием и исследованиями Вадима Владымцева?"
+      ]
+    }
+  ]
+}
