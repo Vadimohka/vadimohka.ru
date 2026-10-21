@@ -33,7 +33,7 @@ from site_model import (
 
 SCHEMAS = Path(__file__).resolve().parent / 'schemas'
 READ_TYPES = {'application/ld+json', 'text/plain', 'text/markdown'}
-URN = re.compile(r'^urn:air:vadimohka\.ru:[a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+$')
+URN = re.compile(r'^urn:air:vadimohka\.ru(:[a-zA-Z0-9._-]+)+$')
 COMMON_FIELDS = {'identifier', 'displayName', 'type', 'url', 'description', 'tags'}
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
         'meta', 'param', 'source', 'track', 'wbr'}
@@ -283,13 +283,54 @@ def local_file(root, url):
     return target
 
 
-def check_head(facts, name):
+def check_head(facts, name, source_path, is_lite=False):
     for relation, path in CATALOG_PATHS.items():
         links = [attrs for attrs in facts.head_links if relation in attrs.get('rel', '').split()]
         require(len(links) == 1, f'{name}: expected one {relation} relation in head')
         require(urljoin(facts.url, links[0].get('href', '')) == BASE + path
                 and links[0].get('type') == CATALOG_MEDIA_TYPES[relation],
                 f'{name}: wrong {relation} target or media type')
+    representations = [
+        ('canonical', None, canonical(source_path)),
+        ('alternate', 'text/markdown', BASE + source_path + '.md'),
+        ('describedby', 'text/plain', BASE + index_path(source_path)),
+    ]
+    if not is_lite:
+        representations.append(('alternate', 'text/html',
+                                BASE + lite_path(source_path).removesuffix('index.html')))
+    for relation, media_type, target in representations:
+        # Language alternates may coexist with links to the same-language formats.
+        links = [attrs for attrs in facts.head_links
+                 if relation in attrs.get('rel', '').split()
+                 and (media_type is None or attrs.get('type') == media_type)
+                 and (relation != 'alternate' or not attrs.get('hreflang'))]
+        label = relation + (' ' + media_type if media_type else '')
+        require(len(links) == 1, f'{name}: expected one {label} relation in head')
+        require(links[0].get('href') and urljoin(facts.url, links[0]['href']) == target,
+                f'{name}: wrong {label} target; expected {target}')
+
+
+def check_index(root, source_path):
+    name = index_path(source_path)
+    text = (root / name).read_text(encoding='utf-8')
+    links = {urljoin(BASE + name, url) for url in markdown_links(text)}
+    expected = {BASE + path for path in CATALOG_PATHS.values()}
+    if source_path == 'index.html':
+        expected.update(BASE + path + '.md' for path in PAGES)
+        expected.update(BASE + lite_path(path).removesuffix('index.html') for path in PAGES)
+        expected.update(BASE + path for path in
+                        ('llms-full.txt', 'llm-profile.json', 'person.jsonld', 'sitemap.xml'))
+    else:
+        expected.update((BASE + source_path + '.md',
+                         BASE + lite_path(source_path).removesuffix('index.html'),
+                         canonical(source_path), BASE + 'llms.txt', BASE + 'person.jsonld'))
+    missing = sorted(expected - links)
+    require(not missing, f'{name}: missing navigation target(s): {", ".join(missing)}')
+    # Additional useful links are allowed, but every local destination must exist.
+    for url in sorted(links):
+        if urlsplit(url).netloc == urlsplit(BASE).netloc:
+            target = local_file(root, url)
+            require(target.stat().st_size > 0, f'{name}: empty navigation target {url}')
 
 
 def validate_site(root=ROOT):
@@ -318,10 +359,10 @@ def validate_site(root=ROOT):
     for path in PAGES:
         facts = HTMLFacts((root / path).read_text(encoding='utf-8'), canonical(path))
         source_pages[path] = facts
-        check_head(facts, path)
+        check_head(facts, path, path)
         lite_name = lite_path(path)
         lite = HTMLFacts((root / lite_name).read_text(encoding='utf-8'), BASE + lite_name.removesuffix('index.html'))
-        check_head(lite, lite_name)
+        check_head(lite, lite_name, path, is_lite=True)
         md_name = path + '.md'
         markdown = (root / md_name).read_text(encoding='utf-8')
         md_links, md_words = markdown_links(markdown), markdown_text(markdown)
@@ -335,10 +376,7 @@ def validate_site(root=ROOT):
                 continue
             for name, output in ((md_name, md_words), ('llms-full.txt', full_words), (lite_name, tokens(lite.text))):
                 require(words in output, f'{name}: source paragraph missing or changed: {paragraph[:100]}')
-        for index in {index_path(path)}:
-            index_text = (root / index).read_text(encoding='utf-8')
-            for catalog in CATALOG_PATHS.values():
-                require(BASE + catalog in markdown_links(index_text), f'{index}: missing catalog navigation')
+        check_index(root, path)
 
     for resource in RESOURCES:
         entry = ai_entries[resource.identifier]
@@ -375,7 +413,7 @@ def main(argv=None):
     validate_site(args.root)
     print('Discovery validation passed: pinned ARD manifest schema, local AI CDDL structural contract, '
           f'{len(RESOURCES)} document resources, {len(PAGES) * 2} discovery heads, '
-          'source links, profile and maturity fidelity.')
+          'format/index navigation, source links, profile and maturity fidelity.')
 
 
 if __name__ == '__main__':

@@ -14,7 +14,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = runpy.run_path(str(ROOT / 'scripts/validate-discovery.py'))
@@ -58,6 +60,25 @@ class CatalogContracts(unittest.TestCase):
         for payload in ('{"entries": [], "entries": []}', '{"data": NaN}'):
             with self.subTest(payload=payload), self.assertRaises(ValueError):
                 CHECKS['parse_json'](payload)
+
+    def test_new_hierarchical_identifier_requires_explicit_registration(self):
+        template = next(resource for resource in CHECKS['RESOURCES']
+                        if resource.media_type == 'text/markdown')
+        resource = replace(template, identifier='urn:air:vadimohka.ru:docs:home:summary',
+                           path='index.html.md', source_page='index.html')
+        for path in (AI, ARD):
+            with self.subTest(path=path):
+                document = read_json(ROOT / path)
+                entry = copy.deepcopy(next(entry for entry in document['entries']
+                                           if entry['identifier'] == template.identifier))
+                entry.update(identifier=resource.identifier,
+                             url=CHECKS['BASE'] + resource.path)
+                document['entries'].append(entry)
+                with self.assertRaisesRegex(ValueError, 'resource inventory differs'):
+                    CHECKS['validate_catalog_document'](path, document)
+                with patch.dict(CHECKS['validate_catalog_document'].__globals__,
+                                RESOURCES=CHECKS['RESOURCES'] + (resource,)):
+                    CHECKS['validate_catalog_document'](path, document)
 
 
 class SourceFidelity(unittest.TestCase):
@@ -107,6 +128,70 @@ class SourceFidelity(unittest.TestCase):
                         CHECKS['validate_site'](self.root)
                 finally:
                     target.write_text(original, encoding='utf-8')
+
+    def test_llms_indexes_require_their_page_and_support_navigation(self):
+        cases = (
+            ('llms.txt', 'background/index.html.md', 'projects/index.html.md'),
+            ('llms.txt', 'llms-full.txt', 'llms.txt'),
+            ('projects/llms.txt', 'projects/index.html.md', 'context/index.html.md'),
+            ('projects/llms.txt', 'projects/', 'approach/'),
+        )
+        for path, before, after in cases:
+            with self.subTest(path=path, target=before):
+                target = self.root / path
+                original = target.read_text(encoding='utf-8')
+                try:
+                    self.replace(path, f'({CHECKS["BASE"]}{before})',
+                                 f'({CHECKS["BASE"]}{after})')
+                    with self.assertRaisesRegex(ValueError, 'missing navigation target'):
+                        CHECKS['validate_site'](self.root)
+                finally:
+                    target.write_text(original, encoding='utf-8')
+
+    def test_llms_indexes_check_additional_local_links(self):
+        for path in ('llms.txt', 'projects/llms.txt'):
+            with self.subTest(path=path):
+                target = self.root / path
+                original = target.read_text(encoding='utf-8')
+                try:
+                    target.write_text(original + '\n- [Дополнительный раздел]('
+                                      + CHECKS['BASE'] + 'missing-page.md)\n', encoding='utf-8')
+                    with self.assertRaisesRegex(ValueError, 'Missing or unsafe resource'):
+                        CHECKS['validate_site'](self.root)
+                    target.write_text(original + '\n- [Дополнительный раздел]('
+                                      + CHECKS['BASE'] + 'context/)\n', encoding='utf-8')
+                    CHECKS['validate_site'](self.root)
+                finally:
+                    target.write_text(original, encoding='utf-8')
+
+    def test_representation_navigation_stays_with_its_source_page(self):
+        for path in ('projects/index.html', 'llm/projects/index.html'):
+            original = (self.root / path).read_text(encoding='utf-8')
+            prefix = CHECKS['BASE'] if path.startswith('llm/') else '/'
+            cases = [
+                ('canonical',
+                 f'<link rel="canonical" href="{CHECKS["BASE"]}projects/">',
+                 f'<link rel="canonical" href="{CHECKS["BASE"]}approach/">'),
+                ('canonical without target',
+                 f'<link rel="canonical" href="{CHECKS["BASE"]}projects/">',
+                 '<link rel="canonical">'),
+                ('Markdown',
+                 f'<link rel="alternate" type="text/markdown" href="{prefix}projects/index.html.md">',
+                 f'<link rel="alternate" type="text/markdown" href="{prefix}approach/index.html.md">'),
+                ('scoped index',
+                 f'<link rel="describedby" type="text/plain" href="{prefix}projects/llms.txt">',
+                 f'<link rel="describedby" type="text/plain" href="{prefix}approach/llms.txt">'),
+            ]
+            if not path.startswith('llm/'):
+                cases.append(('text HTML', 'href="/llm/projects/"', 'href="/llm/approach/"'))
+            for label, before, after in cases:
+                with self.subTest(path=path, relation=label):
+                    try:
+                        self.replace(path, before, after)
+                        with self.assertRaisesRegex(ValueError, 'wrong .* target'):
+                            CHECKS['validate_site'](self.root)
+                    finally:
+                        (self.root / path).write_text(original, encoding='utf-8')
 
     def test_source_link_must_survive_full_corpus(self):
         self.replace('llms-full.txt', 'https://stepik.org/course/86957/promo',

@@ -44,15 +44,18 @@ jobs:
       - name: Test discovery and delivery regressions
         run: |
           python3 scripts/test-discovery.py
+          python3 scripts/test-discovery-client.py
           python3 scripts/test-delivery.py
 
       - name: Build allowlisted static files and inventory
+        id: build
         run: python3 scripts/build-site.py --output dist --inventory _dist/inventory.json
 
       - name: Exercise discovery from the built homepage
         run: python3 scripts/check-discovery-client.py --serve-dir dist --report _dist/discovery-trace.json
 
       - name: Upload build snapshot and verification inventory
+        if: always() && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: site-dist-debug
@@ -132,11 +135,19 @@ jobs:
           --retry-interval 5
           --report _live/delivery-report.json
 
+      - name: Exercise discovery on the canonical live site
+        run: >-
+          python3 scripts/check-discovery-client.py
+          --base-url https://vadimohka.ru/
+          --report _live/discovery-trace.json
+
       - name: Save delivery verification report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: site-live-verification
-          path: _live/delivery-report.json
+          path: |
+            _live/delivery-report.json
+            _live/discovery-trace.json
           if-no-files-found: warn
           retention-days: 7

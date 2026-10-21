@@ -82,6 +82,30 @@ class DeliveryTests(unittest.TestCase):
         self.assertTrue(all(value <= 0.25 for value in timeouts))
         self.assertLess(timeouts[-1], timeouts[0])
 
+    def test_failure_report_keeps_successes_and_exact_unfinished_resources(self):
+        clock = Clock()
+        items = [record(path=path) for path in ('ready.json', 'stuck.json', 'unvisited.json')]
+
+        def fetch(url, timeout, expected_bytes):
+            if url.endswith('/stuck.json'):
+                clock.sleep(timeout)
+                raise checker.RetryableError('request deadline exceeded')
+            return checker.Response(200, 'application/json', b'{"version":2}', url)
+
+        with self.assertRaises(checker.DeliveryError) as caught:
+            checker.check_inventory({'files': items}, 'https://example.test', fetch=fetch,
+                                    deadline=0.25, request_timeout=10, retry_interval=0.1,
+                                    clock=clock.time, sleep=clock.sleep, progress=lambda message: None)
+        report = caught.exception.report
+        self.assertFalse(report['ok'])
+        self.assertEqual(report['checked_resources'], 1)
+        self.assertEqual([row['path'] for row in report['resources']], ['ready.json'])
+        self.assertEqual([row['path'] for row in report['pending_resources']], ['stuck.json', 'unvisited.json'])
+        self.assertEqual([row['attempts'] for row in report['pending_resources']], [1, 0])
+        self.assertEqual(report['pending_resources'][0]['last_error'], 'request deadline exceeded')
+        self.assertAlmostEqual(report['elapsed_seconds'], 0.25)
+        self.assertNotIn('ready.json', report['error'])
+
     def test_missing_resource_can_appear_during_propagation(self):
         clock, attempts = Clock(), []
 

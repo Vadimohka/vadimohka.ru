@@ -24,7 +24,9 @@ from site_model import CATALOG_PATHS, ROOT
 
 
 class DeliveryError(ValueError):
-    pass
+    def __init__(self, message, *, report=None):
+        super().__init__(message)
+        self.report = report
 
 
 class RetryableError(Exception):
@@ -193,41 +195,66 @@ def check_inventory(inventory, base_url, *, deadline=300, request_timeout=15,
     if fetch is None:
         fetch = CurlFetcher(connect_timeout=min(5, request_timeout))
     base_url = base_url.rstrip('/')
-    pending = [item for item in inventory['files'] if item['public_url_path'] is not None]
-    verified, attempts, last_errors = [], {}, {}
+    required = [item for item in inventory['files'] if item['public_url_path'] is not None]
+    pending = list(required)
+    verified, verified_paths, attempts, last_errors = [], set(), {}, {}
     started = clock()
     expires = started + deadline
-    while pending:
-        retry = []
-        for item in pending:
-            remaining = expires - clock()
-            if remaining <= 0:
-                names = ', '.join(row['path'] for row in pending)
-                details = '; '.join(path + ': ' + error for path, error in last_errors.items())
-                raise DeliveryError('Overall deadline exceeded; pending: ' + names + ('. ' + details if details else ''))
-            path = item['path']
-            requested_url = base_url + item['public_url_path']
-            attempts[path] = attempts.get(path, 0) + 1
-            try:
-                response = fetch(requested_url, min(request_timeout, remaining), item['bytes'])
-                if clock() >= expires:
-                    raise DeliveryError('Overall deadline exceeded while fetching ' + path)
-                result = validate_response(item, response, requested_url, catalog_check)
-            except RetryableError as error:
-                last_errors[path] = str(error)
-                retry.append(item)
-                progress(path + ': waiting for current build (' + str(error) + ')')
-            else:
-                result['attempts'] = attempts[path]
-                verified.append(result)
-                last_errors.pop(path, None)
-        pending = retry
-        if pending:
-            remaining = expires - clock()
-            if remaining > 0:
-                sleep(min(retry_interval, remaining))
-    return {'ok': True, 'base_url': base_url, 'elapsed_seconds': round(clock() - started, 3),
-            'checked_resources': len(verified), 'resources': verified}
+
+    def make_report(error=None):
+        report = {'ok': error is None, 'base_url': base_url,
+                  'elapsed_seconds': round(clock() - started, 3),
+                  'checked_resources': len(verified), 'resources': verified}
+        if error is not None:
+            report['error'] = str(error)
+            report['pending_resources'] = [
+                {'path': item['path'], 'url': base_url + item['public_url_path'],
+                 'attempts': attempts.get(item['path'], 0),
+                 'last_error': last_errors.get(item['path'])}
+                for item in required if item['path'] not in verified_paths
+            ]
+        return report
+
+    try:
+        while pending:
+            retry = []
+            for item in pending:
+                remaining = expires - clock()
+                if remaining <= 0:
+                    names = ', '.join(row['path'] for row in required if row['path'] not in verified_paths)
+                    details = '; '.join(path + ': ' + error for path, error in last_errors.items())
+                    raise DeliveryError('Overall deadline exceeded; pending: ' + names + ('. ' + details if details else ''))
+                path = item['path']
+                requested_url = base_url + item['public_url_path']
+                attempts[path] = attempts.get(path, 0) + 1
+                try:
+                    response = fetch(requested_url, min(request_timeout, remaining), item['bytes'])
+                    if clock() >= expires:
+                        raise DeliveryError('Overall deadline exceeded while fetching ' + path)
+                    result = validate_response(item, response, requested_url, catalog_check)
+                except RetryableError as error:
+                    last_errors[path] = str(error)
+                    retry.append(item)
+                    progress(path + ': waiting for current build (' + str(error) + ')')
+                except (OSError, ValueError, ImportError) as error:
+                    last_errors[path] = str(error)
+                    raise
+                else:
+                    result['attempts'] = attempts[path]
+                    verified.append(result)
+                    verified_paths.add(path)
+                    last_errors.pop(path, None)
+            pending = retry
+            if pending:
+                remaining = expires - clock()
+                if remaining > 0:
+                    sleep(min(retry_interval, remaining))
+    except (OSError, ValueError, ImportError) as error:
+        if isinstance(error, DeliveryError):
+            error.report = make_report(error)
+            raise
+        raise DeliveryError(str(error), report=make_report(error)) from error
+    return make_report()
 
 
 def main():
@@ -253,7 +280,7 @@ def main():
                                  retry_interval=args.retry_interval, fetch=CurlFetcher(args.connect_timeout))
         print('Live delivery passed: ' + str(report['checked_resources']) + ' resources match the build, including both catalogs.')
     except (OSError, ValueError, ImportError) as error:
-        report = {'ok': False, 'error': str(error)}
+        report = getattr(error, 'report', None) or {'ok': False, 'error': str(error)}
         raise
     finally:
         if args.report and report is not None:

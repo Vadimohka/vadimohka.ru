@@ -33,15 +33,18 @@ jobs:
       - name: Test discovery and delivery regressions
         run: |
           python3 scripts/test-discovery.py
+          python3 scripts/test-discovery-client.py
           python3 scripts/test-delivery.py
 
       - name: Build the same static artifact used for publication
+        id: build
         run: python3 scripts/build-site.py --output dist --inventory _dist/inventory.json
 
       - name: Exercise discovery from the built homepage
         run: python3 scripts/check-discovery-client.py --serve-dir dist --report _dist/discovery-trace.json
 
       - name: Save the branch build and discovery trace
+        if: always() && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: site-preview
