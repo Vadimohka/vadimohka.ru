@@ -152,6 +152,13 @@ def word_count(text):
     return len(re.findall(r"\b\w+(?:[-’']\w+)*\b", text))
 
 
+def russian_date_label(value):
+    parsed = date.fromisoformat(value)
+    months = ('января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+              'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря')
+    return f'{parsed.day} {months[parsed.month - 1]} {parsed.year}'
+
+
 def essay_dates(doc, old_page, path):
     values = {key: old_page[key] for key in ('datePublished', 'dateModified')}
     for key, value in values.items():
@@ -161,15 +168,19 @@ def essay_dates(doc, old_page, path):
     if values['dateModified'] < values['datePublished']:
         raise ValueError(path + ': modification precedes publication')
     times = [node for node in doc.all('time') if 'essay-date' in node.attrs.get('class', '').split()]
-    if len(times) != 1 or times[0].attrs.get('datetime') != values['datePublished'] or not times[0].text():
+    if len(times) != 1 or times[0].attrs.get('datetime') != values['datePublished']:
         raise ValueError(path + ': visible publication date differs from JSON-LD')
+    if times[0].text() != russian_date_label(values['datePublished']):
+        raise ValueError(path + ': visible publication label differs from the ISO date')
     return values
 
 
-def generate_feed(docs, order):
+def generate_feed(docs, order, publication_dates):
     """RSS uses editorial content, never the build clock or an invented time."""
     atom = 'http://www.w3.org/2005/Atom'
+    dc = 'http://purl.org/dc/elements/1.1/'
     ET.register_namespace('atom', atom)
+    ET.register_namespace('dc', dc)
     rss = ET.Element('rss', {'version': '2.0'})
     channel = ET.SubElement(rss, 'channel')
     ET.SubElement(channel, 'title').text = 'Эссе — ' + NAME
@@ -184,8 +195,9 @@ def generate_feed(docs, order):
         ET.SubElement(item, 'link').text = canonical(path)
         ET.SubElement(item, 'guid', {'isPermaLink': 'true'}).text = canonical(path)
         ET.SubElement(item, 'description').text = metadata(docs[path], 'description')
+        ET.SubElement(item, '{' + dc + '}date').text = publication_dates[path]
         # datePublished has day precision; RSS pubDate requires a time and zone.
-        # The optional field is intentionally omitted rather than fabricating one.
+        # Dublin Core preserves that precision; do not fabricate a pubDate time.
     ET.indent(rss, space='  ')
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(rss, encoding='unicode') + '\n'
 
@@ -235,7 +247,7 @@ def generate():
     website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':NAME,
                'alternateName':'Vadimohka','inLanguage':SCHEMA_LANGUAGE,'publisher':ref(PERSON_ID)}
     image = {'@type':'ImageObject','url':IMAGE,'width':1448,'height':1086}
-    outputs, texts, essay_order = {}, [], []
+    outputs, texts, essay_order, publication_dates = {}, [], [], {}
     for path, source in sources.items():
         doc, url = docs[path], canonical(path)
         title, description = title_description(path, doc)
@@ -247,6 +259,7 @@ def generate():
         nodes = [page, person, organization, website]
         if PAGE_BY_PATH[path].is_essay:
             page.update(essay_dates(doc, old_page, path))
+            publication_dates[path] = page['datePublished']
             page['isPartOf'] = ref(canonical(ESSAY_INDEX_PATH) + '#webpage')
         if page['@type'] == 'ProfilePage':
             page['mainEntity'] = ref(PERSON_ID)
@@ -349,7 +362,7 @@ def generate():
             sitemap += ['    <image:image><image:loc>'+IMAGE+'</image:loc></image:image>']
         sitemap += ['  </url>']
     outputs['sitemap.xml'] = '\n'.join(sitemap+['</urlset>',''])
-    outputs[ESSAY_FEED_PATH] = generate_feed(docs, essay_order)
+    outputs[ESSAY_FEED_PATH] = generate_feed(docs, essay_order, publication_dates)
     outputs.update(LLM_PAGES['generate'](docs, outputs, BASE))
     page_metadata = {path: title_description(path, doc) for path, doc in docs.items()}
     for path, catalog in build_catalogs(page_metadata).items():

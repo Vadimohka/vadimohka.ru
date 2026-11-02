@@ -33,6 +33,15 @@ def normalized(value):
     return ' '.join(value.split())
 
 
+def russian_date_label(value):
+    """Check the displayed date independently from the production generator."""
+    parsed = date.fromisoformat(value)
+    months = {1: 'января', 2: 'февраля', 3: 'марта', 4: 'апреля',
+              5: 'мая', 6: 'июня', 7: 'июля', 8: 'августа',
+              9: 'сентября', 10: 'октября', 11: 'ноября', 12: 'декабря'}
+    return f'{parsed.day} {months[parsed.month]} {parsed.year}'
+
+
 class EssayHTML(HTMLParser):
     def __init__(self, source, url):
         super().__init__(convert_charrefs=True)
@@ -49,6 +58,8 @@ class EssayHTML(HTMLParser):
         self.time_frames = []
         self.heading_links = []
         self.link_frames = []
+        self.cards = []
+        self.card_frames = []
         self.json_text = None
         self.graph = []
         self.feed(source)
@@ -72,12 +83,15 @@ class EssayHTML(HTMLParser):
             self.body_count += 1
         in_main = any(t == 'main' for t, _ in self.stack)
         in_body = any(a.get('id') == 'essay-body' for _, a in self.stack)
+        if in_main and tag == 'article' and 'essay-card' in attrs.get('class', '').split():
+            self.card_frames.append((len(self.stack), {'links': [], 'times': []}))
+        card = self.card_frames[-1][1] if self.card_frames else None
         if in_body and tag in BLOCKS:
             self.frames.append((len(self.stack), []))
-        if in_main and tag == 'time' and 'essay-date' in attrs.get('class', '').split():
-            self.time_frames.append((len(self.stack), attrs.get('datetime'), []))
+        if in_main and tag == 'time' and (card is not None or 'essay-date' in attrs.get('class', '').split()):
+            self.time_frames.append((len(self.stack), attrs.get('datetime'), [], card))
         if in_main and tag == 'a' and attrs.get('href') and any(t == 'h2' for t, _ in self.stack):
-            self.link_frames.append((len(self.stack), urljoin(self.url, attrs['href']), []))
+            self.link_frames.append((len(self.stack), urljoin(self.url, attrs['href']), [], card))
 
     def handle_startendtag(self, tag, pairs):
         self.handle_starttag(tag, pairs)
@@ -97,14 +111,22 @@ class EssayHTML(HTMLParser):
             if depth > index:
                 self.body_blocks.append(normalized(''.join(parts)))
         self.frames = [frame for frame in self.frames if frame[0] <= index]
-        for depth, value, parts in self.time_frames:
+        for depth, value, parts, card in self.time_frames:
             if depth > index:
-                self.times.append((value, normalized(''.join(parts))))
+                times = self.times if card is None else card['times']
+                times.append((value, normalized(''.join(parts))))
         self.time_frames = [frame for frame in self.time_frames if frame[0] <= index]
-        for depth, url, parts in self.link_frames:
+        for depth, url, parts, card in self.link_frames:
             if depth > index:
-                self.heading_links.append((url, normalized(''.join(parts))))
+                entry = (url, normalized(''.join(parts)))
+                self.heading_links.append(entry)
+                if card is not None:
+                    card['links'].append(entry)
         self.link_frames = [frame for frame in self.link_frames if frame[0] <= index]
+        for depth, card in self.card_frames:
+            if depth > index:
+                self.cards.append(card)
+        self.card_frames = [frame for frame in self.card_frames if frame[0] <= index]
         del self.stack[index:]
 
     def handle_data(self, text):
@@ -119,9 +141,9 @@ class EssayHTML(HTMLParser):
             self.h1.append(text + ' ')
         for _, parts in self.frames:
             parts.append(text + ' ')
-        for _, _, parts in self.time_frames:
+        for _, _, parts, _ in self.time_frames:
             parts.append(text + ' ')
-        for _, _, parts in self.link_frames:
+        for _, _, parts, _ in self.link_frames:
             parts.append(text + ' ')
 
     @property
@@ -162,7 +184,7 @@ def validate_essays(root=ROOT):
             'Essay ItemList differs from visible archive order or titles')
     require(collection.get('hasPart') == [{'@id': url + '#article'} for url in ordered_urls],
             'Essay archive hasPart differs from published essays')
-    facts_by_url = {}
+    facts_by_url, published_by_url = {}, {}
     for spec in ESSAY_SPECS:
         url = canonical(spec.path)
         facts = EssayHTML((root / spec.path).read_text(encoding='utf-8'), url)
@@ -193,8 +215,11 @@ def validate_essays(root=ROOT):
             date.fromisoformat(value)
             require(article.get(field) == value, spec.path + ': Article date differs from WebPage')
         require(page['datePublished'] <= page['dateModified'], spec.path + ': invalid publication chronology')
-        require(len(facts.times) == 1 and facts.times[0][0] == page['datePublished'] and facts.times[0][1],
+        require(len(facts.times) == 1 and facts.times[0][0] == page['datePublished'],
                 spec.path + ': visible publication date differs from structured data')
+        require(facts.times[0][1] == russian_date_label(page['datePublished']),
+                spec.path + ': visible publication label differs from the ISO date')
+        published_by_url[url] = page['datePublished']
         body = '\n\n'.join(facts.body_blocks)
         require(article.get('articleBody') == body, spec.path + ': Article body differs from visible prose')
         words = len(re.findall(r"\b\w+(?:[-’']\w+)*\b", body))
@@ -209,6 +234,20 @@ def validate_essays(root=ROOT):
                 spec.path + ': essay breadcrumb hierarchy is incomplete')
     require(all(facts_by_url[url].headline == label for url, label in archive.heading_links),
             'Essay archive title differs from article H1')
+    require(len(archive.cards) == len(ordered_urls)
+            and all(len(card['links']) == 1 for card in archive.cards)
+            and [card['links'][0][0] for card in archive.cards] == ordered_urls,
+            'Essay archive links must belong to their corresponding cards')
+    for card in archive.cards:
+        url = card['links'][0][0]
+        published = published_by_url[url]
+        require(len(card['times']) == 1 and card['times'][0][0] == published,
+                url + ': archive card publication date differs from article')
+        require(card['times'][0][1] == russian_date_label(published),
+                url + ': archive card publication label differs from the ISO date')
+    ordered_dates = [published_by_url[url] for url in ordered_urls]
+    require(ordered_dates == sorted(ordered_dates, reverse=True),
+            'Essay archive is not ordered by publication date descending')
     feed = ET.parse(root / ESSAY_FEED_PATH).getroot()
     require(feed.tag == 'rss' and feed.attrib == {'version': '2.0'}, 'Expected RSS 2.0 essay feed')
     channels = feed.findall('channel')
@@ -231,6 +270,9 @@ def validate_essays(root=ROOT):
         guid = item.find('guid')
         require(guid is not None and guid.text == facts.url and guid.get('isPermaLink') == 'true',
                 'RSS item has an unstable or incorrect GUID')
+        dates = item.findall('{http://purl.org/dc/elements/1.1/}date')
+        require(len(dates) == 1 and dates[0].text == published_by_url[facts.url],
+                'RSS dc:date differs from the article publication date or loses day precision')
         require(item.find('pubDate') is None, 'RSS invents a publication time for a date-only source')
 
 
@@ -239,8 +281,8 @@ def main():
     parser.add_argument('--root', type=Path, default=ROOT)
     args = parser.parse_args()
     validate_essays(args.root)
-    print(f'Essay validation passed: {len(ESSAY_SPECS)} complete articles, dates, attribution, '
-          'articleBody, wordCount, hierarchical breadcrumbs, archive and RSS.')
+    print(f'Essay validation passed: {len(ESSAY_SPECS)} complete articles, Russian date labels, attribution, '
+          'articleBody, wordCount, hierarchical breadcrumbs, chronological archive and dated RSS.')
 
 
 if __name__ == '__main__':

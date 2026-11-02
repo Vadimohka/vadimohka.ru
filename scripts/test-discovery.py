@@ -294,6 +294,65 @@ class SourceFidelity(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'visible publication date'):
             ESSAY_CHECKS['validate_essays'](self.root)
 
+    def test_visible_essay_date_label_must_agree_with_its_iso_date(self):
+        path = 'essays/revising-my-architecture/index.html'
+        target = self.root / path
+        source = target.read_text(encoding='utf-8')
+        changed, count = re.subn(r'(<time\b[^>]*>).*?(</time>)',
+                                 r'\g<1>31 декабря 1999\g<2>', source, count=1, flags=re.S)
+        self.assertEqual(count, 1)
+        target.write_text(changed, encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'visible publication label'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+        result = self.run_generator('--write', expect_ok=False)
+        self.assertIn('visible publication label', result.stderr)
+
+    def test_archive_card_date_must_belong_to_its_article(self):
+        target = self.root / 'essays/index.html'
+        original = target.read_text(encoding='utf-8')
+        for change_label_too in (False, True):
+            with self.subTest(change_label_too=change_label_too):
+                try:
+                    changed, count = re.subn(r'(<time\b[^>]*\bdatetime=")[^"]+',
+                                             r'\g<1>1999-12-31', original, count=1)
+                    self.assertEqual(count, 1)
+                    if change_label_too:
+                        changed = re.sub(r'(<time\b[^>]*>).*?(</time>)',
+                                         r'\g<1>31 декабря 1999\g<2>', changed, count=1, flags=re.S)
+                    target.write_text(changed, encoding='utf-8')
+                    with self.assertRaisesRegex(ValueError, 'archive card publication date differs from article'):
+                        ESSAY_CHECKS['validate_essays'](self.root)
+                finally:
+                    target.write_text(original, encoding='utf-8')
+
+    def test_archive_card_date_label_must_agree_with_its_iso_date(self):
+        target = self.root / 'essays/index.html'
+        source = target.read_text(encoding='utf-8')
+        changed, count = re.subn(r'(<time\b[^>]*>).*?(</time>)',
+                                 r'\g<1>31 декабря 1999\g<2>', source, count=1, flags=re.S)
+        self.assertEqual(count, 1)
+        target.write_text(changed, encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'archive card publication label'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+
+    def test_consistent_archive_exports_cannot_hide_wrong_chronological_order(self):
+        target = self.root / 'essays/index.html'
+        source = target.read_text(encoding='utf-8')
+        cards = list(re.finditer(r'<article\b[^>]*class="essay-card"[^>]*>.*?</article>', source, re.S))
+        self.assertGreaterEqual(len(cards), 2)
+        first, second = cards[:2]
+        dates = [re.search(r'<time\b[^>]*datetime="([^"]+)"', card[0])[1]
+                 for card in (first, second)]
+        self.assertGreater(dates[0], dates[1], 'Fixture needs different publication dates in descending order')
+        target.write_text(source[:first.start()] + second[0] + source[first.end():second.start()]
+                          + first[0] + source[second.end():], encoding='utf-8')
+        # Regenerate ItemList, hasPart and RSS in the same wrong order. A check
+        # against another export would pass; the independent date check must fail.
+        self.run_generator('--write')
+        self.run_generator('--check')
+        with self.assertRaisesRegex(ValueError, 'publication date descending'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+
     def test_essay_breadcrumb_requires_the_archive_level(self):
         path = 'essays/revising-my-architecture/index.html'
         def mutate(graph):
@@ -315,7 +374,9 @@ class SourceFidelity(unittest.TestCase):
     def test_essay_feed_preserves_inventory_and_date_precision(self):
         target = self.root / 'essays/feed.xml'
         original = target.read_text(encoding='utf-8')
-        for mutation in ('missing', 'invented-time'):
+        dc_date = '{http://purl.org/dc/elements/1.1/}date'
+        for mutation in ('missing', 'invented-time', 'missing-dc-date', 'wrong-dc-date',
+                         'datetime-in-dc-date', 'duplicate-dc-date', 'unnamespaced-date'):
             with self.subTest(mutation=mutation):
                 try:
                     tree = ET.fromstring(original)
@@ -323,10 +384,23 @@ class SourceFidelity(unittest.TestCase):
                     item = channel.find('item')
                     if mutation == 'missing':
                         channel.remove(item)
-                    else:
+                    elif mutation == 'invented-time':
                         ET.SubElement(item, 'pubDate').text = 'Mon, 02 Nov 2026 12:00:00 +0300'
+                    else:
+                        published = item.find(dc_date)
+                        self.assertIsNotNone(published, 'Fixture needs a day-precision dc:date')
+                        if mutation == 'missing-dc-date':
+                            item.remove(published)
+                        elif mutation == 'wrong-dc-date':
+                            published.text = '1999-12-31'
+                        elif mutation == 'datetime-in-dc-date':
+                            published.text += 'T00:00:00+03:00'
+                        elif mutation == 'duplicate-dc-date':
+                            item.append(copy.deepcopy(published))
+                        elif mutation == 'unnamespaced-date':
+                            published.tag = 'date'
                     target.write_text(ET.tostring(tree, encoding='unicode'), encoding='utf-8')
-                    with self.assertRaisesRegex(ValueError, 'RSS items differ|RSS invents'):
+                    with self.assertRaisesRegex(ValueError, 'RSS items differ|RSS invents|RSS dc:date differs'):
                         ESSAY_CHECKS['validate_essays'](self.root)
                 finally:
                     target.write_text(original, encoding='utf-8')
