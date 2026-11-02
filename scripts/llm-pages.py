@@ -9,8 +9,9 @@ import re
 from urllib.parse import urljoin, urlsplit
 
 from site_model import (
-    NAME, CONTACT, LANGUAGE, PAGE_SPECS, PAGE_BY_PATH,
-    canonical, lite_path, index_path, catalog_links, catalog_index_lines,
+    NAME, CONTACT, LANGUAGE, PAGE_SPECS, PAGE_BY_PATH, NAV_PAGES,
+    ESSAY_INDEX_PATH, ESSAY_FEED_PATH,
+    canonical, lite_path, index_path, catalog_links, catalog_index_lines, feed_links,
 )
 
 SKIP = {'script', 'style', 'noscript', 'nav', 'svg', 'img', 'figure', 'button'}
@@ -86,7 +87,7 @@ def generate(docs, outputs, base):
             raise ValueError('Missing main content: ' + path)
         nav = ' '.join('<a href="/' + lite_path(page.path).removesuffix('index.html') + '"' +
                        (' aria-current="page"' if page.path == path else '') + '>' + page.label + '</a>'
-                       for page in PAGE_SPECS)
+                       for page in NAV_PAGES)
         result[lite_path(path)] = (
             '<!doctype html>\n<html lang="' + LANGUAGE + '">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
@@ -97,6 +98,7 @@ def generate(docs, outputs, base):
             '<link rel="alternate" type="text/markdown" href="' + md_url + '">\n'
             '<link rel="describedby" type="text/plain" href="' + base + index_path(path) + '">\n'
             + '\n'.join(catalog_links()) + '\n'
+            + '\n'.join(feed_links(path)) + '\n'
             '<link rel="icon" type="image/svg+xml" href="/favicon.svg">\n'
             '<style>' + STYLE + '</style>\n</head>\n<body>\n'
             '<nav aria-label="Текстовые страницы">' + nav + '</nav>\n'
@@ -110,14 +112,28 @@ def generate(docs, outputs, base):
         if path != 'index.html':
             lead = main.first('header')
             lead = next((n for n in lead.all('p') if 'lead' in n.attrs.get('class', '').split()), None) if lead else None
-            summary = (lead.text() if lead else PAGE_BY_PATH[path].label)
+            description = next((n.attrs.get('content', '') for n in doc.all('meta')
+                                if n.attrs.get('name') == 'description'), '')
+            summary = lead.text() if lead else (description or PAGE_BY_PATH[path].label)
+            children = [page for page in PAGE_SPECS if page.parent == path]
+            child_lines = ''
+            if children:
+                child_lines = '\n## Материалы раздела\n\n' + '\n'.join(
+                    '- [' + docs[child.path].first('h1').text() + ']('
+                    + base + child.markdown_path + ')' for child in children) + '\n'
+            related = ''
+            if PAGE_BY_PATH[path].is_essay:
+                related += '- [Все эссе](' + base + index_path(ESSAY_INDEX_PATH) + ')\n'
+            if path == ESSAY_INDEX_PATH or PAGE_BY_PATH[path].is_essay:
+                related += '- [RSS эссе](' + base + ESSAY_FEED_PATH + ')\n'
             result[index_path(path)] = (
                 '# ' + PAGE_BY_PATH[path].label + ' — ' + NAME + '\n\n> ' + summary + '\n\n'
                 '## Страница\n\n- [Полный текст в Markdown](' + md_url + ')\n'
                 '- [Текстовая HTML-версия](' + llm_url + ')\n'
-                '- [Основная страница](' + page_url + ')\n\n'
-                '## Optional\n\n- [Все разделы](' + base + 'llms.txt)\n'
+                '- [Основная страница](' + page_url + ')\n'
+                + child_lines + '\n## Optional\n\n- [Все разделы](' + base + 'llms.txt)\n'
                 '- [Профиль](' + base + 'person.jsonld)\n'
+                + related
                 + '\n'.join(catalog_index_lines()) + '\n'
             )
     return result

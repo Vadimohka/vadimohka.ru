@@ -1,0 +1,25 @@
+# Эссе — Вадим Владымцев
+
+> О решениях, за которые я отвечаю: в инженерии, командах и собственных проектах.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/essays/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/essays/)
+- [Основная страница](https://vadimohka.ru/essays/)
+
+## Материалы раздела
+
+- [Я переделал собственную архитектуру](https://vadimohka.ru/essays/revising-my-architecture/index.html.md)
+- [Кому достаётся время, которое экономит ИИ](https://vadimohka.ru/essays/who-gets-the-time-ai-saves/index.html.md)
+- [Общий язык не появляется сам](https://vadimohka.ru/essays/shared-understanding/index.html.md)
+- [Что останется после аплодисментов](https://vadimohka.ru/essays/after-the-applause/index.html.md)
+- [Я хочу узнавать себя в своих проектах](https://vadimohka.ru/essays/recognising-myself-in-my-work/index.html.md)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)
+- [RSS эссе](https://vadimohka.ru/essays/feed.xml)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

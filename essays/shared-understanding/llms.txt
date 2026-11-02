@@ -1,0 +1,18 @@
+# Общий язык не появляется сам — Вадим Владымцев
+
+> Чему подготовка команды So Stuffy научила меня об объяснении решений, самостоятельности участников и работе технического руководителя.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/essays/shared-understanding/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/essays/shared-understanding/)
+- [Основная страница](https://vadimohka.ru/essays/shared-understanding/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)
+- [Все эссе](https://vadimohka.ru/essays/llms.txt)
+- [RSS эссе](https://vadimohka.ru/essays/feed.xml)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

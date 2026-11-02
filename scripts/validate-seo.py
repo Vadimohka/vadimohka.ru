@@ -166,7 +166,7 @@ def main():
         require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{p}: invalid English handoff')
     require({'century','knowledge','ecommerce'} <= pages['projects/index.html'].ids, 'Missing case')
     require({'stacklevel','bsuir-dev','teach-it','startlab','senior-lecturer','assistant','icpc','student-projects','education','awards'} <= pages['background/index.html'].ids, 'Missing biography section')
-    print('SEO validation passed: five pages, exact role, approved portrait, links, metadata, JSON-LD and English-only domain links.')
+    print(f'SEO validation passed: {len(PAGES)} pages, exact role, approved portrait, links, metadata, JSON-LD and English-only domain links.')
 
 
 if __name__ == '__main__':

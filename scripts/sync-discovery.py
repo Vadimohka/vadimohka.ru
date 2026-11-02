@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synchronize SEO metadata and text representations with the five public pages.
+"""Synchronize SEO metadata and reading formats with registered public pages.
 
 Run with --write after editing the site, or --check in CI. Page bodies and the
 owner's approach text are never rewritten. Uses only the Python standard library.
@@ -11,13 +11,15 @@ import re
 import runpy
 import sys
 import xml.etree.ElementTree as ET
+from datetime import date
 from html.parser import HTMLParser
 from urllib.parse import urljoin
 from urllib.robotparser import RobotFileParser
 
 from site_model import (
     ROOT, BASE, ROLE, PERSON_ID, IMAGE, NAME, CONTACT, LANGUAGE,
-    SCHEMA_LANGUAGE, PAGES, PAGE_BY_PATH, RESOURCES, canonical, lite_path, index_path,
+    SCHEMA_LANGUAGE, PAGES, PAGE_BY_PATH, RESOURCES, ESSAY_INDEX_PATH, ESSAY_FEED_PATH,
+    ESSAY_SPECS, canonical, lite_path, index_path, page_ancestors, feed_links,
     load_profile, catalog_links, catalog_index_lines, build_catalogs,
 )
 
@@ -134,6 +136,60 @@ def title_description(path, doc):
     return doc.first('title').text(), metadata(doc,'description')
 
 
+def essay_body(doc, path):
+    body = doc.by_id('essay-body')
+    if body is None:
+        raise ValueError('Missing essay-body in ' + path)
+    blocks = [node.text() for node in body.all()
+              if node.tag in ('h2', 'h3', 'h4', 'p', 'li', 'pre')]
+    if not blocks or not all(blocks):
+        raise ValueError('Empty essay body or paragraph in ' + path)
+    return '\n\n'.join(blocks)
+
+
+def word_count(text):
+    # Count lexical words, including hyphenated words, rather than punctuation.
+    return len(re.findall(r"\b\w+(?:[-’']\w+)*\b", text))
+
+
+def essay_dates(doc, old_page, path):
+    values = {key: old_page[key] for key in ('datePublished', 'dateModified')}
+    for key, value in values.items():
+        if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
+            raise ValueError(path + ': ' + key + ' must be an editorial ISO date')
+        date.fromisoformat(value)
+    if values['dateModified'] < values['datePublished']:
+        raise ValueError(path + ': modification precedes publication')
+    times = [node for node in doc.all('time') if 'essay-date' in node.attrs.get('class', '').split()]
+    if len(times) != 1 or times[0].attrs.get('datetime') != values['datePublished'] or not times[0].text():
+        raise ValueError(path + ': visible publication date differs from JSON-LD')
+    return values
+
+
+def generate_feed(docs, order):
+    """RSS uses editorial content, never the build clock or an invented time."""
+    atom = 'http://www.w3.org/2005/Atom'
+    ET.register_namespace('atom', atom)
+    rss = ET.Element('rss', {'version': '2.0'})
+    channel = ET.SubElement(rss, 'channel')
+    ET.SubElement(channel, 'title').text = 'Эссе — ' + NAME
+    ET.SubElement(channel, 'link').text = canonical(ESSAY_INDEX_PATH)
+    ET.SubElement(channel, 'description').text = metadata(docs[ESSAY_INDEX_PATH], 'description')
+    ET.SubElement(channel, 'language').text = LANGUAGE
+    ET.SubElement(channel, '{' + atom + '}link', {
+        'href': BASE + ESSAY_FEED_PATH, 'rel': 'self', 'type': 'application/rss+xml'})
+    for path in order:
+        item = ET.SubElement(channel, 'item')
+        ET.SubElement(item, 'title').text = docs[path].first('h1').text()
+        ET.SubElement(item, 'link').text = canonical(path)
+        ET.SubElement(item, 'guid', {'isPermaLink': 'true'}).text = canonical(path)
+        ET.SubElement(item, 'description').text = metadata(docs[path], 'description')
+        # datePublished has day precision; RSS pubDate requires a time and zone.
+        # The optional field is intentionally omitted rather than fabricating one.
+    ET.indent(rss, space='  ')
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(rss, encoding='unicode') + '\n'
+
+
 def replace_head(source, title, description, graph, path):
     head, body = source.split('</head>', 1)
     head = re.sub(r'<title>.*?</title>', lambda _: '<title>'+html.escape(title)+'</title>', head, count=1, flags=re.S)
@@ -152,6 +208,7 @@ def replace_head(source, title, description, graph, path):
     head = re.sub(r'<link rel="alternate" type="text/html" title="Текстовая версия"[^>]*>\s*', '', head)
     head = re.sub(r'<link rel="describedby" type="text/plain"[^>]*>\s*', '', head)
     head = re.sub(r'<link rel="(?:ai-catalog|ard)"[^>]*>\s*', '', head)
+    head = re.sub(r'<link\b(?=[^>]*\btype="application/rss\+xml")[^>]*>\s*', '', head)
     head = re.sub(r'<meta name="twitter:url"[^>]*>\s*', '', head)
     links = [
         '<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">',
@@ -164,6 +221,7 @@ def replace_head(source, title, description, graph, path):
         '<meta name="twitter:url" content="'+canonical(path)+'">',
     ]
     links.extend(catalog_links())
+    links.extend(feed_links(path))
     head = head.rstrip() + '\n' + '\n'.join(links) + '\n'
     return head + '</head>' + body
 
@@ -177,7 +235,7 @@ def generate():
     website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':NAME,
                'alternateName':'Vadimohka','inLanguage':SCHEMA_LANGUAGE,'publisher':ref(PERSON_ID)}
     image = {'@type':'ImageObject','url':IMAGE,'width':1448,'height':1086}
-    outputs, texts = {}, []
+    outputs, texts, essay_order = {}, [], []
     for path, source in sources.items():
         doc, url = docs[path], canonical(path)
         title, description = title_description(path, doc)
@@ -187,6 +245,9 @@ def generate():
                 'author':ref(PERSON_ID),'primaryImageOfPage':image,
                 'dateModified':old_page['dateModified']}
         nodes = [page, person, organization, website]
+        if PAGE_BY_PATH[path].is_essay:
+            page.update(essay_dates(doc, old_page, path))
+            page['isPartOf'] = ref(canonical(ESSAY_INDEX_PATH) + '#webpage')
         if page['@type'] == 'ProfilePage':
             page['mainEntity'] = ref(PERSON_ID)
         elif page['@type'] == 'CollectionPage':
@@ -203,6 +264,13 @@ def generate():
             listing['itemListElement'] = [{'@type':'ListItem','position':i,'name':name,'url':link}
                                          for i,(name,link) in enumerate(entries,1)]
             nodes.append(listing)
+            if path == ESSAY_INDEX_PATH:
+                by_url = {canonical(essay.path): essay.path for essay in ESSAY_SPECS}
+                urls = [link for _, link in entries]
+                if len(urls) != len(by_url) or set(urls) != set(by_url):
+                    raise ValueError('Essay archive must link exactly once to every registered essay')
+                essay_order = [by_url[url] for url in urls]
+                page['hasPart'] = [ref(link + '#article') for link in urls]
         else:
             article = {'@type':'Article','@id':url+'#article','url':url,'headline':doc.first('h1').text(),
                        'description':description,'inLanguage':SCHEMA_LANGUAGE,'author':ref(PERSON_ID),
@@ -210,6 +278,11 @@ def generate():
                        'dateModified':page['dateModified'],'image':image,
                        'articleSection':[n.text() for n in doc.first('main').all('h2')]}
             page['mainEntity'] = ref(article['@id'])
+            if PAGE_BY_PATH[path].is_essay:
+                body = essay_body(doc, path)
+                article.update(datePublished=page['datePublished'], articleBody=body,
+                               wordCount=word_count(body), articleSection='Эссе',
+                               isPartOf=ref(canonical(ESSAY_INDEX_PATH) + '#webpage'))
             nodes.append(article)
         if path == 'context/index.html':
             paper = doc.by_id('heart-rate-paper')
@@ -227,8 +300,11 @@ def generate():
             nodes.extend([publication,patent])
         if path != 'index.html':
             crumb = {'@type':'BreadcrumbList','@id':url+'#breadcrumb','itemListElement':[
-                {'@type':'ListItem','position':1,'name':PAGE_BY_PATH['index.html'].breadcrumb,'item':BASE},
-                {'@type':'ListItem','position':2,'name':PAGE_BY_PATH[path].breadcrumb,'item':url}]}
+                {'@type':'ListItem','position':position,
+                 'name':(docs[ancestor].first('h1').text() if PAGE_BY_PATH[ancestor].is_essay
+                         else PAGE_BY_PATH[ancestor].breadcrumb),
+                 'item':canonical(ancestor)}
+                for position, ancestor in enumerate(page_ancestors(path), 1)]}
             page['breadcrumb'] = ref(crumb['@id'])
             nodes.append(crumb)
         else:
@@ -258,7 +334,8 @@ def generate():
               '- [Полный текст]('+BASE+'llms-full.txt)',
               '- [Структурированный профиль]('+BASE+'llm-profile.json)',
               '- [Person]('+BASE+'person.jsonld)',
-              '- [Карта сайта]('+BASE+'sitemap.xml)']
+              '- [Карта сайта]('+BASE+'sitemap.xml)',
+              '- [RSS эссе]('+BASE+ESSAY_FEED_PATH+')']
     lines += catalog_index_lines() + ['']
     outputs['llms.txt'] = '\n'.join(lines)
     # Use genuine page edit dates, not today's build time. Keep only canonical Russian pages.
@@ -272,6 +349,7 @@ def generate():
             sitemap += ['    <image:image><image:loc>'+IMAGE+'</image:loc></image:image>']
         sitemap += ['  </url>']
     outputs['sitemap.xml'] = '\n'.join(sitemap+['</urlset>',''])
+    outputs[ESSAY_FEED_PATH] = generate_feed(docs, essay_order)
     outputs.update(LLM_PAGES['generate'](docs, outputs, BASE))
     page_metadata = {path: title_description(path, doc) for path, doc in docs.items()}
     for path, catalog in build_catalogs(page_metadata).items():
@@ -310,6 +388,7 @@ def validate(outputs):
         if not path.endswith('.html') and re.search(r'vadimohka\.com\b',text,re.I):
             raise ValueError('Unexpected English domain in '+path)
     ET.fromstring(outputs['sitemap.xml'])
+    ET.fromstring(outputs[ESSAY_FEED_PATH])
 
 
 def main():

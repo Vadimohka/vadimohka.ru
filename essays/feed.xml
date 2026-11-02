@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Эссе — Вадим Владымцев</title>
+    <link>https://vadimohka.ru/essays/</link>
+    <description>Эссе Вадима Владымцева об инженерных решениях, совместной работе, пользе ИИ и авторстве. Личный опыт, аргументы и вопросы, к которым я возвращаюсь.</description>
+    <language>ru</language>
+    <atom:link href="https://vadimohka.ru/essays/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Я переделал собственную архитектуру</title>
+      <link>https://vadimohka.ru/essays/revising-my-architecture/</link>
+      <guid isPermaLink="true">https://vadimohka.ru/essays/revising-my-architecture/</guid>
+      <description>История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.</description>
+    </item>
+    <item>
+      <title>Кому достаётся время, которое экономит ИИ</title>
+      <link>https://vadimohka.ru/essays/who-gets-the-time-ai-saves/</link>
+      <guid isPermaLink="true">https://vadimohka.ru/essays/who-gets-the-time-ai-saves/</guid>
+      <description>Ускорение работы создаёт возможность, которой ещё нужно распорядиться. О том, кому приносит пользу автоматизация и как договориться о результате.</description>
+    </item>
+    <item>
+      <title>Общий язык не появляется сам</title>
+      <link>https://vadimohka.ru/essays/shared-understanding/</link>
+      <guid isPermaLink="true">https://vadimohka.ru/essays/shared-understanding/</guid>
+      <description>Чему подготовка команды So Stuffy научила меня об объяснении решений, самостоятельности участников и работе технического руководителя.</description>
+    </item>
+    <item>
+      <title>Что останется после аплодисментов</title>
+      <link>https://vadimohka.ru/essays/after-the-applause/</link>
+      <guid isPermaLink="true">https://vadimohka.ru/essays/after-the-applause/</guid>
+      <description>Как помочь проекту продолжить жизнь после конкурса и почему возможность, вручённая команде, ещё требует совместной работы.</description>
+    </item>
+    <item>
+      <title>Я хочу узнавать себя в своих проектах</title>
+      <link>https://vadimohka.ru/essays/recognising-myself-in-my-work/</link>
+      <guid isPermaLink="true">https://vadimohka.ru/essays/recognising-myself-in-my-work/</guid>
+      <description>О личном интересе и авторстве: почему мне важно понимать собственные решения и хотеть возвращаться к тому, что я создал.</description>
+    </item>
+  </channel>
+</rss>

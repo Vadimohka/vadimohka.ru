@@ -28,7 +28,8 @@ except ImportError as error:
 
 from site_model import (
     ARD_CONTEXT, BASE, CATALOG_MEDIA_TYPES, CATALOG_PATHS, CONTACT, LANGUAGE,
-    NAME, PAGES, PERSON_ID, RESOURCES, ROOT, canonical, index_path, lite_path,
+    NAME, PAGES, PAGE_SPECS, PAGE_BY_PATH, PERSON_ID, RESOURCES, ROOT,
+    ESSAY_INDEX_PATH, ESSAY_FEED_PATH, canonical, index_path, lite_path,
 )
 
 SCHEMAS = Path(__file__).resolve().parent / 'schemas'
@@ -298,6 +299,8 @@ def check_head(facts, name, source_path, is_lite=False):
     if not is_lite:
         representations.append(('alternate', 'text/html',
                                 BASE + lite_path(source_path).removesuffix('index.html')))
+    if source_path == ESSAY_INDEX_PATH or PAGE_BY_PATH[source_path].is_essay:
+        representations.append(('alternate', 'application/rss+xml', BASE + ESSAY_FEED_PATH))
     for relation, media_type, target in representations:
         # Language alternates may coexist with links to the same-language formats.
         links = [attrs for attrs in facts.head_links
@@ -319,11 +322,16 @@ def check_index(root, source_path):
         expected.update(BASE + path + '.md' for path in PAGES)
         expected.update(BASE + lite_path(path).removesuffix('index.html') for path in PAGES)
         expected.update(BASE + path for path in
-                        ('llms-full.txt', 'llm-profile.json', 'person.jsonld', 'sitemap.xml'))
+                        ('llms-full.txt', 'llm-profile.json', 'person.jsonld', 'sitemap.xml', ESSAY_FEED_PATH))
     else:
         expected.update((BASE + source_path + '.md',
                          BASE + lite_path(source_path).removesuffix('index.html'),
                          canonical(source_path), BASE + 'llms.txt', BASE + 'person.jsonld'))
+        expected.update(BASE + page.markdown_path for page in PAGE_SPECS if page.parent == source_path)
+        if PAGE_BY_PATH[source_path].is_essay:
+            expected.add(BASE + index_path(ESSAY_INDEX_PATH))
+        if source_path == ESSAY_INDEX_PATH or PAGE_BY_PATH[source_path].is_essay:
+            expected.add(BASE + ESSAY_FEED_PATH)
     missing = sorted(expected - links)
     require(not missing, f'{name}: missing navigation target(s): {", ".join(missing)}')
     # Additional useful links are allowed, but every local destination must exist.

@@ -24,6 +24,10 @@ CANONICAL_BASE = 'https://vadimohka.ru/'
 PERSON_ID = CANONICAL_BASE + '#person'
 MAX_RESPONSE_BYTES = 2_000_000
 CLIENT_ID = 'vadimohka-reference-reader-v1'
+ESSAY_SLUGS = (
+    'revising-my-architecture', 'who-gets-the-time-ai-saves',
+    'shared-understanding', 'after-the-applause', 'recognising-myself-in-my-work',
+)
 CLIENT_ERRORS = (OSError, ValueError, KeyError, TypeError, HTTPError, URLError)
 TRANSPORT_TYPES = {
     'text/html': {'text/html'},
@@ -294,6 +298,26 @@ class Reader:
                 'Reading index does not link to the evidence documents')
         record('contact-and-navigation', 'Как найти подходящий материал и обратиться с задачей?',
                [profile_entry, index_entry, approach_entry])
+
+        archive_entry, archive = resource('docs:essays')
+        require(archive_entry['url'] == CANONICAL_BASE + 'essays/index.html.md'
+                and has_link(index, archive_entry['url']),
+                'Essay archive is absent from the reading index')
+        essay_entries = []
+        for slug in ESSAY_SLUGS:
+            entry, text = resource('docs:essays:' + slug)
+            page_url = CANONICAL_BASE + 'essays/' + slug + '/'
+            require(entry['url'] == page_url + 'index.html.md'
+                    and has_link(archive, page_url) and has_link(index, entry['url']),
+                    'Essay discovery does not reach the canonical article: ' + slug)
+            heading = re.search(r'^# [^\n]+$', text, re.M)
+            prose = re.sub(r'!?\[[^\]]*\]\([^\n]*?\)', '', text)
+            require(heading is not None and len(re.findall(r'\b\w+\b', prose)) >= 150
+                    and 'Вадим Владымцев' in text,
+                    'Essay resource contains only a stub or lacks attribution: ' + slug)
+            essay_entries.append(entry)
+        record('essays', 'Где прочитать полные авторские эссе об инженерной работе и людях?',
+               [archive_entry, *essay_entries])
 
 
 class QuietHandler(SimpleHTTPRequestHandler):

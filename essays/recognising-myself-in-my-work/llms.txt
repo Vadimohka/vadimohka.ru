@@ -1,0 +1,18 @@
+# Я хочу узнавать себя в своих проектах — Вадим Владымцев
+
+> О личном интересе и авторстве: почему мне важно понимать собственные решения и хотеть возвращаться к тому, что я создал.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/essays/recognising-myself-in-my-work/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/essays/recognising-myself-in-my-work/)
+- [Основная страница](https://vadimohka.ru/essays/recognising-myself-in-my-work/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)
+- [Все эссе](https://vadimohka.ru/essays/llms.txt)
+- [RSS эссе](https://vadimohka.ru/essays/feed.xml)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

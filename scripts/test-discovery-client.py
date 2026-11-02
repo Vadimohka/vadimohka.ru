@@ -65,11 +65,13 @@ class ReaderRegressions(unittest.TestCase):
         mutate(document)
         self.files[path] = (media_type, json.dumps(document, ensure_ascii=False))
 
-    def test_current_public_documents_provide_all_seven_scenarios(self):
+    def test_current_public_documents_provide_all_eight_scenarios(self):
         report = self.reader().check()
         self.assertEqual(report['status'], 'pass')
-        self.assertEqual(len(report['evidenceChecks']), 7)
-        self.assertEqual(len(report['requests']), 9)
+        self.assertEqual(len(report['evidenceChecks']), 8)
+        self.assertEqual(len(report['requests']), 15)
+        self.assertEqual(report['evidenceChecks'][-1]['name'], 'essays')
+        self.assertEqual(len(report['evidenceChecks'][-1]['sources']), 6)
 
     def test_non_json_constants_are_rejected_in_catalogs_and_profile(self):
         for path in ('/.well-known/ai-catalog.json', '/.well-known/ard.json', '/person.jsonld'):
@@ -153,8 +155,31 @@ class ReaderRegressions(unittest.TestCase):
         self.assertIn('contact differ', stderr)
         self.assertEqual(report['status'], 'failed')
         self.assertIn('contact differ', report['error'])
-        self.assertEqual(len(report['requests']), 9)
+        self.assertEqual(len(report['requests']), 15)
         self.assertEqual(len(report['evidenceChecks']), 6)
+
+    def test_essay_archive_must_link_to_the_exact_article(self):
+        path = '/essays/index.html.md'
+        media_type, text = self.files[path]
+        correct = 'https://vadimohka.ru/essays/revising-my-architecture/'
+        self.assertIn('(' + correct + ')', text)
+        self.files[path] = (media_type, text.replace('(' + correct + ')', '(' + correct + 'missing/)'))
+        with self.assertRaisesRegex(ValueError, 'Essay discovery'):
+            self.reader().check()
+
+    def test_essay_summary_cannot_replace_the_complete_resource(self):
+        path = '/essays/revising-my-architecture/index.html.md'
+        self.files[path] = ('text/markdown', '# Я переделал собственную архитектуру\n\nВадим Владымцев. Краткое описание.')
+        with self.assertRaisesRegex(ValueError, 'only a stub'):
+            self.reader().check()
+
+    def test_both_catalogs_omitting_an_essay_do_not_hide_its_absence(self):
+        missing = 'urn:air:vadimohka.ru:docs:essays:shared-understanding'
+        for path in ('/.well-known/ai-catalog.json', '/.well-known/ard.json'):
+            self.mutate_json(path, lambda doc: doc.update(
+                entries=[entry for entry in doc['entries'] if entry['identifier'] != missing]))
+        with self.assertRaisesRegex(ValueError, 'Missing acceptance resource'):
+            self.reader().check()
 
 
 if __name__ == '__main__':
