@@ -47,6 +47,9 @@ class PageSpec:
     label: str
     breadcrumb: str
     schema_type: str
+    parent: str | None = 'index.html'
+    is_essay: bool = False
+    in_navigation: bool = True
 
     @property
     def markdown_path(self):
@@ -55,15 +58,49 @@ class PageSpec:
 
 # One page inventory supplies navigation, schema selection and all text formats.
 # Titles, descriptions, dates and visible text are read from the approved HTML.
+ESSAY_INDEX_PATH = 'essays/index.html'
+ESSAY_FEED_PATH = 'essays/feed.xml'
+ESSAY_SPECS = (
+    PageSpec('essays/revising-my-architecture/index.html', 'Я переделал собственную архитектуру',
+             'Я переделал собственную архитектуру', 'WebPage', ESSAY_INDEX_PATH, True, False),
+    PageSpec('essays/who-gets-the-time-ai-saves/index.html', 'Кому достаётся время, которое экономит ИИ',
+             'Кому достаётся время, которое экономит ИИ', 'WebPage', ESSAY_INDEX_PATH, True, False),
+    PageSpec('essays/shared-understanding/index.html', 'Общий язык не появляется сам',
+             'Общий язык не появляется сам', 'WebPage', ESSAY_INDEX_PATH, True, False),
+    PageSpec('essays/after-the-applause/index.html', 'Что останется после аплодисментов',
+             'Что останется после аплодисментов', 'WebPage', ESSAY_INDEX_PATH, True, False),
+    PageSpec('essays/recognising-myself-in-my-work/index.html', 'Я хочу узнавать себя в своих проектах',
+             'Я хочу узнавать себя в своих проектах', 'WebPage', ESSAY_INDEX_PATH, True, False),
+)
 PAGE_SPECS = (
-    PageSpec('index.html', 'Главная', 'Главная', 'ProfilePage'),
+    PageSpec('index.html', 'Главная', 'Главная', 'ProfilePage', None),
     PageSpec('background/index.html', 'Путь и образование', 'Путь', 'ProfilePage'),
     PageSpec('projects/index.html', 'Проекты', 'Проекты', 'CollectionPage'),
     PageSpec('approach/index.html', 'Подход', 'Подход', 'WebPage'),
     PageSpec('context/index.html', 'Публикации и материалы', 'Профили и материалы', 'CollectionPage'),
-)
+    PageSpec(ESSAY_INDEX_PATH, 'Эссе', 'Эссе', 'CollectionPage'),
+) + ESSAY_SPECS
 PAGES = [page.path for page in PAGE_SPECS]
 PAGE_BY_PATH = {page.path: page for page in PAGE_SPECS}
+NAV_PAGES = tuple(page for page in PAGE_SPECS if page.in_navigation)
+
+
+def page_ancestors(path):
+    """Return the registered hierarchy, including the current page."""
+    result = []
+    while path is not None:
+        if path in result:
+            raise ValueError('Circular page hierarchy: ' + path)
+        result.append(path)
+        path = PAGE_BY_PATH[path].parent
+    return tuple(reversed(result))
+
+
+def feed_links(path):
+    if path == ESSAY_INDEX_PATH or PAGE_BY_PATH[path].is_essay:
+        return ['<link rel="alternate" type="application/rss+xml" title="Эссе Вадима Владымцева" href="/'
+                + ESSAY_FEED_PATH + '">']
+    return []
 
 CATALOG_PATHS = {
     'ai-catalog': '.well-known/ai-catalog.json',
@@ -127,8 +164,7 @@ class ResourceSpec:
         }
 
 
-# Preserve the identifiers from the reviewed four-resource prototype. Additional
-# entries describe the existing background and publications pages, not new tools.
+# Stable identifiers describe published documents, never promised tools.
 RESOURCES = (
     ResourceSpec(
         'urn:air:vadimohka.ru:profile:vadim-vladymtsev',
@@ -143,7 +179,7 @@ RESOURCES = (
         'urn:air:vadimohka.ru:docs:index',
         'llms.txt', 'text/plain', None,
         'Навигация по материалам Вадима Владымцева',
-        'Индекс официальных материалов на русском языке: биография, проекты, подход, публикации и ссылки на текстовые версии.',
+        'Индекс официальных материалов на русском языке: биография, проекты, подход, эссе, публикации и ссылки на текстовые версии.',
         ('documentation', 'portfolio', LANGUAGE),
         ('Где найти официальные материалы Вадима Владымцева о его работе?',
          'Где прочитать биографию, проекты и публикации Вадима Владымцева?'),
@@ -176,6 +212,31 @@ RESOURCES = (
         ('Где найти научные публикации и учебные материалы Вадима Владымцева?',
          'Какие публичные материалы связаны с преподаванием и исследованиями Вадима Владымцева?'),
     ),
+    ResourceSpec(
+        'urn:air:vadimohka.ru:docs:essays',
+        PAGE_BY_PATH[ESSAY_INDEX_PATH].markdown_path, 'text/markdown', ESSAY_INDEX_PATH,
+        None, None, ('essays', 'writing', LANGUAGE),
+        ('Где прочитать эссе Вадима Владымцева?',
+         'Какие авторские тексты Вадима Владымцева посвящены инженерной работе и командам?'),
+    ),
+) + tuple(
+    ResourceSpec(
+        'urn:air:vadimohka.ru:docs:essays:' + page.path.split('/')[1],
+        page.markdown_path, 'text/markdown', page.path,
+        None, None, ('essays', 'writing', LANGUAGE), queries,
+    )
+    for page, queries in zip(ESSAY_SPECS, (
+        ('Почему Вадим Владымцев пересмотрел собственную архитектуру?',
+         'Как автор эссе предлагает отвечать за неудачные инженерные решения?'),
+        ('Кому достаётся рабочее время, сэкономленное с помощью ИИ?',
+         'Как Вадим Владымцев связывает автоматизацию с пользой для команды?'),
+        ('Почему сильным специалистам нужен общий язык?',
+         'Что тренерская работа дала Вадиму Владымцеву для управления командой?'),
+        ('Что происходит с проектами после конкурса или демонстрации?',
+         'Как Вадим Владымцев смотрит на поддержку создателей после первого одобрения?'),
+        ('Как Вадим Владымцев понимает авторство в инженерной работе?',
+         'Как личный интерес связан с проектами и исследованиями автора?'),
+    ))
 )
 
 

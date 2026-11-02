@@ -8,18 +8,21 @@ than rebuilding the expected catalogs with the production generator.
 import copy
 import hashlib
 import json
+import re
 import runpy
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = runpy.run_path(str(ROOT / 'scripts/validate-discovery.py'))
+ESSAY_CHECKS = runpy.run_path(str(ROOT / 'scripts/validate-essays.py'))
 AI = '.well-known/ai-catalog.json'
 ARD = '.well-known/ard.json'
 
@@ -97,6 +100,17 @@ class SourceFidelity(unittest.TestCase):
 
     def write_json(self, path, data):
         (self.root / path).write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+    def mutate_graph(self, path, mutate):
+        target = self.root / path
+        source = target.read_text(encoding='utf-8')
+        pattern = r'(<script type="application/ld\+json">)(.*?)(</script>)'
+        match = re.search(pattern, source, re.S)
+        self.assertIsNotNone(match)
+        graph = json.loads(match[2])
+        mutate(graph['@graph'])
+        replacement = match[1] + json.dumps(graph, ensure_ascii=False, separators=(',', ':')) + match[3]
+        target.write_text(source[:match.start()] + replacement + source[match.end():], encoding='utf-8')
 
     def run_generator(self, mode, expect_ok=True):
         result = subprocess.run([sys.executable, 'scripts/sync-discovery.py', mode],
@@ -236,8 +250,7 @@ class SourceFidelity(unittest.TestCase):
             CHECKS['validate_site'](self.root)
 
     def test_generation_is_idempotent_and_preserves_editorial_bodies(self):
-        sources = ('index.html', 'background/index.html', 'projects/index.html',
-                   'approach/index.html', 'context/index.html')
+        sources = CHECKS['PAGES']
         bodies = {name: (self.root / name).read_text(encoding='utf-8').split('</head>', 1)[1]
                   for name in sources}
         protected = {name: (self.root / name).read_bytes() for name in
@@ -251,6 +264,95 @@ class SourceFidelity(unittest.TestCase):
             self.assertEqual(body, (self.root / name).read_text(encoding='utf-8').split('</head>', 1)[1], name)
         for name, data in protected.items():
             self.assertEqual(data, (self.root / name).read_bytes(), name)
+
+    def test_essay_article_body_count_and_attribution_are_verified_from_html(self):
+        path = 'essays/revising-my-architecture/index.html'
+        target = self.root / path
+        original = target.read_text(encoding='utf-8')
+        cases = (
+            ('body', lambda article: article.update(articleBody='Текст был потерян.'), 'body differs'),
+            ('count', lambda article: article.update(wordCount=1), 'wordCount differs'),
+            ('author', lambda article: article.update(author={'@id': 'https://example.invalid/person'}), 'author or publisher'),
+            ('date', lambda article: article.update(datePublished='2020-01-01'), 'date differs'),
+        )
+        for label, mutate, error in cases:
+            with self.subTest(label=label):
+                try:
+                    self.mutate_graph(path, lambda graph: mutate(next(node for node in graph if node.get('@type') == 'Article')))
+                    with self.assertRaisesRegex(ValueError, error):
+                        ESSAY_CHECKS['validate_essays'](self.root)
+                finally:
+                    target.write_text(original, encoding='utf-8')
+
+    def test_visible_essay_date_cannot_drift_from_structured_data(self):
+        path = 'essays/revising-my-architecture/index.html'
+        target = self.root / path
+        source = target.read_text(encoding='utf-8')
+        changed, count = re.subn(r'(<time\b[^>]*\bdatetime=")[^"]+', r'\g<1>2020-01-01', source, count=1)
+        self.assertEqual(count, 1)
+        target.write_text(changed, encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'visible publication date'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+
+    def test_essay_breadcrumb_requires_the_archive_level(self):
+        path = 'essays/revising-my-architecture/index.html'
+        def mutate(graph):
+            crumb = next(node for node in graph if node.get('@type') == 'BreadcrumbList')
+            crumb['itemListElement'].pop(1)
+        self.mutate_graph(path, mutate)
+        with self.assertRaisesRegex(ValueError, 'breadcrumb hierarchy'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+
+    def test_essay_itemlist_cannot_silently_drop_a_visible_article(self):
+        def mutate(graph):
+            listing = next(node for node in graph if node.get('@type') == 'ItemList')
+            listing['itemListElement'].pop()
+            listing['numberOfItems'] -= 1
+        self.mutate_graph('essays/index.html', mutate)
+        with self.assertRaisesRegex(ValueError, 'ItemList differs'):
+            ESSAY_CHECKS['validate_essays'](self.root)
+
+    def test_essay_feed_preserves_inventory_and_date_precision(self):
+        target = self.root / 'essays/feed.xml'
+        original = target.read_text(encoding='utf-8')
+        for mutation in ('missing', 'invented-time'):
+            with self.subTest(mutation=mutation):
+                try:
+                    tree = ET.fromstring(original)
+                    channel = tree.find('channel')
+                    item = channel.find('item')
+                    if mutation == 'missing':
+                        channel.remove(item)
+                    else:
+                        ET.SubElement(item, 'pubDate').text = 'Mon, 02 Nov 2026 12:00:00 +0300'
+                    target.write_text(ET.tostring(tree, encoding='unicode'), encoding='utf-8')
+                    with self.assertRaisesRegex(ValueError, 'RSS items differ|RSS invents'):
+                        ESSAY_CHECKS['validate_essays'](self.root)
+                finally:
+                    target.write_text(original, encoding='utf-8')
+
+    def test_essay_archive_index_must_reach_every_full_text(self):
+        self.replace('essays/llms.txt',
+                     '(https://vadimohka.ru/essays/shared-understanding/index.html.md)',
+                     '(https://vadimohka.ru/essays/index.html.md)')
+        with self.assertRaisesRegex(ValueError, 'missing navigation target'):
+            CHECKS['validate_site'](self.root)
+
+    def test_essay_source_update_reaches_all_reading_formats_and_schema(self):
+        path = 'essays/revising-my-architecture/index.html'
+        target = self.root / path
+        marker = 'Контрольный абзац для проверки полного текста эссе.'
+        source, count = re.subn(r'(<div\b[^>]*\bid="essay-body"[^>]*>)',
+                                lambda match: match[1] + '<p>' + marker + '</p>',
+                                target.read_text(encoding='utf-8'), count=1)
+        self.assertEqual(count, 1)
+        target.write_text(source, encoding='utf-8')
+        self.run_generator('--check', expect_ok=False)
+        self.run_generator('--write')
+        for name in (path, path + '.md', 'llm/' + path, 'llms-full.txt'):
+            self.assertIn(marker, (self.root / name).read_text(encoding='utf-8'))
+        ESSAY_CHECKS['validate_essays'](self.root)
+        CHECKS['validate_site'](self.root)
 
 
 if __name__ == '__main__':

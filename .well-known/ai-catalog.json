@@ -21,7 +21,7 @@
       "displayName": "Навигация по материалам Вадима Владымцева",
       "type": "text/plain",
       "url": "https://vadimohka.ru/llms.txt",
-      "description": "Индекс официальных материалов на русском языке: биография, проекты, подход, публикации и ссылки на текстовые версии.",
+      "description": "Индекс официальных материалов на русском языке: биография, проекты, подход, эссе, публикации и ссылки на текстовые версии.",
       "tags": [
         "documentation",
         "portfolio",
@@ -72,6 +72,78 @@
       "tags": [
         "publications",
         "teaching",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays",
+      "displayName": "Эссе — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/index.html.md",
+      "description": "Эссе Вадима Владымцева об инженерных решениях, совместной работе, пользе ИИ и авторстве. Личный опыт, аргументы и вопросы, к которым я возвращаюсь.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:revising-my-architecture",
+      "displayName": "Я переделал собственную архитектуру — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/revising-my-architecture/index.html.md",
+      "description": "История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:who-gets-the-time-ai-saves",
+      "displayName": "Кому достаётся время, которое экономит ИИ — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/who-gets-the-time-ai-saves/index.html.md",
+      "description": "Ускорение работы создаёт возможность, которой ещё нужно распорядиться. О том, кому приносит пользу автоматизация и как договориться о результате.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:shared-understanding",
+      "displayName": "Общий язык не появляется сам — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/shared-understanding/index.html.md",
+      "description": "Чему подготовка команды So Stuffy научила меня об объяснении решений, самостоятельности участников и работе технического руководителя.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:after-the-applause",
+      "displayName": "Что останется после аплодисментов — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/after-the-applause/index.html.md",
+      "description": "Как помочь проекту продолжить жизнь после конкурса и почему возможность, вручённая команде, ещё требует совместной работы.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:recognising-myself-in-my-work",
+      "displayName": "Я хочу узнавать себя в своих проектах — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/recognising-myself-in-my-work/index.html.md",
+      "description": "О личном интересе и авторстве: почему мне важно понимать собственные решения и хотеть возвращаться к тому, что я создал.",
+      "tags": [
+        "essays",
+        "writing",
         "ru"
       ]
     }

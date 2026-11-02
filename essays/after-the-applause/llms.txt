@@ -1,0 +1,18 @@
+# Что останется после аплодисментов — Вадим Владымцев
+
+> Как помочь проекту продолжить жизнь после конкурса и почему возможность, вручённая команде, ещё требует совместной работы.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/essays/after-the-applause/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/essays/after-the-applause/)
+- [Основная страница](https://vadimohka.ru/essays/after-the-applause/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)
+- [Все эссе](https://vadimohka.ru/essays/llms.txt)
+- [RSS эссе](https://vadimohka.ru/essays/feed.xml)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

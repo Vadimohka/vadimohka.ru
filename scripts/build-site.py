@@ -19,7 +19,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
-from site_model import BASE, CATALOG_PATHS, PAGES, RESOURCES, ROOT, canonical, index_path, lite_path
+from site_model import BASE, CATALOG_PATHS, PAGES, RESOURCES, ROOT, ESSAY_FEED_PATH, canonical, index_path, lite_path
 
 
 FIXED_FILES = {
@@ -34,6 +34,7 @@ FIXED_FILES = {
     'assets/studio.css': 'runtime-asset',
     'assets/profile.css': 'runtime-asset',
     'assets/approach.css': 'runtime-asset',
+    'assets/essays.css': 'runtime-asset',
     'assets/portrait.css': 'runtime-asset',
     'assets/studio.js': 'runtime-asset',
     'assets/hero-vadim-2026.webp': 'runtime-asset',
@@ -45,6 +46,7 @@ FIXED_FILES = {
     'en/approach/index.html': 'legacy-handoff',
     'CNAME': 'hosting-control',
     '.nojekyll': 'hosting-control',
+    ESSAY_FEED_PATH: 'reading-feed',
 }
 
 MIME_TYPES = {
@@ -109,6 +111,8 @@ def representation(path, role):
         content_types.insert(0, 'application/ai-catalog+json')
     if path == CATALOG_PATHS['ard']:
         content_types.append('application/ld+json')
+    if path == ESSAY_FEED_PATH:
+        content_types.insert(0, 'application/rss+xml')
     if suffix in ('.json', '.jsonld'):
         payload_format = 'json'
     elif suffix == '.xml':

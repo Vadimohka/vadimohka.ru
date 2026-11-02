@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Я переделал собственную архитектуру — Вадим Владымцев</title>
+<meta name="description" content="История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="Владымцев Вадим Денисович">
+<link rel="canonical" href="https://vadimohka.ru/essays/revising-my-architecture/">
+<link rel="alternate" hreflang="ru" href="https://vadimohka.ru/essays/revising-my-architecture/">
+<link rel="alternate" hreflang="x-default" href="https://vadimohka.ru/essays/revising-my-architecture/">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Вадим Владымцев">
+<meta property="og:url" content="https://vadimohka.ru/essays/revising-my-architecture/">
+<meta property="og:title" content="Я переделал собственную архитектуру — Вадим Владымцев">
+<meta property="og:description" content="История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.">
+<meta property="og:image" content="https://vadimohka.ru/assets/hero-vadim-2026.webp">
+<meta property="og:image:type" content="image/webp">
+<meta property="og:image:width" content="1448">
+<meta property="og:image:height" content="1086">
+<meta property="og:image:alt" content="Портрет Вадима Владымцева">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Я переделал собственную архитектуру — Вадим Владымцев">
+<meta name="twitter:description" content="История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.">
+<meta name="twitter:image" content="https://vadimohka.ru/assets/hero-vadim-2026.webp">
+<meta name="twitter:image:alt" content="Портрет Вадима Владымцева">
+<link rel="stylesheet" href="/assets/studio.css?v=expert-20261006">
+<link rel="stylesheet" href="/assets/essays.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://vadimohka.ru/essays/revising-my-architecture/#webpage","url":"https://vadimohka.ru/essays/revising-my-architecture/","name":"Я переделал собственную архитектуру — Вадим Владымцев","description":"История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.","inLanguage":"ru-RU","isPartOf":{"@id":"https://vadimohka.ru/essays/#webpage"},"about":{"@id":"https://vadimohka.ru/#person"},"author":{"@id":"https://vadimohka.ru/#person"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://vadimohka.ru/assets/hero-vadim-2026.webp","width":1448,"height":1086},"dateModified":"2026-11-02","datePublished":"2026-11-02","mainEntity":{"@id":"https://vadimohka.ru/essays/revising-my-architecture/#article"},"breadcrumb":{"@id":"https://vadimohka.ru/essays/revising-my-architecture/#breadcrumb"}},{"@type":"Person","@id":"https://vadimohka.ru/#person","name":"Вадим Владымцев","alternateName":["Владымцев Вадим Денисович","Vadim Vladymtsev","Vladymtsev Vadim Denisovich","Vadimohka"],"url":"https://vadimohka.ru/","image":"https://vadimohka.ru/assets/hero-vadim-2026.webp","jobTitle":"Co-Founder Century | CTO StackLevel GROUP","description":"Я — сооснователь Century и CTO StackLevel GROUP. Проектирую системы, пишу код и организую разработку. Преподаю и тренирую команды ICPC.","worksFor":{"@id":"https://stacklevel.group/#organization"},"email":"mailto:vadimohkav@gmail.com","mainEntityOfPage":{"@id":"https://vadimohka.ru/#webpage"},"knowsLanguage":["ru","en"],"sameAs":["https://www.linkedin.com/in/vadimohka/","https://github.com/vadimohka","https://scholar.google.com/citations?user=ccabRDYAAAAJ","https://www.researchgate.net/profile/Vadim-Vladymtsev","https://codeforces.com/profile/Vadimohka","https://stepik.org/users/296085237/profile"],"knowsAbout":["Архитектура программных систем","Разработка программного обеспечения","BPA","RPA","LLM","RAG","Agent-to-Agent","Корпоративные интеграции","Governance","Compliance","Контроль доступа к данным","Руководство разработкой","Спортивное программирование","ICPC","Преподавание программирования","Оптимизация Android-приложений","Проектирование бизнес-процессов","Командная коммуникация","Системный анализ","Мобильная и веб-разработка","Обработка данных в реальном времени","Интеграция биомедицинских датчиков","Транспортная телематика","Организация олимпиад","Профориентация"],"givenName":"Вадим","familyName":"Владымцев","hasCredential":[{"@type":"EducationalOccupationalCredential","name":"Спортивное программирование для тренеров","credentialCategory":"Повышение квалификации","recognizedBy":{"@type":"CollegeOrUniversity","name":"МФТИ"},"url":"https://vadimohka.ru/background/#mipt"},{"@type":"EducationalOccupationalCredential","name":"Методика разработки программ ДПО инженерной направленности","credentialCategory":"Повышение квалификации","recognizedBy":{"@type":"CollegeOrUniversity","name":"Новгородский государственный университет имени Ярослава Мудрого","alternateName":"НовГУ"},"url":"https://vadimohka.ru/background/#novsu"}]},{"@type":"Organization","@id":"https://stacklevel.group/#organization","name":"StackLevel Group","url":"https://stacklevel.group","sameAs":["https://www.linkedin.com/company/stacklevel"]},{"@type":"WebSite","@id":"https://vadimohka.ru/#website","url":"https://vadimohka.ru/","name":"Вадим Владымцев","alternateName":"Vadimohka","inLanguage":"ru-RU","publisher":{"@id":"https://vadimohka.ru/#person"}},{"@type":"Article","@id":"https://vadimohka.ru/essays/revising-my-architecture/#article","url":"https://vadimohka.ru/essays/revising-my-architecture/","headline":"Я переделал собственную архитектуру","description":"История переделки микросервисного приложения и мой взгляд на ответственность инженера, которому приходится пересматривать собственное решение.","inLanguage":"ru-RU","author":{"@id":"https://vadimohka.ru/#person"},"publisher":{"@id":"https://vadimohka.ru/#person"},"mainEntityOfPage":{"@id":"https://vadimohka.ru/essays/revising-my-architecture/#webpage"},"dateModified":"2026-11-02","image":{"@type":"ImageObject","url":"https://vadimohka.ru/assets/hero-vadim-2026.webp","width":1448,"height":1086},"articleSection":"Эссе","datePublished":"2026-11-02","articleBody":"Ответственность за инженерное решение включает готовность пересмотреть его, когда оно начинает мешать работе. Согласиться с этим легко, пока речь идёт о чужой архитектуре. Со своей сложнее: вместе с кодом приходится разбираться с собственным желанием остаться правым.\n\nВ начале моей работы с микросервисами был проект, в котором каждый сервис получил собственную базу данных. Со временем такая организация стала создавать проблемы. Для исправления я свёл некоторые базы вместе и переработал приложение. Переход потребовал множества миграций. Архитектуру выбрал я, поэтому исправление тоже считал своей работой.\n\nМикросервисный подход предполагает разделение приложения на отдельные сервисы, каждый со своей задачей. Отдельная база может поддерживать самостоятельность сервиса. Но наличие понятного принципа ещё не означает, что конкретная система от него выигрывает. В моём случае выбранное разделение пришлось менять. Этого достаточно для разбора моего решения, но недостаточно для общего приговора микросервисам.\n\nМеня в этой истории занимает ещё одна трудность. Когда решение своё, у него появляется защита, которой нет в техническом описании. Ты уже потратил время, привык к устройству системы, возможно, объяснил другим, почему оно разумно. Переделка может ощущаться как признание собственной несостоятельности. Поэтому хочется сначала найти ещё один аргумент в пользу исходного выбора.\n\nАргументы обычно находятся. Где-то есть похожая архитектура, которая работает. Есть статьи с убедительными объяснениями. Можно добавить обходной путь, чтобы сохранить выбранную конструкцию. Всё это само по себе ничего не говорит о том, помогает ли она приложению, которое сейчас лежит перед тобой.\n\nЯ возвращаю такой разговор к задачам системы. Какую работу стало трудно выполнять? Что именно создаёт эту трудность? Оправдывает ли устранение этого ограничения затраты на переделку? Здесь уже можно обсуждать последствия решений. Автору бывает неприятно это слышать, зато появляются основания для следующего шага.\n\nПосле признания ошибки остаётся работа по переходу. Надо продумать миграцию и проверить сохранность данных. Придётся объяснить изменения тем, кто будет поддерживать приложение дальше. Красивая фраза о полученном опыте эту работу за тебя не выполнит. Цена первоначального решения становится видна в объёме необходимой переделки.\n\nСчитать исправление своей ответственностью не означает делать всё одному. Иногда разумнее привлечь человека, который лучше разбирается в конкретной проблеме. Тогда моя задача — честно передать контекст и дать ему возможность изменить то, что строил я. Защищать собственное авторство от полезных изменений было бы странным способом заботиться о системе.\n\nУ пересмотра тоже должны быть основания. Если каждое сомнение заканчивается переписыванием, продукт может надолго остаться в ремонте. Есть неудобства, с которыми пока разумно жить. Есть ограничения, которые уже мешают необходимой работе. Разница между ними требует внимания к задаче и цене перехода; одного желания сделать красивее недостаточно.\n\nЯ хочу, чтобы профессиональное доверие выдерживало этот разговор. Можно объяснить первоначальный выбор, назвать его последствия и предложить исправление. Для этого не нужно задним числом объявлять каждый поворот частью большого плана. Достаточно отвечать за то, что теперь стало понятно.\n\nИстория с базами оставила у меня вполне практичный критерий: когда решение перестаёт помогать системе, я должен быть готов помочь системе пережить это решение. В том числе собственное.","wordCount":468,"isPartOf":{"@id":"https://vadimohka.ru/essays/#webpage"}},{"@type":"BreadcrumbList","@id":"https://vadimohka.ru/essays/revising-my-architecture/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://vadimohka.ru/"},{"@type":"ListItem","position":2,"name":"Эссе","item":"https://vadimohka.ru/essays/"},{"@type":"ListItem","position":3,"name":"Я переделал собственную архитектуру","item":"https://vadimohka.ru/essays/revising-my-architecture/"}]}]}</script>
+<script src="/assets/studio.js" defer></script>
+<script>
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return;}k=e.createElement(t);a=e.getElementsByTagName(t)[0];k.async=1;k.src=r;a.parentNode.insertBefore(k,a);})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=105913979','ym');
+ym(105913979,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:'dataLayer',accurateTrackBounce:true,trackLinks:true});
+</script>
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">
+<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="alternate" type="text/markdown" href="/essays/revising-my-architecture/index.html.md">
+<link rel="alternate" type="text/html" title="Текстовая версия" href="/llm/essays/revising-my-architecture/">
+<link rel="describedby" type="text/plain" href="/essays/revising-my-architecture/llms.txt">
+<link rel="describedby" type="application/ld+json" href="/person.jsonld">
+<meta name="twitter:url" content="https://vadimohka.ru/essays/revising-my-architecture/">
+<link rel="ai-catalog" type="application/ai-catalog+json" href="/.well-known/ai-catalog.json">
+<link rel="ard" type="application/json" href="/.well-known/ard.json">
+<link rel="alternate" type="application/rss+xml" title="Эссе Вадима Владымцева" href="/essays/feed.xml">
+</head>
+<body class="inside essays-page">
+<noscript><div class="tracker"><img src="https://mc.yandex.ru/watch/105913979" alt="" width="1" height="1"></div></noscript>
+<a class="skip-link" href="#main-content">Перейти к содержимому</a>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/" aria-label="Вадим Владымцев — главная">Вадим Владымцев</a>
+<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" hidden>Меню <span aria-hidden="true">+</span></button>
+<nav class="site-nav" id="site-navigation" aria-label="Основная навигация"><a href="/projects/">Кейсы</a><a href="/background/">Путь</a><a href="/approach/">Подход</a><a href="/essays/" aria-current="location">Эссе</a><a href="#contact">Связаться</a><a href="https://vadimohka.com/" lang="en" hreflang="en" rel="alternate" aria-label="Английская версия сайта">EN</a></nav>
+</div></header>
+<main id="main-content" class="essay-shell wrap" tabindex="-1">
+<nav class="essay-breadcrumbs" aria-label="Хлебные крошки"><ol><li><a href="/">Главная</a></li><li><a href="/essays/">Эссе</a></li></ol></nav>
+<article id="essay" class="essay-article">
+<header class="essay-header">
+<p class="eyebrow">Инженерия · Архитектура</p>
+<h1>Я переделал собственную архитектуру</h1>
+<div class="essay-meta"><a href="/background/" rel="author">Вадим Владымцев</a><time class="essay-date" datetime="2026-11-02">2 ноября 2026</time><span>3 мин чтения</span></div>
+</header>
+<div id="essay-body">
+<p class="essay-thesis">Ответственность за инженерное решение включает готовность пересмотреть его, когда оно начинает мешать работе. Согласиться с этим легко, пока речь идёт о чужой архитектуре. Со своей сложнее: вместе с кодом приходится разбираться с собственным желанием остаться правым.</p>
+<div class="essay-prose">
+<p>В начале моей работы с микросервисами был проект, в котором каждый сервис получил собственную базу данных. Со временем такая организация стала создавать проблемы. Для исправления я свёл некоторые базы вместе и переработал приложение. Переход потребовал множества миграций. Архитектуру выбрал я, поэтому исправление тоже считал своей работой.</p>
+<p>Микросервисный подход предполагает разделение приложения на отдельные сервисы, каждый со своей задачей. Отдельная база может поддерживать самостоятельность сервиса. Но наличие понятного принципа ещё не означает, что конкретная система от него выигрывает. В моём случае выбранное разделение пришлось менять. Этого достаточно для разбора моего решения, но недостаточно для общего приговора микросервисам.</p>
+<p>Меня в этой истории занимает ещё одна трудность. Когда решение своё, у него появляется защита, которой нет в техническом описании. Ты уже потратил время, привык к устройству системы, возможно, объяснил другим, почему оно разумно. Переделка может ощущаться как признание собственной несостоятельности. Поэтому хочется сначала найти ещё один аргумент в пользу исходного выбора.</p>
+<p>Аргументы обычно находятся. Где-то есть похожая архитектура, которая работает. Есть статьи с убедительными объяснениями. Можно добавить обходной путь, чтобы сохранить выбранную конструкцию. Всё это само по себе ничего не говорит о том, помогает ли она приложению, которое сейчас лежит перед тобой.</p>
+<p>Я возвращаю такой разговор к задачам системы. Какую работу стало трудно выполнять? Что именно создаёт эту трудность? Оправдывает ли устранение этого ограничения затраты на переделку? Здесь уже можно обсуждать последствия решений. Автору бывает неприятно это слышать, зато появляются основания для следующего шага.</p>
+<p>После признания ошибки остаётся работа по переходу. Надо продумать миграцию и проверить сохранность данных. Придётся объяснить изменения тем, кто будет поддерживать приложение дальше. Красивая фраза о полученном опыте эту работу за тебя не выполнит. Цена первоначального решения становится видна в объёме необходимой переделки.</p>
+<p>Считать исправление своей ответственностью не означает делать всё одному. Иногда разумнее привлечь человека, который лучше разбирается в конкретной проблеме. Тогда моя задача — честно передать контекст и дать ему возможность изменить то, что строил я. Защищать собственное авторство от полезных изменений было бы странным способом заботиться о системе.</p>
+<p>У пересмотра тоже должны быть основания. Если каждое сомнение заканчивается переписыванием, продукт может надолго остаться в ремонте. Есть неудобства, с которыми пока разумно жить. Есть ограничения, которые уже мешают необходимой работе. Разница между ними требует внимания к задаче и цене перехода; одного желания сделать красивее недостаточно.</p>
+<p>Я хочу, чтобы профессиональное доверие выдерживало этот разговор. Можно объяснить первоначальный выбор, назвать его последствия и предложить исправление. Для этого не нужно задним числом объявлять каждый поворот частью большого плана. Достаточно отвечать за то, что теперь стало понятно.</p>
+<p>История с базами оставила у меня вполне практичный критерий: когда решение перестаёт помогать системе, я должен быть готов помочь системе пережить это решение. В том числе собственное.</p>
+</div>
+</div>
+<footer class="essay-author" aria-labelledby="author-heading"><h2 id="author-heading">Вадим Владымцев</h2><p>Проектирую системы, организую разработку и помогаю специалистам работать вместе.</p><a class="text-link" href="/background/">О моём опыте <span aria-hidden="true">→</span></a></footer>
+</article>
+<section class="essay-related" aria-labelledby="related-heading"><h2 id="related-heading">Продолжить чтение</h2><div class="essay-related-grid">
+<article><h3><a href="/essays/shared-understanding/">Общий язык не появляется сам</a></h3><p>Сильной команде нужен общий язык: без него знания одного человека могут остаться недоступными остальным.</p></article>
+<article><h3><a href="/essays/recognising-myself-in-my-work/">Я хочу узнавать себя в своих проектах</a></h3><p>Мне важно узнавать в своих проектах собственный выбор и понимать, почему я сделал именно так.</p></article>
+</div><a class="text-link all-essays" href="/essays/">Все эссе <span aria-hidden="true">→</span></a></section>
+</main>
+<section class="essay-contact wrap" id="contact" aria-labelledby="contact-heading">
+<div><h2 id="contact-heading">Продолжить разговор</h2><p>Если мысль отозвалась или ваш опыт оказался другим — напишите мне.</p></div>
+<div class="actions"><a class="text-link" href="mailto:vadimohkav@gmail.com">Написать мне <span aria-hidden="true">↗</span></a><a class="text-link" href="/essays/feed.xml" type="application/rss+xml">RSS <span aria-hidden="true">↗</span></a></div>
+</section>
+<footer class="site-footer"><div class="wrap footer-inner">
+<p>© 2026 Вадим Владымцев</p>
+<nav aria-label="Ссылки в подвале"><a href="/essays/">Эссе</a><a href="/context/">Профили и публикации</a><a href="https://github.com/vadimohka" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/vadimohka/" target="_blank" rel="noopener noreferrer">LinkedIn</a></nav>
+</div></footer>
+</body>
+</html>
