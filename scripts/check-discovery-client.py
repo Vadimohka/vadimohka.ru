@@ -25,6 +25,7 @@ PERSON_ID = CANONICAL_BASE + '#person'
 MAX_RESPONSE_BYTES = 2_000_000
 CLIENT_ID = 'vadimohka-reference-reader-v1'
 ESSAY_SLUGS = (
+    'helping-startups-grow',
     'revising-my-architecture', 'who-gets-the-time-ai-saves',
     'shared-understanding', 'after-the-applause', 'recognising-myself-in-my-work',
 )

@@ -10,6 +10,7 @@
 
 ## Материалы раздела
 
+- [Как дать стартапам больше шансов на рост](https://vadimohka.ru/essays/helping-startups-grow/index.html.md)
 - [Я переделал собственную архитектуру](https://vadimohka.ru/essays/revising-my-architecture/index.html.md)
 - [Кому достаётся время, которое экономит ИИ](https://vadimohka.ru/essays/who-gets-the-time-ai-saves/index.html.md)
 - [Общий язык не появляется сам](https://vadimohka.ru/essays/shared-understanding/index.html.md)

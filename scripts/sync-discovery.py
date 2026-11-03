@@ -246,12 +246,14 @@ def generate():
     organization = next(n for n in profile['@graph'] if n.get('@type') == 'Organization')
     website = {'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':NAME,
                'alternateName':'Vadimohka','inLanguage':SCHEMA_LANGUAGE,'publisher':ref(PERSON_ID)}
-    image = {'@type':'ImageObject','url':IMAGE,'width':1448,'height':1086}
+    default_image = {'@type':'ImageObject','url':IMAGE,'width':1448,'height':1086}
     outputs, texts, essay_order, publication_dates = {}, [], [], {}
     for path, source in sources.items():
         doc, url = docs[path], canonical(path)
         title, description = title_description(path, doc)
         old_page = next(n for n in script_json(source)['@graph'] if n.get('@id') == url+'#webpage')
+        # The editorial page can provide its own illustration without changing the author portrait.
+        image = old_page.get('primaryImageOfPage', default_image)
         page = {'@type':PAGE_BY_PATH[path].schema_type,'@id':url+'#webpage','url':url,'name':title,'description':description,
                 'inLanguage':SCHEMA_LANGUAGE,'isPartOf':ref(BASE+'#website'),'about':ref(PERSON_ID),
                 'author':ref(PERSON_ID),'primaryImageOfPage':image,
@@ -296,6 +298,10 @@ def generate():
                 article.update(datePublished=page['datePublished'], articleBody=body,
                                wordCount=word_count(body), articleSection='Эссе',
                                isPartOf=ref(canonical(ESSAY_INDEX_PATH) + '#webpage'))
+                keywords = next((n.attrs.get('content', '') for n in doc.all('meta')
+                                 if n.attrs.get('name') == 'keywords'), '')
+                if keywords:
+                    article['keywords'] = [word.strip() for word in keywords.split(',') if word.strip()]
             nodes.append(article)
         if path == 'context/index.html':
             paper = doc.by_id('heart-rate-paper')
@@ -358,8 +364,9 @@ def generate():
         url = canonical(path)
         page = next(n for n in script_json(outputs[path])['@graph'] if n['@id'] == url+'#webpage')
         sitemap += ['  <url>','    <loc>'+url+'</loc>','    <lastmod>'+page['dateModified']+'</lastmod>']
-        if path == 'index.html':
-            sitemap += ['    <image:image><image:loc>'+IMAGE+'</image:loc></image:image>']
+        primary_image = page['primaryImageOfPage']['url']
+        if path == 'index.html' or primary_image != IMAGE:
+            sitemap += ['    <image:image><image:loc>'+html.escape(primary_image)+'</image:loc></image:image>']
         sitemap += ['  </url>']
     outputs['sitemap.xml'] = '\n'.join(sitemap+['</urlset>',''])
     outputs[ESSAY_FEED_PATH] = generate_feed(docs, essay_order, publication_dates)

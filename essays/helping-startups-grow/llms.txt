@@ -1,0 +1,18 @@
+# Как дать стартапам больше шансов на рост — Вадим Владымцев
+
+> Как связать обучение, инвестиции и работу с заказчиками, чтобы поддержка стартапов соответствовала опыту команды и помогала пройти следующий этап роста.
+
+## Страница
+
+- [Полный текст в Markdown](https://vadimohka.ru/essays/helping-startups-grow/index.html.md)
+- [Текстовая HTML-версия](https://vadimohka.ru/llm/essays/helping-startups-grow/)
+- [Основная страница](https://vadimohka.ru/essays/helping-startups-grow/)
+
+## Optional
+
+- [Все разделы](https://vadimohka.ru/llms.txt)
+- [Профиль](https://vadimohka.ru/person.jsonld)
+- [Все эссе](https://vadimohka.ru/essays/llms.txt)
+- [RSS эссе](https://vadimohka.ru/essays/feed.xml)
+- [AI Catalog — каталог материалов](https://vadimohka.ru/.well-known/ai-catalog.json)
+- [ARD — каталог материалов для поиска](https://vadimohka.ru/.well-known/ard.json)

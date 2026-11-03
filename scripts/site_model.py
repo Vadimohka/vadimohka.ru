@@ -61,6 +61,8 @@ class PageSpec:
 ESSAY_INDEX_PATH = 'essays/index.html'
 ESSAY_FEED_PATH = 'essays/feed.xml'
 ESSAY_SPECS = (
+    PageSpec('essays/helping-startups-grow/index.html', 'Как дать стартапам больше шансов на рост',
+             'Как дать стартапам больше шансов на рост', 'WebPage', ESSAY_INDEX_PATH, True, False),
     PageSpec('essays/revising-my-architecture/index.html', 'Я переделал собственную архитектуру',
              'Я переделал собственную архитектуру', 'WebPage', ESSAY_INDEX_PATH, True, False),
     PageSpec('essays/who-gets-the-time-ai-saves/index.html', 'Кому достаётся время, которое экономит ИИ',
@@ -226,6 +228,8 @@ RESOURCES = (
         None, None, ('essays', 'writing', LANGUAGE), queries,
     )
     for page, queries in zip(ESSAY_SPECS, (
+        ('Как государство и частные инвесторы могут поддерживать стартапы на разных стадиях?',
+         'Зачем нужна широкая воронка стартапов и как оценивать результат такой поддержки?'),
         ('Почему Вадим Владымцев пересмотрел собственную архитектуру?',
          'Как автор эссе предлагает отвечать за неудачные инженерные решения?'),
         ('Кому достаётся рабочее время, сэкономленное с помощью ИИ?',

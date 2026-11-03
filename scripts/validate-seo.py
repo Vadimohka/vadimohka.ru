@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
-from site_model import PAGES as SOURCE_PAGES
+from site_model import PAGES as SOURCE_PAGES, PAGE_BY_PATH
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://vadimohka.ru/'
@@ -17,6 +17,10 @@ PAGES = {path: BASE + path.removesuffix('index.html') for path in SOURCE_PAGES}
 ROLE = 'Co-Founder Century | CTO StackLevel GROUP'
 IMAGE = 'assets/hero-vadim-2026.webp'
 IMAGE_SHA256 = '7861caaa5608ecbc2bcebc4760fd30c79eeb08f035bfee48456f6428db87ff13'
+PAGE_IMAGES = {
+    'essays/helping-startups-grow/index.html':
+        ('assets/essays/helping-startups-grow/ecosystem-illustration.webp', 1774, 887),
+}
 COM = re.compile(r'vadimohka\.com\b', re.I)
 
 
@@ -97,8 +101,15 @@ def local_target(value, canonical):
     return target, unquote(url.fragment)
 
 
+def webp_dimensions(data, name):
+    require(len(data) >= 30 and data[:4] == b'RIFF' and data[8:12] == b'WEBP'
+            and data[12:16] == b'VP8 ', f'{name}: invalid VP8 WebP')
+    require(len(data) == int.from_bytes(data[4:8], 'little') + 8, f'{name}: truncated image')
+    return tuple(v & 0x3fff for v in struct.unpack('<HH', data[26:30]))
+
+
 def main():
-    pages, titles, descriptions = {}, set(), set()
+    pages, titles, descriptions, image_data = {}, set(), set(), {}
     for name, canonical in PAGES.items():
         text = (ROOT / name).read_text(encoding='utf-8')
         page = Page(text, name); pages[name] = page
@@ -110,11 +121,29 @@ def main():
         robots = set(page.meta('robots').split(','))
         require({'index','follow'} <= robots and 'noindex' not in robots, f'{name}: wrong robots')
         require(page.meta('og:url') == canonical and page.meta('twitter:card') == 'summary_large_image', f'{name}: wrong social metadata')
+        image_path, width, height = PAGE_IMAGES.get(name, (IMAGE, 1448, 1086))
         for key in ('og:image','twitter:image'):
-            require(page.meta(key) == BASE + IMAGE, f'{name}: wrong social image')
+            require(page.meta(key) == BASE + image_path, f'{name}: wrong social image')
             local_target(page.meta(key), canonical)
-        require(page.meta('og:image:type') == 'image/webp' and page.meta('og:image:width') == '1448' and page.meta('og:image:height') == '1086', f'{name}: wrong image metadata')
+        if image_path not in image_data:
+            image_data[image_path] = (ROOT / image_path).read_bytes()
+        require(webp_dimensions(image_data[image_path], image_path) == (width, height), f'{name}: wrong native image dimensions')
+        require(page.meta('og:image:type') == 'image/webp' and page.meta('og:image:width') == str(width) and page.meta('og:image:height') == str(height), f'{name}: wrong image metadata')
         require('© 2026' in text and page.json_blocks, f'{name}: missing copyright or structured data')
+        nodes = [node for block in page.json_blocks for node in block.get('@graph', [])]
+        expected_image = {'@type': 'ImageObject', 'url': BASE + image_path, 'width': width, 'height': height}
+        page_nodes = [node for node in nodes if node.get('@id') == canonical + '#webpage']
+        require(len(page_nodes) == 1, f'{name}: missing or duplicate page image owner')
+        image = page_nodes[0].get('primaryImageOfPage')
+        require(isinstance(image, dict) and all(image.get(key) == value for key, value in expected_image.items()), f'{name}: wrong page schema image')
+        article_nodes = [node for node in nodes if node.get('@id') == canonical + '#article']
+        if PAGE_BY_PATH[name].schema_type == 'WebPage' or article_nodes:
+            require(len(article_nodes) == 1 and article_nodes[0].get('@type') == 'Article', f'{name}: missing or duplicate article image owner')
+            image = article_nodes[0].get('image')
+            require(isinstance(image, dict) and all(image.get(key) == value for key, value in expected_image.items()), f'{name}: wrong article schema image')
+        person_nodes = [node for node in nodes if node.get('@id') == BASE + '#person']
+        require(len(person_nodes) == 1 and person_nodes[0].get('@type') == 'Person'
+                and person_nodes[0].get('image') == BASE + IMAGE, f'{name}: wrong person portrait')
         if name != 'approach/index.html': require(ROLE in text, f'{name}: missing approved role')
         for tag, attrs in page.tags:
             require(not (tag == 'meta' and attrs.get('http-equiv','').lower() == 'refresh'), f'{name}: unexpected redirect')
@@ -132,11 +161,9 @@ def main():
     require(len(heroes) == 1, 'Expected one hero image')
     hero = heroes[0]
     require(hero['src'] == '/' + IMAGE and hero.get('loading') == 'eager' and hero.get('fetchpriority') == 'high', 'Wrong hero or priority')
-    data = (ROOT / IMAGE).read_bytes()
+    data = image_data[IMAGE]
     require(hashlib.sha256(data).hexdigest() == IMAGE_SHA256, 'Portrait differs from approved asset')
-    require(data[:4] == b'RIFF' and data[8:12] == b'WEBP' and data[12:16] == b'VP8 ', 'Invalid WebP')
-    require(len(data) == int.from_bytes(data[4:8], 'little') + 8, 'Truncated image')
-    dimensions = tuple(v & 0x3fff for v in struct.unpack('<HH', data[26:30]))
+    dimensions = webp_dimensions(data, IMAGE)
     require((int(hero['width']),int(hero['height'])) == dimensions == (1448,1086), 'Wrong native portrait dimensions')
     require(len(data) < 200000, 'Portrait exceeds size budget')
     require(any(t == 'link' and a.get('rel') == 'preload' and a.get('href') == '/'+IMAGE for t,a in home.tags), 'Missing hero preload')
@@ -166,7 +193,7 @@ def main():
         require('noindex' in text and 'https://vadimohka.com/' in text, f'en/{p}: invalid English handoff')
     require({'century','knowledge','ecommerce'} <= pages['projects/index.html'].ids, 'Missing case')
     require({'stacklevel','bsuir-dev','teach-it','startlab','senior-lecturer','assistant','icpc','student-projects','education','awards'} <= pages['background/index.html'].ids, 'Missing biography section')
-    print(f'SEO validation passed: {len(PAGES)} pages, exact role, approved portrait, links, metadata, JSON-LD and English-only domain links.')
+    print(f'SEO validation passed: {len(PAGES)} pages, exact role, approved portrait and editorial cover, links, metadata, JSON-LD and English-only domain links.')
 
 
 if __name__ == '__main__':

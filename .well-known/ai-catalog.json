@@ -80,7 +80,19 @@
       "displayName": "Эссе — Вадим Владымцев",
       "type": "text/markdown",
       "url": "https://vadimohka.ru/essays/index.html.md",
-      "description": "Эссе Вадима Владымцева об инженерных решениях, совместной работе, пользе ИИ и авторстве. Личный опыт, аргументы и вопросы, к которым я возвращаюсь.",
+      "description": "Эссе Вадима Владымцева о развитии стартапов, инженерных решениях, совместной работе, пользе ИИ и авторстве. Личный опыт и мысли о том, как двигаться дальше.",
+      "tags": [
+        "essays",
+        "writing",
+        "ru"
+      ]
+    },
+    {
+      "identifier": "urn:air:vadimohka.ru:docs:essays:helping-startups-grow",
+      "displayName": "Как дать стартапам больше шансов на рост — Вадим Владымцев",
+      "type": "text/markdown",
+      "url": "https://vadimohka.ru/essays/helping-startups-grow/index.html.md",
+      "description": "Как связать обучение, инвестиции и работу с заказчиками, чтобы поддержка стартапов соответствовала опыту команды и помогала пройти следующий этап роста.",
       "tags": [
         "essays",
         "writing",

@@ -69,9 +69,9 @@ class ReaderRegressions(unittest.TestCase):
         report = self.reader().check()
         self.assertEqual(report['status'], 'pass')
         self.assertEqual(len(report['evidenceChecks']), 8)
-        self.assertEqual(len(report['requests']), 15)
+        self.assertEqual(len(report['requests']), 16)
         self.assertEqual(report['evidenceChecks'][-1]['name'], 'essays')
-        self.assertEqual(len(report['evidenceChecks'][-1]['sources']), 6)
+        self.assertEqual(len(report['evidenceChecks'][-1]['sources']), 7)
 
     def test_non_json_constants_are_rejected_in_catalogs_and_profile(self):
         for path in ('/.well-known/ai-catalog.json', '/.well-known/ard.json', '/person.jsonld'):
@@ -155,7 +155,7 @@ class ReaderRegressions(unittest.TestCase):
         self.assertIn('contact differ', stderr)
         self.assertEqual(report['status'], 'failed')
         self.assertIn('contact differ', report['error'])
-        self.assertEqual(len(report['requests']), 15)
+        self.assertEqual(len(report['requests']), 16)
         self.assertEqual(len(report['evidenceChecks']), 6)
 
     def test_essay_archive_must_link_to_the_exact_article(self):
