@@ -42,6 +42,7 @@ FIXED_FILES = {
     'assets/essays/helping-startups-grow/ecosystem-mobile.svg': 'runtime-asset',
     'assets/essays/helping-startups-grow/ecosystem.svg': 'runtime-asset',
     'assets/essays/helping-startups-grow/funnel-mobile.svg': 'runtime-asset',
+    'assets/essays/helping-startups-grow/funnel.png': 'runtime-asset',
     'assets/essays/helping-startups-grow/funnel.svg': 'runtime-asset',
     'assets/essays/helping-startups-grow/support-by-need-mobile.svg': 'runtime-asset',
     'assets/essays/helping-startups-grow/support-by-need.svg': 'runtime-asset',
