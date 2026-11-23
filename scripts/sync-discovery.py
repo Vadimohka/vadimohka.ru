@@ -11,7 +11,7 @@ import re
 import runpy
 import sys
 import xml.etree.ElementTree as ET
-from datetime import date
+from datetime import date, datetime
 from html.parser import HTMLParser
 from urllib.parse import urljoin
 from urllib.robotparser import RobotFileParser
@@ -159,6 +159,14 @@ def russian_date_label(value):
     return f'{parsed.day} {months[parsed.month - 1]} {parsed.year}'
 
 
+def profile_modified(value, path):
+    if not isinstance(value, str) or not re.fullmatch(
+            r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:[0-5]\d)', value):
+        raise ValueError(path + ': ProfilePage dateModified must include time and timezone (ISO 8601)')
+    datetime.fromisoformat(value.replace('Z', '+00:00'))
+    return value
+
+
 def essay_dates(doc, old_page, path):
     values = {key: old_page[key] for key in ('datePublished', 'dateModified')}
     for key, value in values.items():
@@ -264,6 +272,7 @@ def generate():
             publication_dates[path] = page['datePublished']
             page['isPartOf'] = ref(canonical(ESSAY_INDEX_PATH) + '#webpage')
         if page['@type'] == 'ProfilePage':
+            page['dateModified'] = profile_modified(page['dateModified'], path)
             page['mainEntity'] = ref(PERSON_ID)
         elif page['@type'] == 'CollectionPage':
             listing = {'@type':'ItemList','@id':url+'#items','name':doc.first('h1').text(),'itemListElement':[]}

@@ -6,6 +6,7 @@ import re
 import struct
 import sys
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -35,6 +36,17 @@ def unique_json(pairs):
         require(key not in result, f'Duplicate JSON key: {key}')
         result[key] = value
     return result
+
+
+def validate_profile_modified(value, name):
+    require(isinstance(value, str) and re.fullmatch(
+        r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:[0-5]\d)', value),
+        f'{name}: ProfilePage dateModified requires an ISO 8601 time and timezone')
+    try:
+        stamp = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except ValueError as error:
+        raise ValueError(f'{name}: invalid ProfilePage dateModified') from error
+    require(stamp <= datetime.now(timezone.utc), f'{name}: future ProfilePage dateModified')
 
 
 class Page(HTMLParser):
@@ -134,6 +146,8 @@ def main():
         expected_image = {'@type': 'ImageObject', 'url': BASE + image_path, 'width': width, 'height': height}
         page_nodes = [node for node in nodes if node.get('@id') == canonical + '#webpage']
         require(len(page_nodes) == 1, f'{name}: missing or duplicate page image owner')
+        if PAGE_BY_PATH[name].schema_type == 'ProfilePage':
+            validate_profile_modified(page_nodes[0].get('dateModified'), name)
         image = page_nodes[0].get('primaryImageOfPage')
         require(isinstance(image, dict) and all(image.get(key) == value for key, value in expected_image.items()), f'{name}: wrong page schema image')
         article_nodes = [node for node in nodes if node.get('@id') == canonical + '#article']
